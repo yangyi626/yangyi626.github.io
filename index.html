@@ -5,147 +5,720 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>杨艺 Yang Yi | NLP Researcher</title>
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
       body { 
-        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif; 
-        max-width: 860px; 
-        margin: 48px auto; 
-        padding: 0 24px; 
-        line-height: 1.7; 
-        color: #333;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif; 
+        line-height: 1.75; 
+        color: #2c3e50;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        padding: 60px 32px;
       }
-      h1 { margin-bottom: 8px; font-size: 2.2em; }
-      h2 { margin-top: 0; color: #0b66ff; font-size: 1.3em; border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
-      .subtitle { color: #666; font-size: 1.1em; margin-bottom: 24px; }
-      .card { 
-        border: 1px solid #e5e5e5; 
-        border-radius: 12px; 
-        padding: 20px 24px; 
-        margin: 18px 0; 
-        background: #fafafa;
+      
+      /* 主布局容器 */
+      .main-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        gap: 32px;
+        align-items: flex-start;
       }
-      .muted { color: #666; font-size: 0.95em; }
-      .highlight { color: #d73a49; font-weight: 600; }
-      a { color: #0b66ff; text-decoration: none; }
-      a:hover { text-decoration: underline; }
-      ul { padding-left: 20px; }
-      li { margin: 10px 0; }
-      .pub-title { font-weight: 600; color: #24292e; }
-      .venue { 
-        background: #0b66ff; 
-        color: white; 
-        padding: 2px 8px; 
-        border-radius: 4px; 
-        font-size: 0.85em;
+      
+      /* 侧边目录样式 */
+      .toc-wrapper {
+        position: sticky;
+        top: 80px;
+        width: 240px;
+        flex-shrink: 0;
+      }
+      
+      .toc {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      }
+      
+      .toc-title {
+        font-size: 1.2em;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+      
+      .toc-list {
+        list-style: none;
+        padding: 0;
+      }
+      
+      .toc-item {
+        margin: 0;
+      }
+      
+      .toc-link {
+        display: block;
+        padding: 10px 12px;
+        color: #5a6c7d;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 0.95em;
+        position: relative;
+        padding-left: 28px;
+      }
+      
+      .toc-link::before {
+        content: '';
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 6px;
+        height: 6px;
+        background: #667eea;
+        border-radius: 50%;
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+      
+      .toc-link:hover {
+        background: #f5f7fa;
+        color: #667eea;
+        padding-left: 32px;
+      }
+      
+      .toc-link:hover::before {
+        opacity: 1;
+      }
+      
+      .toc-link.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
         font-weight: 600;
+        padding-left: 32px;
       }
-      .ccf { 
-        background: #d73a49; 
+      
+      .toc-link.active::before {
+        opacity: 1;
+        background: white;
+      }
+      
+      /* 内容区域 */
+      .content-wrapper {
+        flex: 1;
+        min-width: 0;
+      }
+      
+      .container {
+        background: white;
+        border-radius: 20px;
+        padding: 48px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      }
+      
+      /* 头部样式 */
+      .header {
+        text-align: center;
+        padding-bottom: 32px;
+        border-bottom: 3px solid #f0f0f0;
+        margin-bottom: 40px;
+      }
+      
+      h1 { 
+        font-size: 2.8em; 
+        margin-bottom: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
+      }
+      
+      .subtitle { 
+        color: #5a6c7d; 
+        font-size: 1.15em; 
+        line-height: 1.8;
+        margin-top: 16px;
+      }
+      
+      .subtitle .muted {
+        display: block;
+        margin-top: 8px;
+        font-size: 0.95em;
+      }
+      
+      /* 章节标题 */
+      h2 { 
+        font-size: 1.5em;
+        color: #2c3e50;
+        margin-bottom: 24px;
+        padding-left: 16px;
+        border-left: 5px solid #667eea;
+        font-weight: 700;
+        scroll-margin-top: 80px;
+      }
+      
+      /* 卡片样式 */
+      .card { 
+        border: 1px solid #e8ecef;
+        border-radius: 16px; 
+        padding: 32px; 
+        margin: 28px 0; 
+        background: #fafbfc;
+        transition: all 0.3s ease;
+      }
+      
+      .card:hover {
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+        transform: translateY(-2px);
+      }
+      
+      /* 文本样式 */
+      .muted { 
+        color: #7f8c8d; 
+        font-size: 0.92em; 
+      }
+      
+      .highlight { 
+        color: #e74c3c; 
+        font-weight: 700;
+        background: #ffe6e6;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+      
+      b, strong {
+        color: #2c3e50;
+        font-weight: 700;
+      }
+      
+      /* 链接样式 */
+      a { 
+        color: #667eea; 
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-weight: 500;
+      }
+      
+      a:hover { 
+        color: #764ba2;
+        text-decoration: none;
+      }
+      
+      /* 列表样式 */
+      ul { 
+        padding-left: 20px; 
+      }
+      
+      li { 
+        margin: 14px 0;
+        line-height: 1.8;
+      }
+      
+      /* 论文样式 */
+      .pub-list {
+        list-style: none;
+        padding-left: 0;
+      }
+      
+      .pub-item {
+        padding: 20px;
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border-left: 4px solid #667eea;
+        transition: all 0.3s ease;
+      }
+      
+      .pub-item:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transform: translateX(4px);
+      }
+      
+      .pub-title { 
+        font-weight: 700; 
+        color: #2c3e50;
+        font-size: 1.05em;
+        display: block;
+        margin: 12px 0 8px 0;
+        line-height: 1.6;
+      }
+      
+      .venue { 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white; 
-        padding: 2px 6px; 
-        border-radius: 4px; 
-        font-size: 0.8em;
-        margin-left: 4px;
+        padding: 4px 12px; 
+        border-radius: 6px; 
+        font-size: 0.85em;
+        font-weight: 700;
+        display: inline-block;
       }
-      .links a { 
-        display: inline-block; 
-        margin-right: 16px; 
+      
+      .ccf { 
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white; 
+        padding: 4px 10px; 
+        border-radius: 6px; 
+        font-size: 0.8em;
+        margin-left: 8px;
+        font-weight: 700;
+        display: inline-block;
+      }
+      
+      .author-role {
+        background: #fff3cd;
+        color: #856404;
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-size: 0.8em;
+        margin-left: 8px;
+        font-weight: 600;
+        display: inline-block;
+      }
+      
+      /* 项目样式 */
+      .project-item {
+        padding: 24px;
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        border: 1px solid #e8ecef;
+      }
+      
+      .project-title {
+        font-weight: 700;
+        font-size: 1.15em;
+        color: #2c3e50;
+        margin-bottom: 8px;
+        display: block;
+        line-height: 1.5;
+      }
+      
+      .project-meta {
+        color: #7f8c8d;
+        font-size: 0.9em;
+        margin-bottom: 16px;
+        display: block;
+      }
+      
+      .project-meta strong {
+        color: #667eea;
+        font-weight: 700;
+      }
+      
+      .project-item ul {
+        margin-top: 12px;
+      }
+      
+      .project-item li {
+        position: relative;
+        padding-left: 8px;
+      }
+      
+      /* 教育背景 */
+      .edu-item { 
+        padding: 20px;
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        border-left: 4px solid #3498db;
+      }
+      
+      .edu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      
+      .edu-title { 
+        font-weight: 700; 
+        color: #2c3e50;
+        font-size: 1.15em;
+      }
+      
+      .edu-date {
+        color: #7f8c8d;
+        font-size: 0.9em;
+      }
+      
+      .edu-detail {
+        color: #5a6c7d;
+        line-height: 1.8;
+      }
+      
+      .edu-detail strong {
+        color: #2c3e50;
+      }
+      
+      /* 技能标签 */
+      .skills-section .skill-item {
+        margin-bottom: 16px;
+        padding: 16px;
+        background: white;
+        border-radius: 8px;
+        line-height: 2;
+      }
+      
+      .skills-section .skill-category {
+        color: #667eea;
+        font-weight: 700;
         font-size: 1.05em;
       }
-      .tag {
-        background: #e1f5ff;
-        color: #0366d6;
-        padding: 3px 10px;
-        border-radius: 12px;
-        font-size: 0.9em;
-        display: inline-block;
-        margin: 4px 4px 4px 0;
+      
+      /* 荣誉奖项 */
+      .award-section {
+        margin-bottom: 24px;
+      }
+      
+      .award-category {
+        color: #2c3e50;
+        font-size: 1.1em;
+        font-weight: 700;
+        margin-bottom: 12px;
+        display: block;
+      }
+      
+      .award-section ul {
+        margin-top: 12px;
+        background: white;
+        padding: 16px 16px 16px 36px;
+        border-radius: 8px;
+      }
+      
+      .award-section li strong {
+        color: #e74c3c;
+      }
+      
+      /* 联系方式 */
+      .contact-links {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+      
+      .contact-links a { 
+        display: inline-flex;
+        align-items: center;
+        padding: 12px 24px;
+        background: white;
+        border-radius: 10px;
+        font-size: 1.05em;
+        transition: all 0.3s ease;
+        border: 2px solid #e8ecef;
+      }
+      
+      .contact-links a:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        border-color: transparent;
+      }
+      
+      /* 页脚 */
+      .footer {
+        text-align: center;
+        margin-top: 48px;
+        padding: 24px 0;
+        color: #7f8c8d;
+        font-size: 0.95em;
+        border-top: 2px solid #f0f0f0;
+      }
+      
+      .footer-highlight {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
+        font-size: 1.1em;
+      }
+      
+      /* 响应式设计 */
+      @media (max-width: 1200px) {
+        .toc-wrapper {
+          display: none;
+        }
+        
+        .main-wrapper {
+          display: block;
+        }
+        
+        .content-wrapper {
+          max-width: 920px;
+          margin: 0 auto;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        body {
+          padding: 24px 16px;
+        }
+        
+        .container {
+          padding: 24px;
+        }
+        
+        h1 {
+          font-size: 2em;
+        }
+        
+        h2 {
+          font-size: 1.3em;
+        }
+        
+        .card {
+          padding: 20px;
+        }
+        
+        .contact-links {
+          flex-direction: column;
+          gap: 16px;
+        }
+        
+        .edu-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
       }
     </style>
   </head>
   <body>
-    <h1>杨艺 Yang Yi</h1>
-    <div class="subtitle">
-      NLP Researcher · Multi-Agent Simulation · Stance Detection<br>
-      <span class="muted">深圳大学 计算机技术硕士在读（2027届）</span>
-    </div>
+    <div class="main-wrapper">
+      <!-- 侧边目录 -->
+      <div class="toc-wrapper">
+        <nav class="toc">
+          <div class="toc-title">📑 目录导航</div>
+          <ul class="toc-list">
+            <li class="toc-item">
+              <a href="#education" class="toc-link">🎓 教育背景</a>
+            </li>
+            <li class="toc-item">
+              <a href="#publications" class="toc-link">📝 学术论文</a>
+            </li>
+            <li class="toc-item">
+              <a href="#projects" class="toc-link">🚀 项目经历</a>
+            </li>
+            <li class="toc-item">
+              <a href="#skills" class="toc-link">🛠️ 专业技能</a>
+            </li>
+            <li class="toc-item">
+              <a href="#awards" class="toc-link">🏆 荣誉与奖项</a>
+            </li>
+            <li class="toc-item">
+              <a href="#contact" class="toc-link">📬 联系方式</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
 
-    <div class="card">
-      <h2>📚 研究方向</h2>
-      <div>
-        <span class="tag">自然语言处理 (NLP)</span>
-        <span class="tag">立场检测</span>
-        <span class="tag">多智能体仿真</span>
-        <span class="tag">LLM Agents</span>
-        <span class="tag">社交网络分析</span>
-        <span class="tag">对话系统</span>
+      <!-- 主内容区域 -->
+      <div class="content-wrapper">
+        <div class="container">
+          <div class="header">
+            <h1>杨艺 Yang Yi</h1>
+            <div class="subtitle">
+              <strong>NLP Researcher · Multi-Agent Simulation · Stance Detection</strong>
+              <span class="muted">深圳大学 计算机技术硕士在读（2027届）</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 id="education">🎓 教育背景</h2>
+            <div class="edu-item">
+              <div class="edu-header">
+                <span class="edu-title">深圳大学</span>
+                <span class="edu-date">2024.09 – 2027.06</span>
+              </div>
+              <div class="edu-detail">
+                <strong>计算机技术</strong> | <strong>硕士（推免）</strong> | 研究方向：NLP、多智能体仿真、立场检测
+              </div>
+            </div>
+            <div class="edu-item">
+              <div class="edu-header">
+                <span class="edu-title">广西师范大学</span>
+                <span class="edu-date">2020.09 – 2024.06</span>
+              </div>
+              <div class="edu-detail">
+                <strong>数据科学与大数据技术</strong> | <strong>本科</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 id="publications">📝 学术论文</h2>
+            <ul class="pub-list">
+              <li class="pub-item">
+                <div>
+                  <span class="venue">EMNLP 2025</span>
+                  <span class="ccf">CCF B</span>
+                  <span class="author-role">共同一作</span>
+                </div>
+                <span class="pub-title">SPARK: Simulating the Co-evolution of Stance and Topic Dynamics in Online Discourse with LLM-based Agents</span>
+                <a href="https://aclanthology.org/2025.emnlp-main.1176/">[Link]</a>
+              </li>
+              <li class="pub-item">
+                <div>
+                  <span class="venue">WWW 2025</span>
+                  <span class="ccf">CCF A</span>
+                  <span class="author-role">共同一作</span>
+                </div>
+                <span class="pub-title">C-MTCSD: A Chinese Multi-Turn Conversational Stance Detection Dataset</span>
+                <a href="https://dl.acm.org/doi/10.1145/3701716.3715307">[Link]</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h2 id="projects">🚀 项目经历</h2>
+            
+            <div class="project-item">
+              <span class="project-title">SimBotPol：基于大语言模型的多智能体社交机器人网络极化仿真与干预评估框架</span>
+              <span class="project-meta"><strong>项目负责人</strong> | 2025.07 – 至今 | 在研</span>
+              <ul>
+                <li>面向社交平台极化分析，搭建 <strong>LLM 驱动的多智能体仿真框架</strong>（角色设定 → 交互生成 → 指标统计 → 干预评估），在真实社交网络结构上模拟 <strong>1,800 个智能体</strong>（1,200 真人 + 600 机器人）交互，量化机器人对用户立场/情绪演化的影响</li>
+                <li>设计<strong>智能体决策引擎</strong>（<strong>7 类操纵策略</strong> + 五大人格特质 + 双层记忆）与<strong>社交环境模拟器</strong>（发帖/转发/评论等），实现<strong>双层干预策略</strong>（个体认知反思 + 群体信息流调控）；工程实现：<strong>Mesa + LLM + MySQL</strong>（日志与指标落库、可复现实验配置）</li>
+                <li><strong>结果</strong>：复现回音室效应与群体极化；谣言传播型机器人显著推动负面情绪（情绪极化指数 <span class="highlight">+43%</span>），影响力较定向攻击型高 <span class="highlight">28%</span>；双层干预将极化水平降低 <span class="highlight">31%</span>，成果整理投稿中</li>
+              </ul>
+            </div>
+
+            <div class="project-item">
+              <span class="project-title">SPARK：基于大语言模型的多智能体对话生成与话题-立场协同演化仿真框架</span>
+              <span class="project-meta"><strong>核心开发者</strong> | 2025.02 – 2025.06 | EMNLP 2025 共同一作</span>
+              <ul>
+                <li>提出<strong>话题-立场协同演化建模方案</strong>，解决既有方法对话中"话题漂移/扩展"与"观点更新"割裂的问题；联合模拟 <strong>108 个智能体</strong>在 5 个领域开展多轮对话交互，实现个体可追踪、群体可量化的仿真与分析</li>
+                <li>构建<strong>立场感知智能体模块</strong>（个性化角色 + 双层记忆 + 反思式立场更新）与<strong>话题演化模拟器</strong>（话题树动态扩展 + 传播路径追踪），实现单次仿真生成 <strong>10,000+ 对话轮次</strong>并输出结构化统计指标；工程实现 <strong>Mesa + LLM + MySQL</strong>（实验日志/指标统计）</li>
+                <li><strong>结果</strong>：量化验证话题与立场强耦合（相关系数 <span class="highlight">0.88</span>）；科技话题创新速度较科学/医疗高 <span class="highlight">22.7%</span>；易受影响人格的话题新颖性较稳定人格高 <span class="highlight">22.7%</span></li>
+                <li>代码开源：<a href="https://github.com/yangyi626/SPARK_">[Code]</a></li>
+              </ul>
+            </div>
+
+            <div class="project-item">
+              <span class="project-title">C-MTCSD：中文多轮对话立场检测数据集构建与基准评测</span>
+              <span class="project-meta"><strong>数据与评测负责人</strong> | 2024.09 – 2025.01 | WWW 2025 共同一作</span>
+              <ul>
+                <li>针对中文多轮对话语义理解中上下文依赖与隐式立场难点，构建<strong>大规模中文多轮对话立场检测数据集</strong>；从微博采集 5 个热点话题，完成 <strong>24,264 条实例标注</strong>（最深 6 轮），规模为同类中文数据集 <span class="highlight">4.2 倍</span></li>
+                <li>设计<strong>三阶段数据处理流水线</strong>与<strong>双人标注 + 专家复审机制</strong>，标注一致性达 <span class="highlight">0.972</span>；实现 <strong>12 个模型全量评测</strong>（传统深度学习/预训练模型/对话专用模型/大语言模型），并按对话轮次/深度分析性能衰减规律（评测脚本与统计分析可复现）</li>
+                <li><strong>结果</strong>：零样本场景下最优模型 GPT-4 平均 F1 为 <span class="highlight">64.07%</span>，传统模型在隐式立场检测中 F1 低于 <span class="highlight">50%</span>；发现对话深度每增加 1 轮性能平均下降 <span class="highlight">6.2%</span>，最高衰减达 <span class="highlight">37.2%</span></li>
+                <li>数据开源：<a href="https://github.com/yangyi626/C-MTCSD">[Data]</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card skills-section">
+            <h2 id="skills">🛠️ 专业技能</h2>
+            <div class="skill-item">
+              <span class="skill-category">NLP：</span>语义理解与文本分类、立场检测、多轮对话建模、NLU、对话状态跟踪、对话策略
+            </div>
+            <div class="skill-item">
+              <span class="skill-category">深度学习与 LLM 工具链：</span>PyTorch、Prompt Engineering、LLM Agents（记忆/反思/可控生成）
+            </div>
+            <div class="skill-item">
+              <span class="skill-category">工程与数据：</span>Python、MySQL、Linux、Git；数据处理流水线与实验复现（配置管理/日志/统计分析）
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 id="awards">🏆 荣誉与奖项</h2>
+            
+            <div class="award-section">
+              <span class="award-category">学业奖学金</span>
+              <ul>
+                <li>深圳大学硕士研究生学业奖学金<strong>一等奖</strong>（2025）</li>
+                <li>深圳大学硕士研究生学业奖学金<strong>特等奖</strong>（2024）</li>
+              </ul>
+            </div>
+
+            <div class="award-section">
+              <span class="award-category">国家级竞赛</span>
+              <ul>
+                <li>第16届全国大学生计算机设计大赛<strong>三等奖</strong>（2023）</li>
+              </ul>
+            </div>
+
+            <div class="award-section">
+              <span class="award-category">省级竞赛</span>
+              <ul>
+                <li>第五届广西高校计算机设计大赛<strong>一等奖</strong>（2023）</li>
+                <li>第十四届蓝桥杯全国软件与信息技术人才大赛<strong>三等奖</strong>（2023）</li>
+                <li>第十三届蓝桥杯全国软件与信息技术人才大赛<strong>二等奖</strong>（2022）</li>
+                <li>"桂林银行杯"数据建模大赛暨全国大学生数学建模大赛预赛<strong>优秀奖</strong>广西赛区（2022）</li>
+                <li>中国大学生程序设计大赛（阶梯竞赛）<strong>三等奖</strong>广西"华山讨论组"（2022）</li>
+                <li>第四届传智杯全国IT技能大赛编程赛道<strong>三等奖</strong>（2021）</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 id="contact">📬 联系方式</h2>
+            <div class="contact-links">
+              <a href="mailto:2931564251@qq.com">📧 2931564251@qq.com</a>
+              <!-- <a href="tel:18934786067">📱 18934786067</a> -->
+              <a href="https://github.com/yangyi626" target="_blank">🔗 GitHub</a>
+              <a href="https://scholar.google.com/citations?user=r5EdeWEAAAAJ&hl=en" target="_blank">🎓 Google Scholar</a>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p class="footer-highlight">💡 base深圳 · 随时到岗 · 可实习6个月 · 2027年6月毕业</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>📝 学术论文</h2>
-      <ul style="list-style: none; padding-left: 0;">
-        <li>
-          <span class="venue">EMNLP 2025</span><span class="ccf">CCF B</span> <span class="muted">共同一作</span><br>
-          <span class="pub-title">SPARK: Simulating the Co-evolution of Stance and Topic Dynamics in Online Discourse with LLM-based Agents</span><br>
-          <span class="muted">话题-立场协同演化 · 108智能体仿真 · 10,000+对话轮次</span>
-          <a href="https://github.com/yangyi626">[Code]</a>
-        </li>
-        <li style="margin-top: 20px;">
-          <span class="venue">WWW 2025</span><span class="ccf">CCF A</span> <span class="muted">共同一作</span><br>
-          <span class="pub-title">C-MTCSD: A Chinese Multi-Turn Conversational Stance Detection Dataset</span><br>
-          <span class="muted">24,264条标注实例 · 12模型基准评测 · 标注一致性0.972</span>
-          <a href="https://github.com/yangyi626">[Code]</a>
-        </li>
-      </ul>
-    </div>
+    <script>
+      // 平滑滚动
+      document.querySelectorAll('.toc-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          const targetElement = document.querySelector(targetId);
+          
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
 
-    <div class="card">
-      <h2>🚀 核心项目</h2>
-      <ul>
-        <li>
-          <b>SimBotPol</b> — 社交机器人网络极化仿真与干预框架 <span class="muted">(在研)</span><br>
-          <span class="muted">1,800智能体 · 双层干预策略 · 极化水平降低<span class="highlight">31%</span></span>
-        </li>
-        <li>
-          <b>SPARK</b> — 话题-立场协同演化仿真框架 <span class="muted">(EMNLP 2025)</span><br>
-          <span class="muted">话题树动态扩展 · 双层记忆机制 · 相关系数<span class="highlight">0.88</span></span>
-        </li>
-        <li>
-          <b>C-MTCSD</b> — 中文多轮对话立场检测数据集 <span class="muted">(WWW 2025)</span><br>
-          <span class="muted">5话题 · 6轮对话深度 · 规模为同类数据集<span class="highlight">4.2倍</span></span>
-        </li>
-      </ul>
-    </div>
+      // 滚动时高亮当前章节
+      const sections = document.querySelectorAll('h2[id]');
+      const tocLinks = document.querySelectorAll('.toc-link');
 
-    <div class="card">
-      <h2>🛠️ 技术栈</h2>
-      <p>
-        <b>NLP:</b> 立场检测 · 多轮对话建模 · 语义理解 · 对话状态跟踪<br>
-        <b>AI/ML:</b> PyTorch · LLM Agents · Prompt Engineering · 记忆/反思机制<br>
-        <b>工程:</b> Python · MySQL · Linux · Git · Mesa · 实验复现与配置管理
-      </p>
-    </div>
+      function highlightTOC() {
+        let current = '';
+        
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+          if (window.pageYOffset >= sectionTop - 100) {
+            current = section.getAttribute('id');
+          }
+        });
 
-    <div class="card">
-      <h2>🏆 荣誉奖项</h2>
-      <ul style="margin: 8px 0;">
-        <li>深圳大学硕士研究生学业奖学金 <b>特等奖</b> (2024) · <b>一等奖</b> (2025)</li>
-        <li>中国大学生计算机设计大赛 <b>国家级三等奖</b> (2023)</li>
-      </ul>
-    </div>
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + current) {
+            link.classList.add('active');
+          }
+        });
+      }
 
-    <div class="card">
-      <h2>📬 联系方式</h2>
-      <p class="links">
-        <a href="https://github.com/yangyi626">🔗 GitHub</a>
-        <a href="https://scholar.google.com/">🎓 Google Scholar</a>
-        <a href="mailto:2931564251@qq.com">📧 Email</a>
-        <a href="tel:18934786067">📱 18934786067</a>
-      </p>
-    </div>
-
-    <footer style="text-align: center; margin-top: 48px; padding: 24px 0; color: #999; font-size: 0.9em; border-top: 1px solid #e5e5e5;">
-      <p>💡 <i>随时到岗 · 可实习6个月 · 2027年6月毕业</i></p>
-    </footer>
+      window.addEventListener('scroll', highlightTOC);
+      highlightTOC(); // 初始化
+    </script>
   </body>
 </html>
