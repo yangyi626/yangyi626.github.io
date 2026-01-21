@@ -3,36 +3,149 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Yang Yi | Portfolio</title>
+    <title>杨艺 Yang Yi | NLP Researcher</title>
     <style>
-      body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial; max-width: 820px; margin: 48px auto; padding: 0 18px; line-height: 1.6; }
-      h1 { margin-bottom: 6px; }
-      .muted { color: #666; }
-      .card { border: 1px solid #e5e5e5; border-radius: 12px; padding: 16px; margin: 14px 0; }
+      body { 
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif; 
+        max-width: 860px; 
+        margin: 48px auto; 
+        padding: 0 24px; 
+        line-height: 1.7; 
+        color: #333;
+      }
+      h1 { margin-bottom: 8px; font-size: 2.2em; }
+      h2 { margin-top: 0; color: #0b66ff; font-size: 1.3em; border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+      .subtitle { color: #666; font-size: 1.1em; margin-bottom: 24px; }
+      .card { 
+        border: 1px solid #e5e5e5; 
+        border-radius: 12px; 
+        padding: 20px 24px; 
+        margin: 18px 0; 
+        background: #fafafa;
+      }
+      .muted { color: #666; font-size: 0.95em; }
+      .highlight { color: #d73a49; font-weight: 600; }
       a { color: #0b66ff; text-decoration: none; }
       a:hover { text-decoration: underline; }
-      code { background: #f6f6f6; padding: 2px 6px; border-radius: 6px; }
+      ul { padding-left: 20px; }
+      li { margin: 10px 0; }
+      .pub-title { font-weight: 600; color: #24292e; }
+      .venue { 
+        background: #0b66ff; 
+        color: white; 
+        padding: 2px 8px; 
+        border-radius: 4px; 
+        font-size: 0.85em;
+        font-weight: 600;
+      }
+      .ccf { 
+        background: #d73a49; 
+        color: white; 
+        padding: 2px 6px; 
+        border-radius: 4px; 
+        font-size: 0.8em;
+        margin-left: 4px;
+      }
+      .links a { 
+        display: inline-block; 
+        margin-right: 16px; 
+        font-size: 1.05em;
+      }
+      .tag {
+        background: #e1f5ff;
+        color: #0366d6;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 0.9em;
+        display: inline-block;
+        margin: 4px 4px 4px 0;
+      }
     </style>
   </head>
   <body>
-    <h1>杨益（Yang Yi）</h1>
-    <div class="muted">GenAI / ML Engineer · Sydney</div>
+    <h1>杨艺 Yang Yi</h1>
+    <div class="subtitle">
+      NLP Researcher · Multi-Agent Simulation · Stance Detection<br>
+      <span class="muted">深圳大学 计算机技术硕士在读（2027届）</span>
+    </div>
 
     <div class="card">
-      <h2>项目</h2>
-      <ul>
-        <li><b>LLM underwriting decision support</b> — <span class="muted">95% agreement, ~80% faster</span></li>
-        <li><b>Policy-grounded RAG</b> — <span class="muted">~40% fewer overrides</span></li>
-        <li><b>LLM serving on AWS</b> — <span class="muted">stable P95 under traffic spikes</span></li>
+      <h2>📚 研究方向</h2>
+      <div>
+        <span class="tag">自然语言处理 (NLP)</span>
+        <span class="tag">立场检测</span>
+        <span class="tag">多智能体仿真</span>
+        <span class="tag">LLM Agents</span>
+        <span class="tag">社交网络分析</span>
+        <span class="tag">对话系统</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📝 学术论文</h2>
+      <ul style="list-style: none; padding-left: 0;">
+        <li>
+          <span class="venue">EMNLP 2025</span><span class="ccf">CCF B</span> <span class="muted">共同一作</span><br>
+          <span class="pub-title">SPARK: Simulating the Co-evolution of Stance and Topic Dynamics in Online Discourse with LLM-based Agents</span><br>
+          <span class="muted">话题-立场协同演化 · 108智能体仿真 · 10,000+对话轮次</span>
+          <a href="https://github.com/yangyi626">[Code]</a>
+        </li>
+        <li style="margin-top: 20px;">
+          <span class="venue">WWW 2025</span><span class="ccf">CCF A</span> <span class="muted">共同一作</span><br>
+          <span class="pub-title">C-MTCSD: A Chinese Multi-Turn Conversational Stance Detection Dataset</span><br>
+          <span class="muted">24,264条标注实例 · 12模型基准评测 · 标注一致性0.972</span>
+          <a href="https://github.com/yangyi626">[Code]</a>
+        </li>
       </ul>
     </div>
 
     <div class="card">
-      <h2>链接</h2>
+      <h2>🚀 核心项目</h2>
+      <ul>
+        <li>
+          <b>SimBotPol</b> — 社交机器人网络极化仿真与干预框架 <span class="muted">(在研)</span><br>
+          <span class="muted">1,800智能体 · 双层干预策略 · 极化水平降低<span class="highlight">31%</span></span>
+        </li>
+        <li>
+          <b>SPARK</b> — 话题-立场协同演化仿真框架 <span class="muted">(EMNLP 2025)</span><br>
+          <span class="muted">话题树动态扩展 · 双层记忆机制 · 相关系数<span class="highlight">0.88</span></span>
+        </li>
+        <li>
+          <b>C-MTCSD</b> — 中文多轮对话立场检测数据集 <span class="muted">(WWW 2025)</span><br>
+          <span class="muted">5话题 · 6轮对话深度 · 规模为同类数据集<span class="highlight">4.2倍</span></span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🛠️ 技术栈</h2>
       <p>
-        <a href="https://github.com/yangyi">GitHub</a> ·
-        <a href="https://www.linkedin.com/">LinkedIn</a>
+        <b>NLP:</b> 立场检测 · 多轮对话建模 · 语义理解 · 对话状态跟踪<br>
+        <b>AI/ML:</b> PyTorch · LLM Agents · Prompt Engineering · 记忆/反思机制<br>
+        <b>工程:</b> Python · MySQL · Linux · Git · Mesa · 实验复现与配置管理
       </p>
     </div>
+
+    <div class="card">
+      <h2>🏆 荣誉奖项</h2>
+      <ul style="margin: 8px 0;">
+        <li>深圳大学硕士研究生学业奖学金 <b>特等奖</b> (2024) · <b>一等奖</b> (2025)</li>
+        <li>中国大学生计算机设计大赛 <b>国家级三等奖</b> (2023)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📬 联系方式</h2>
+      <p class="links">
+        <a href="https://github.com/yangyi626">🔗 GitHub</a>
+        <a href="https://scholar.google.com/">🎓 Google Scholar</a>
+        <a href="mailto:2931564251@qq.com">📧 Email</a>
+        <a href="tel:18934786067">📱 18934786067</a>
+      </p>
+    </div>
+
+    <footer style="text-align: center; margin-top: 48px; padding: 24px 0; color: #999; font-size: 0.9em; border-top: 1px solid #e5e5e5;">
+      <p>💡 <i>随时到岗 · 可实习6个月 · 2027年6月毕业</i></p>
+    </footer>
   </body>
 </html>
