@@ -5,531 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>杨艺 Yang Yi | NLP Researcher</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-      line-height: 1.75;
-      color: #2c3e50;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      min-height: 100vh;
-      padding: 60px 32px;
-    }
-
-    /* 主布局容器 */
-    .main-wrapper {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: flex;
-      gap: 32px;
-      align-items: flex-start;
-    }
-
-    /* 侧边目录样式 */
-    .toc-wrapper {
-      position: sticky;
-      top: 80px;
-      width: 240px;
-      flex-shrink: 0;
-    }
-
-    .toc {
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    }
-
-    .toc-title {
-      font-size: 1.2em;
-      font-weight: 700;
-      color: #2c3e50;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid #f0f0f0;
-    }
-
-    .toc-list {
-      list-style: none;
-      padding: 0;
-    }
-
-    .toc-item {
-      margin: 0;
-    }
-
-    .toc-link {
-      display: block;
-      padding: 10px 12px;
-      color: #5a6c7d;
-      text-decoration: none;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      font-size: 0.95em;
-      position: relative;
-      padding-left: 28px;
-    }
-
-    .toc-link::before {
-      content: '';
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 6px;
-      height: 6px;
-      background: #667eea;
-      border-radius: 50%;
-      opacity: 0;
-      transition: all 0.3s ease;
-    }
-
-    .toc-link:hover {
-      background: #f5f7fa;
-      color: #667eea;
-      padding-left: 32px;
-    }
-
-    .toc-link:hover::before {
-      opacity: 1;
-    }
-
-    .toc-link.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      font-weight: 600;
-      padding-left: 32px;
-    }
-
-    .toc-link.active::before {
-      opacity: 1;
-      background: white;
-    }
-
-    /* 内容区域 */
-    .content-wrapper {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .container {
-      background: white;
-      border-radius: 20px;
-      padding: 48px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    }
-
-    /* 头部样式 */
-    .header {
-      text-align: center;
-      padding-bottom: 32px;
-      border-bottom: 3px solid #f0f0f0;
-      margin-bottom: 40px;
-    }
-
-    h1 {
-      font-size: 2.8em;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-weight: 700;
-    }
-
-    .subtitle {
-      color: #5a6c7d;
-      font-size: 1.15em;
-      line-height: 1.8;
-      margin-top: 16px;
-    }
-
-    .subtitle .muted {
-      display: block;
-      margin-top: 8px;
-      font-size: 0.95em;
-    }
-
-    /* 章节标题 */
-    h2 {
-      font-size: 1.5em;
-      color: #2c3e50;
-      margin-bottom: 24px;
-      padding-left: 16px;
-      border-left: 5px solid #667eea;
-      font-weight: 700;
-      scroll-margin-top: 80px;
-    }
-
-    /* 卡片样式 */
-    .card {
-      border: 1px solid #e8ecef;
-      border-radius: 16px;
-      padding: 32px;
-      margin: 28px 0;
-      background: #fafbfc;
-      transition: all 0.3s ease;
-    }
-
-    .card:hover {
-      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
-      transform: translateY(-2px);
-    }
-
-    /* 文本样式 */
-    .muted {
-      color: #7f8c8d;
-      font-size: 0.92em;
-    }
-
-    .highlight {
-      color: #e74c3c;
-      font-weight: 700;
-      background: #ffe6e6;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-
-    b,
-    strong {
-      color: #2c3e50;
-      font-weight: 700;
-    }
-
-    /* 链接样式 */
-    a {
-      color: #667eea;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      font-weight: 500;
-    }
-
-    a:hover {
-      color: #764ba2;
-      text-decoration: none;
-    }
-
-    /* 列表样式 */
-    ul {
-      padding-left: 20px;
-    }
-
-    li {
-      margin: 14px 0;
-      line-height: 1.8;
-    }
-
-    /* 论文样式 */
-    .pub-list {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .pub-item {
-      padding: 20px;
-      background: white;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      border-left: 4px solid #667eea;
-      transition: all 0.3s ease;
-    }
-
-    .pub-item:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      transform: translateX(4px);
-    }
-
-    .pub-title {
-      font-weight: 700;
-      color: #2c3e50;
-      font-size: 1.05em;
-      display: block;
-      margin: 12px 0 8px 0;
-      line-height: 1.6;
-    }
-
-    .venue {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 6px;
-      font-size: 0.85em;
-      font-weight: 700;
-      display: inline-block;
-    }
-
-    .ccf {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.8em;
-      margin-left: 8px;
-      font-weight: 700;
-      display: inline-block;
-    }
-
-    .author-role {
-      background: #fff3cd;
-      color: #856404;
-      padding: 3px 10px;
-      border-radius: 6px;
-      font-size: 0.8em;
-      margin-left: 8px;
-      font-weight: 600;
-      display: inline-block;
-    }
-
-    /* 项目样式 */
-    .project-item {
-      padding: 24px;
-      background: white;
-      border-radius: 12px;
-      margin-bottom: 24px;
-      border: 1px solid #e8ecef;
-    }
-
-    .project-title {
-      font-weight: 700;
-      font-size: 1.15em;
-      color: #2c3e50;
-      margin-bottom: 8px;
-      display: block;
-      line-height: 1.5;
-    }
-
-    .project-meta {
-      color: #7f8c8d;
-      font-size: 0.9em;
-      margin-bottom: 16px;
-      display: block;
-    }
-
-    .project-meta strong {
-      color: #667eea;
-      font-weight: 700;
-    }
-
-    .project-item ul {
-      margin-top: 12px;
-    }
-
-    .project-item li {
-      position: relative;
-      padding-left: 8px;
-    }
-
-    /* 教育背景 */
-    .edu-item {
-      padding: 20px;
-      background: white;
-      border-radius: 12px;
-      margin-bottom: 16px;
-      border-left: 4px solid #3498db;
-    }
-
-    .edu-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .edu-title {
-      font-weight: 700;
-      color: #2c3e50;
-      font-size: 1.15em;
-    }
-
-    .edu-date {
-      color: #7f8c8d;
-      font-size: 0.9em;
-    }
-
-    .edu-detail {
-      color: #5a6c7d;
-      line-height: 1.8;
-    }
-
-    .edu-detail strong {
-      color: #2c3e50;
-    }
-
-    /* 技能标签 */
-    .skills-section .skill-item {
-      margin-bottom: 16px;
-      padding: 16px;
-      background: white;
-      border-radius: 8px;
-      line-height: 2;
-    }
-
-    .skills-section .skill-category {
-      color: #667eea;
-      font-weight: 700;
-      font-size: 1.05em;
-    }
-
-    /* 荣誉奖项 */
-    .award-section {
-      margin-bottom: 24px;
-    }
-
-    .award-category {
-      color: #2c3e50;
-      font-size: 1.1em;
-      font-weight: 700;
-      margin-bottom: 12px;
-      display: block;
-    }
-
-    .award-section ul {
-      margin-top: 12px;
-      background: white;
-      padding: 16px 16px 16px 36px;
-      border-radius: 8px;
-    }
-
-    .award-section li strong {
-      color: #e74c3c;
-    }
-
-    /* 联系方式 */
-    .contact-links {
-      display: flex;
-      justify-content: center;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
-
-    .contact-links a {
-      display: inline-flex;
-      align-items: center;
-      padding: 12px 24px;
-      background: white;
-      border-radius: 10px;
-      font-size: 1.05em;
-      transition: all 0.3s ease;
-      border: 2px solid #e8ecef;
-    }
-
-    .contact-links a:hover {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
-      border-color: transparent;
-    }
-
-    /* 页脚 */
-    .footer {
-      text-align: center;
-      margin-top: 48px;
-      padding: 24px 0;
-      color: #7f8c8d;
-      font-size: 0.95em;
-      border-top: 2px solid #f0f0f0;
-    }
-
-    .footer-highlight {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-weight: 700;
-      font-size: 1.1em;
-    }
-
-    /* 可点击卡片样式 */
-    .clickable-card {
-      cursor: pointer;
-      position: relative;
-      transition: all 0.3s ease;
-    }
-
-    .clickable-card::after {
-      content: '→';
-      position: absolute;
-      top: 24px;
-      right: 24px;
-      font-size: 1.5em;
-      color: #667eea;
-      opacity: 0;
-      transition: all 0.3s ease;
-    }
-
-    .clickable-card:hover {
-      transform: translateX(4px);
-      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
-      border-color: #667eea;
-    }
-
-    .clickable-card:hover::after {
-      opacity: 1;
-      right: 20px;
-    }
-
-    /* 防止内部链接被覆盖 */
-    .clickable-card a {
-      position: relative;
-      z-index: 10;
-    }
-
-    /* 响应式设计 */
-    @media (max-width: 1200px) {
-      .toc-wrapper {
-        display: none;
-      }
-
-      .main-wrapper {
-        display: block;
-      }
-
-      .content-wrapper {
-        max-width: 920px;
-        margin: 0 auto;
-      }
-    }
-
-    @media (max-width: 768px) {
-      body {
-        padding: 24px 16px;
-      }
-
-      .container {
-        padding: 24px;
-      }
-
-      h1 {
-        font-size: 2em;
-      }
-
-      h2 {
-        font-size: 1.3em;
-      }
-
-      .card {
-        padding: 20px;
-      }
-
-      .contact-links {
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .edu-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
@@ -537,25 +13,31 @@
     <!-- 侧边目录 -->
     <div class="toc-wrapper">
       <nav class="toc">
-        <div class="toc-title">📑 目录导航</div>
+        <div class="toc-title">目录导航</div>
         <ul class="toc-list">
           <li class="toc-item">
-            <a href="#education" class="toc-link">🎓 教育背景</a>
+            <a href="#education" class="toc-link">教育背景</a>
           </li>
           <li class="toc-item">
-            <a href="#publications" class="toc-link">📝 学术论文</a>
+            <a href="#publications" class="toc-link">学术论文</a>
           </li>
           <li class="toc-item">
-            <a href="#projects" class="toc-link">🚀 项目经历</a>
+            <a href="#internship" class="toc-link">实习经历</a>
           </li>
           <li class="toc-item">
-            <a href="#skills" class="toc-link">🛠️ 专业技能</a>
+            <a href="#competitions" class="toc-link">竞赛经历</a>
           </li>
           <li class="toc-item">
-            <a href="#awards" class="toc-link">🏆 荣誉与奖项</a>
+            <a href="#projects" class="toc-link">项目经历</a>
           </li>
           <li class="toc-item">
-            <a href="#contact" class="toc-link">📬 联系方式</a>
+            <a href="#skills" class="toc-link">专业技能</a>
+          </li>
+          <li class="toc-item">
+            <a href="#awards" class="toc-link">荣誉与奖项</a>
+          </li>
+          <li class="toc-item">
+            <a href="#contact" class="toc-link">联系方式</a>
           </li>
         </ul>
       </nav>
@@ -565,10 +47,34 @@
     <div class="content-wrapper">
       <div class="container">
         <div class="header">
+          <div class="eyebrow">LLM Agent / NLP 算法实习候选人</div>
           <h1>杨艺 Yang Yi</h1>
           <div class="subtitle">
-            <strong>NLP Researcher · Multi-Agent Simulation · Stance Detection</strong>
-            <span class="muted">深圳大学 计算机技术硕士在读（2027届）</span>
+            <strong>聚焦 Agent Harness、Tool Calling、Trace Feedback 与多智能体仿真</strong>
+            <span class="muted">深圳大学 计算机技术硕士在读（2027届） · 可实习 6 个月 · Base 深圳</span>
+          </div>
+          <div class="hero-metrics" aria-label="核心亮点">
+            <div class="hero-metric">
+              <span class="metric-value">WWW 2025</span>
+              <span class="metric-label">CCF A 共同一作</span>
+            </div>
+            <div class="hero-metric">
+              <span class="metric-value">EMNLP 2025</span>
+              <span class="metric-label">CCF B 共同一作</span>
+            </div>
+            <div class="hero-metric">
+              <span class="metric-value">Top 3.6%</span>
+              <span class="metric-label">KDD Cup 2026 25/700</span>
+            </div>
+            <div class="hero-metric">
+              <span class="metric-value">100%</span>
+              <span class="metric-label">Terminal-Bench Easy pass@1</span>
+            </div>
+          </div>
+          <div class="hero-actions">
+            <a href="mailto:2931564251@qq.com" class="primary-action">联系我</a>
+            <a href="https://github.com/yangyi626" target="_blank" class="secondary-action">GitHub</a>
+            <a href="https://scholar.google.com/citations?user=r5EdeWEAAAAJ&hl=en" target="_blank" class="secondary-action">Google Scholar</a>
           </div>
         </div>
 
@@ -617,6 +123,41 @@
               <a href="https://dl.acm.org/doi/10.1145/3701716.3715307">[Link]</a>
             </li>
           </ul>
+        </div>
+
+        <div class="card priority-card">
+          <h2 id="internship">💼 实习经历</h2>
+          <div class="project-item">
+            <span class="project-title">深圳市亿道数码技术有限公司 / 亿道研究院 / AI技术组</span>
+            <span class="project-meta"><strong>算法实习生</strong> | 2026.02 – 2026.05</span>
+            <span class="project-title">AIPC Agent One：端云协同的可执行 Agent 系统</span>
+            <ul>
+              <li>项目启动初期加入，主导 <strong>Agent-One 核心模块从 0 到 1 搭建</strong>，围绕云端 Agent 运行框架、Skill / Memory 系统、Harness 评测进化与端侧 Agent 模型训练，构建“任务执行 → 轨迹采集 → 失败归因 → 版本评估 → 策略优化”的 Agent 工程闭环</li>
+              <li>设计并实现 <strong>Agent Runtime、Skill 管理机制与 Memory / 上下文管理模块</strong>，将文档处理、文件操作、终端执行、数据归档等高频任务抽象为可复用 Skill，统一工具协议、异常处理、超时控制与执行日志</li>
+              <li>构建 <strong>Agent-One Harness</strong> 评测进化框架，接入 Terminal-Bench 2.0 真实终端任务集，支持任务适配、环境初始化、批量运行、断点续跑、Trace 保存与 <strong>pass@1</strong> 统计；在 Easy 子集上将 Harness 评测后 <span class="highlight">pass@1 提升至 100%</span></li>
+              <li>基于稳定 Harness 产出的高质量执行轨迹，搭建端侧 Agent 模型训练流程，探索 Trace Feedback、Reward Modeling、GRPO 与 Atropos online trainer，将 Agent 执行反馈转化为模型策略优化信号</li>
+            </ul>
+            <div class="skill-item">
+              <span class="skill-category">技术栈：</span>Python、DeepAgents、ReAct Agent、Tool Calling、Skill System、Trace Pipeline、Reward Modeling、GRPO、Atropos
+            </div>
+          </div>
+        </div>
+
+        <div class="card priority-card">
+          <h2 id="competitions">🎯 竞赛经历</h2>
+          <div class="project-item">
+            <span class="project-title">KDD Cup 2026 DataAgent-Bench 多源数据分析 Agent</span>
+            <span class="project-meta"><strong>Agent 框架负责人</strong> | 2026.04 – 2026.05 | KDD Cup 2026 排行榜 Top 3.6%（25/700）</span>
+            <ul>
+              <li>面向 <strong>DataAgent-Bench 多源数据问答</strong>任务，基于 <strong>Qwen3.5-35B-A3B</strong> 构建可控 LLM Agent，支持在 CSV、JSON、SQLite、Markdown 等异构数据上下文中完成数据探查、查询推理、统计计算与标准表格答案生成</li>
+              <li>设计 <strong>ReAct + JSON Action</strong> 多步工具调用框架，将复杂数据问答拆解为 Discovery、Schema Linking、Execution、Verification、Submission 五阶段；通过 ToolRegistry 统一封装文件探查、Schema 解析、SQL 查询、Python 计算与提交工具</li>
+              <li>针对 Schema Linking、跨表/跨文件推理、统计口径判断和答案格式控制中的不稳定问题，引入 <strong>knowledge.md、业务语义文档与结构化 Prompt 规则</strong>，增强字段映射、查询生成和结果校验能力</li>
+              <li>构建 Agent 执行安全边界与评测复盘闭环：通过 action 枚举校验、SQL 只读连接、Python 子进程超时、任务级 max_steps 与 task_timeout 控制工具调用风险；阶段评测得分 <span class="highlight">0.5129</span>，排行榜位列 <span class="highlight">25/700</span></li>
+            </ul>
+            <div class="skill-item">
+              <span class="skill-category">技术栈：</span>Python、Qwen3.5-35B-A3B、ReAct Agent、Tool Calling、JSON Action、Schema Linking、SQLite、Docker
+            </div>
+          </div>
         </div>
 
         <div class="card">
@@ -697,6 +238,7 @@
               <div class="award-section">
                 <span class="award-category">国家级竞赛</span>
                 <ul>
+                  <li>KDD Cup 2026 DataAgent-Bench 排行榜 <strong>Top 3.6%</strong>（25/700，2026）</li>
                   <li>第16届全国大学生计算机设计大赛<strong>三等奖</strong>（2023）</li>
                 </ul>
               </div>
