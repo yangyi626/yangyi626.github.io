@@ -127,18 +127,18 @@
 
         <div class="card priority-card">
           <h2 id="internship">💼 实习经历</h2>
-          <div class="project-item">
+          <div class="project-item clickable-card" data-link="agentone-detail.html">
             <span class="project-title">深圳市亿道数码技术有限公司 / 亿道研究院 / AI技术组</span>
             <span class="project-meta"><strong>算法实习生</strong> | 2026.02 – 2026.05</span>
             <span class="project-title">AIPC Agent One：端云协同的可执行 Agent 系统</span>
             <ul>
-              <li>项目启动初期加入，主导 <strong>Agent-One 核心模块从 0 到 1 搭建</strong>，围绕云端 Agent 运行框架、Skill / Memory 系统、Harness 评测进化与端侧 Agent 模型训练，构建“任务执行 → 轨迹采集 → 失败归因 → 版本评估 → 策略优化”的 Agent 工程闭环</li>
-              <li>设计并实现 <strong>Agent Runtime、Skill 管理机制与 Memory / 上下文管理模块</strong>，将文档处理、文件操作、终端执行、数据归档等高频任务抽象为可复用 Skill，统一工具协议、异常处理、超时控制与执行日志</li>
-              <li>构建 <strong>Agent-One Harness</strong> 评测进化框架，接入 Terminal-Bench 2.0 真实终端任务集，支持任务适配、环境初始化、批量运行、断点续跑、Trace 保存与 <strong>pass@1</strong> 统计；在 Easy 子集上将 Harness 评测后 <span class="highlight">pass@1 提升至 100%</span></li>
-              <li>基于稳定 Harness 产出的高质量执行轨迹，搭建端侧 Agent 模型训练流程，探索 Trace Feedback、Reward Modeling、GRPO 与 Atropos online trainer，将 Agent 执行反馈转化为模型策略优化信号</li>
+              <li>面向 AIPC 场景下 <strong>PC 主执行、手机审批协同、NAS 私有归档</strong>等复杂任务链路，参与从 0 到 1 构建端云协同 Agent 系统，负责 Agent Runtime、Skill / Memory、Harness 评测与端侧训练链路核心模块</li>
+              <li>设计云端 <strong>Agent Runtime 与 Skill / Memory 机制</strong>，统一任务输入、步骤规划、工具调用、异常处理、执行日志与上下文管理，将高频流程抽象为可复用 Skill</li>
+              <li>构建 <strong>Agent-One Harness</strong> 评测进化框架，接入 Terminal-Bench 2.0 真实终端任务集，完成批量运行、断点续跑、Trace 保存与 <strong>pass@1</strong> 统计；Easy 子集达到 <span class="highlight">pass@1 = 100%</span></li>
+              <li>基于稳定 Harness 产出的高质量执行轨迹，搭建端侧 Agent 模型训练链路，探索基于 Trace Feedback 的 GRPO、OPD、Atropos online trainer 训练闭环</li>
             </ul>
             <div class="skill-item">
-              <span class="skill-category">技术栈：</span>Python、DeepAgents、ReAct Agent、Tool Calling、Skill System、Trace Pipeline、Reward Modeling、GRPO、Atropos
+              <span class="skill-category">技术栈：</span>Python、DeepAgents、ReAct Agent、Tool Calling、Agent Harness、Trace Pipeline、GRPO、OPD
             </div>
           </div>
         </div>

@@ -35,7 +35,7 @@ html {
 
 body {
   min-height: 100vh;
-  padding: 48px 28px;
+  padding: 52px 28px;
   background:
     linear-gradient(180deg, rgba(255, 253, 248, 0.88), rgba(247, 245, 239, 0.94)),
     repeating-linear-gradient(90deg, rgba(31, 41, 51, 0.025) 0, rgba(31, 41, 51, 0.025) 1px, transparent 1px, transparent 80px);
@@ -62,16 +62,16 @@ body {
 .container {
   width: min(100%, var(--content));
   margin: 0 auto;
-  padding: 48px;
-  background: rgba(255, 253, 248, 0.94);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .header {
-  margin-bottom: 34px;
-  padding-bottom: 28px;
+  margin-bottom: 30px;
+  padding: 18px 0 38px;
   border-bottom: 1px solid var(--line);
   text-align: left;
 }
@@ -137,7 +137,8 @@ h1 {
   padding: 14px 14px 13px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: var(--surface-strong);
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: 0 8px 20px rgba(45, 38, 24, 0.05);
 }
 
 .metric-value,
@@ -274,12 +275,12 @@ tr:hover td {
 
 .card,
 .section-card {
-  margin: 24px 0;
+  margin: 22px 0;
   padding: 30px;
-  background: rgba(255, 255, 255, 0.68);
+  background: rgba(255, 253, 248, 0.82);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 12px 34px rgba(45, 38, 24, 0.055);
 }
 
 .card:first-of-type {
@@ -713,23 +714,23 @@ tr:hover td {
   }
 
   .container {
-    padding: 34px;
+    padding: 0;
   }
 }
 
 @media (max-width: 720px) {
   body {
-    padding: 14px;
+    padding: 24px 14px;
     font-size: 15px;
   }
 
   .container {
-    padding: 22px;
+    padding: 0;
   }
 
   .header {
     margin-bottom: 24px;
-    padding-bottom: 22px;
+    padding: 8px 0 24px;
   }
 
   .hero-metrics {
