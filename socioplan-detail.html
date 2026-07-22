@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SocioPlan 科研详情 | 杨艺 Yang Yi</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <a href="index.html" class="back-button">← 返回主页</a>
+
+      <div class="header">
+        <div class="eyebrow">多智能体仿真 · 结构化决策规划 · 轨迹级评测</div>
+        <h1>SocioPlan：基于结构化社会决策规划的真实事件讨论演化模拟</h1>
+        <div class="project-meta"><strong>第一作者 / 核心开发</strong> | 2026.02 – 至今 | 拟投稿 AAAI 2027</div>
+        <div>
+          <span class="badge badge-venue">Full-8 Action</span>
+          <span class="badge badge-ccf">Behavior Cloning</span>
+          <span class="badge badge-role">PPO / GRPO</span>
+          <span class="badge badge-venue">Qwen2-1.5B</span>
+        </div>
+      </div>
+
+      <nav class="toc-container" id="toc">
+        <div class="toc-title">目录导航</div>
+        <ul class="toc-list">
+          <li><a href="#overview">研究概览</a></li>
+          <li><a href="#idea">核心方法</a></li>
+          <li><a href="#architecture">系统架构</a></li>
+          <li><a href="#data">数据规模</a></li>
+          <li><a href="#protocol">实验协议</a></li>
+          <li><a href="#training">训练方法</a></li>
+          <li><a href="#rollout">Rollout 实现</a></li>
+          <li><a href="#metrics">评测指标</a></li>
+          <li><a href="#contribution">个人贡献</a></li>
+        </ul>
+      </nav>
+      <button class="toc-toggle" id="tocToggle" aria-label="目录">☰</button>
+
+      <section class="section-card" id="overview">
+        <h2>研究概览</h2>
+        <p>
+          SocioPlan 研究真实微博热点事件评论区的讨论轨迹如何随时间演化。给定事件、已观测评论前缀和后续用户状态，模型需要自回归生成后续讨论轨迹，并在群体层面复现真实讨论动态。
+        </p>
+        <p>
+          项目的核心主张是：相比直接自由文本生成，结构化社会决策层能够提供更可解释、可控、可干预、可优化的中间接口。
+        </p>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-number">933</div><div class="stat-label">真实微博事件</div></div>
+          <div class="stat-card"><div class="stat-number">76万+</div><div class="stat-label">评论数据</div></div>
+          <div class="stat-card"><div class="stat-number">53.4万</div><div class="stat-label">Full-8 BC 训练样本</div></div>
+          <div class="stat-card"><div class="stat-number">21.5万</div><div class="stat-label">测试 rollout steps</div></div>
+        </div>
+      </section>
+
+      <section class="section-card" id="idea">
+        <h2>核心方法</h2>
+        <div class="highlight-box">
+          <strong>state → Full-8 structured decision → comment</strong>
+        </div>
+        <p>
+          本项目把长期群体动态优化从自由文本空间转移到结构化社会决策空间。Planner 首先预测八维社会决策，再由条件生成器将决策实现为自然语言评论。
+        </p>
+        <table>
+          <tr><th>维度</th><th>标签空间示例</th><th>作用</th></tr>
+          <tr><td>rumor</td><td>spread / counter</td><td>谣言传播或辟谣动态</td></tr>
+          <tr><td>sentiment_state</td><td>angry / calm / happy / sad / fear / surprise</td><td>细粒度情绪动态</td></tr>
+          <tr><td>attitude / sentiment</td><td>positive / negative / neutral</td><td>态度极性动态，代码字段为 sentiment。</td></tr>
+          <tr><td>behavior_type / behavior</td><td>comment / share</td><td>评论或转发行为，代码字段为 behavior。</td></tr>
+          <tr><td>stance</td><td>support / oppose / neutral</td><td>事件立场</td></tr>
+          <tr><td>belief_degree</td><td>believe / doubt</td><td>相信或怀疑事件真实性</td></tr>
+          <tr><td>subjectivity</td><td>subjective / objective</td><td>主观表达或客观陈述</td></tr>
+          <tr><td>intent_classification</td><td>question / promotion / opinion</td><td>提问、传播或表达观点</td></tr>
+        </table>
+      </section>
+
+      <section class="section-card" id="architecture">
+        <h2>系统架构</h2>
+        <p>
+          SocioPlan 的实现被拆成数据层、特征层、模型层、训练层、实验层、评测层和强化学习层，核心思想是把“社会讨论生成”拆成结构化决策预测和条件文本生成两个子问题。
+        </p>
+        <table>
+          <tr><th>模块</th><th>职责</th></tr>
+          <tr><td>标签与动作空间模块</td><td>定义 Full-8 维度、标签顺序、默认 action，以及 annotation 到 Full-8 action 的映射。</td></tr>
+          <tr><td>状态构造模块</td><td>构造 planner 输入，包含 Topic、Step、UserProfile、RecentContext、PopularContext 和 PrefixStats。</td></tr>
+          <tr><td>Planner 模块</td><td>实现 Full8Planner：hash token + EmbeddingBag mean pooling + 八个分类 head + value head。</td></tr>
+          <tr><td>文本生成模块</td><td>封装 lightweight smoke generator 和 HF/Qwen 生成器，并清洗生成评论。</td></tr>
+          <tr><td>标签投影模块</td><td>将生成评论投影回 Full-8 action，保证生成文本可以进入轨迹级评测和 RL reward。</td></tr>
+        </table>
+        <div class="highlight-box">
+          <p><strong>为什么这样设计：</strong>直接生成评论很难做长期优化；Full-8 action 层把不可控文本空间转成可监督、可采样、可计算 reward 的离散决策空间，后续再由条件生成器把 action 实现为自然语言。</p>
+        </div>
+      </section>
+
+      <section class="section-card" id="data">
+        <h2>数据规模</h2>
+        <table>
+          <tr><th>项目</th><th>规模</th></tr>
+          <tr><td>Final train/test split</td><td>653 / 280 events</td></tr>
+          <tr><td>Full-8 BC training data</td><td>534,324 rows</td></tr>
+          <tr><td>Train rollout steps after K=50</td><td>503,087</td></tr>
+          <tr><td>Test rollout steps after K=50</td><td>215,543</td></tr>
+        </table>
+      </section>
+
+      <section class="section-card" id="protocol">
+        <h2>实验协议</h2>
+        <ul>
+          <li>采用 event-level 7:3 划分，避免同一事件评论同时出现在训练和测试中。</li>
+          <li>rollout start 设置为 K=50，模型观察前 50 条真实评论后自回归生成后续轨迹。</li>
+          <li>所有方法共享相同事件集合、相同 Full-8 标签空间、相同投影器和相同评测指标。</li>
+          <li>对比 Direct Generation、State、Recent、Popular、MF-LLM、Ours-BC、Ours-PPO / GRPO。</li>
+        </ul>
+      </section>
+
+      <section class="section-card" id="training">
+        <h2>训练方法</h2>
+        <h3>Behavior Cloning</h3>
+        <p>
+          使用专家行为轨迹训练 Full-8 planner，提供稳定 warm start。简历中的 71.33% mean action accuracy、rumor / belief 维度 92.60% / 88.81% 来自该阶段的多任务 planner 验证结果。
+        </p>
+        <p>
+          BC 训练流程读取 Full-8 行为克隆样本，把每条样本的状态文本输入 Full8Planner，对八个维度分别计算 cross entropy 并求和训练。验证阶段逐维统计 accuracy，并汇总 mean accuracy，训练产物会保留模型权重和评测摘要。
+        </p>
+        <h3>PPO / GRPO</h3>
+        <p>
+          在 rollout-level 优化长期群体轨迹。GRPO 实现中，同一 state 采样 group_size 个候选 Full-8 action，对每个 action 调用 conditional generator 生成评论，再用 projector 恢复标签并计算 decision / consistency / population / terminal reward，最后做组内相对标准化更新 planner。
+        </p>
+        <div class="implementation-list">
+          <div class="implementation-item">
+            <strong>候选采样</strong>
+            对八个维度分别从 categorical distribution 采样，累计 action logprob 和 entropy，形成同一 state 下的一组候选 Full-8 action。
+          </div>
+          <div class="implementation-item">
+            <strong>奖励分解</strong>
+            decision reward 衡量预测 action 与 gold action 的逐维一致性；consistency reward 衡量预测 action 与生成文本投影回来的 recovered action 是否一致；population / terminal reward 衡量生成前缀分布与真实前缀分布的相似性。
+          </div>
+          <div class="implementation-item">
+            <strong>GRPO 更新</strong>
+            对同一 group 内 reward 做均值方差标准化，使用 clipped ratio policy objective，同时保留 BC auxiliary loss、entropy bonus，并可选 OPD teacher KL distillation。
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" id="rollout">
+        <h2>Rollout 实现</h2>
+        <p>
+          自回归 rollout 流程中，每个事件先读取前 K=50 条真实评论作为 prefix，再从第 51 条开始逐步生成。
+        </p>
+        <div class="pipeline-strip">
+          <span class="pipeline-step">读取事件 split</span>
+          <span class="pipeline-step">构造 prefix counters</span>
+          <span class="pipeline-step">build_state_text</span>
+          <span class="pipeline-step">Planner 预测 Full-8</span>
+          <span class="pipeline-step">Qwen 条件生成</span>
+          <span class="pipeline-step">更新前缀状态</span>
+        </div>
+        <p>
+          state 构造中包含最近评论、热门评论和八维前缀统计：热门评论按 followers_count、comments_count、reposts_count 组合排序；PrefixStats 记录每个维度当前累计分布。这样 planner 不只看单条评论，而是看到事件主题、目标用户画像、局部上下文和群体分布状态。
+        </p>
+        <p>
+          分布式生成时支持按负载均衡切分：系统会按每个事件待生成步数分配任务，避免长事件集中到同一 shard。生成流程还支持断点续跑，会读取已有生成结果中的 completed rows，恢复生成评论和 action 后继续更新 prefix counters。
+        </p>
+      </section>
+
+      <section class="section-card" id="metrics">
+        <h2>评测指标</h2>
+        <table>
+          <tr><th>指标</th><th>含义</th></tr>
+          <tr><td>Accuracy / Macro-F1 / Micro-F1</td><td>个体行为决策预测质量。</td></tr>
+          <tr><td>KL Divergence</td><td>群体分布拟合程度。</td></tr>
+          <tr><td>Wasserstein Distance</td><td>生成轨迹与真实轨迹的分布距离。</td></tr>
+          <tr><td>DTW Distance</td><td>时间序列相似性。</td></tr>
+          <tr><td>NLL Loss</td><td>likelihood diagnostic，用于辅助解释 one-step likelihood 与 rollout fidelity 的差异。</td></tr>
+        </table>
+        <p>
+          指标计算流程先按事件分组并按时间步排序，然后对每个维度计算 accuracy、macro-F1、micro-F1、KL、Wasserstein 和 DTW；最后再聚合到 dimension-level 和 overall-level。DTW 会对长序列做下采样，避免超长评论轨迹造成评测开销爆炸。
+        </p>
+      </section>
+
+      <section class="section-card" id="contribution">
+        <h2>个人贡献</h2>
+        <ul>
+          <li>设计 Full-8 structured social decision interface，将评论演化转化为可监督、可控制、可强化学习优化的 action space。</li>
+          <li>实现 event-level split、BC 数据导出、LLM rollout、标签投影和轨迹级评测流水线。</li>
+          <li>实现 Behavior Cloning planner，并推进 PPO / GRPO 训练入口、分布式训练和中断续跑机制。</li>
+          <li>组织 final_version 实验方案，明确与 MF-LLM 的方法差异和论文证据链。</li>
+        </ul>
+      </section>
+
+      <div class="detail-footer-actions">
+        <a href="index.html" class="link-button">← 返回主页</a>
+      </div>
+    </div>
+
+    <script>
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (window.innerWidth <= 1200) document.getElementById('toc').classList.remove('show');
+        });
+      });
+      window.addEventListener('scroll', function() {
+        const sections = document.querySelectorAll('.section-card[id]');
+        const tocLinks = document.querySelectorAll('.toc-list a');
+        let currentSection = '';
+        sections.forEach(section => {
+          if (window.pageYOffset >= section.offsetTop - 100) currentSection = section.getAttribute('id');
+        });
+        tocLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + currentSection));
+      });
+      const tocToggle = document.getElementById('tocToggle');
+      const toc = document.getElementById('toc');
+      tocToggle.addEventListener('click', () => toc.classList.toggle('show'));
+    </script>
+  </body>
+</html>

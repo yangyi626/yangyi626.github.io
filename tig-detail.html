@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TiG 后训练项目详情 | 杨艺 Yang Yi</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <a href="index.html" class="back-button">← 返回主页</a>
+
+      <div class="header">
+        <div class="eyebrow">大模型后训练 · 决策预测 · 严格 Holdout 验证</div>
+        <h1>TiG 风格宏观动作预测：Qwen2.5-14B 的 SFT / GRPO / OPD-lite 后训练</h1>
+        <div class="project-meta"><strong>个人项目</strong> | 2026.05 – 2026.06</div>
+        <div>
+          <span class="badge badge-venue">Qwen2.5-14B</span>
+          <span class="badge badge-ccf">GRPO</span>
+          <span class="badge badge-role">OPD-lite</span>
+          <span class="badge badge-venue">OpenDota</span>
+        </div>
+      </div>
+
+      <nav class="toc-container" id="toc">
+        <div class="toc-title">目录导航</div>
+        <ul class="toc-list">
+          <li><a href="#overview">项目概览</a></li>
+          <li><a href="#task">任务定义</a></li>
+          <li><a href="#data">数据与防泄漏</a></li>
+          <li><a href="#method">方法设计</a></li>
+          <li><a href="#implementation">实现细节</a></li>
+          <li><a href="#results">实验结果</a></li>
+          <li><a href="#analysis">误差分析</a></li>
+          <li><a href="#contribution">个人贡献</a></li>
+        </ul>
+      </nav>
+      <button class="toc-toggle" id="tocToggle" aria-label="目录">☰</button>
+
+      <section class="section-card" id="overview">
+        <h2>项目概览</h2>
+        <p>
+          该项目面向 Dota 2 复杂团队博弈场景，研究大模型能否根据当前比赛状态预测队伍下一步宏观动作，例如 Farm、Team Fight、Push Tower、Defend Tower、Pickoff 等。项目重点不是做一个普通分类器，而是用 Qwen2.5-14B 在指令生成范式下完成决策预测，并通过 SFT、GRPO 和 OPD-lite corrected continuation 做后训练。
+        </p>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-number">64.88%</div><div class="stat-label">原始 V4.6 test 最终 primary acc</div></div>
+          <div class="stat-card"><div class="stat-number">+4.80 pp</div><div class="stat-label">strict holdout 相对 SFT+GRPO 的 primary acc 提升</div></div>
+          <div class="stat-card"><div class="stat-number">2815</div><div class="stat-label">strict final holdout positive rows</div></div>
+          <div class="stat-card"><div class="stat-number">0 overlap</div><div class="stat-label">holdout 与主数据 match_id / sample_id 重叠</div></div>
+        </div>
+      </section>
+
+      <section class="section-card" id="task">
+        <h2>任务定义</h2>
+        <table>
+          <tr><th>项目</th><th>设置</th></tr>
+          <tr><td>输入</td><td>某一方队伍视角下的当前和近期可见游戏状态事实。</td></tr>
+          <tr><td>输出</td><td>在有限动作空间中给出 1 到 2 个团队宏观动作，可附带简短推理。</td></tr>
+          <tr><td>主指标</td><td>primary action accuracy，即第一个预测动作是否正确。</td></tr>
+          <tr><td>集合指标</td><td>exact action-set match、action micro F1、action macro F1。</td></tr>
+        </table>
+        <p>
+          V4.6 数据线保留游戏状态事实和有限动作候选集，但移除了 prompt 中可见的标签捷径，例如 decision hints、future summary、label evidence 等，避免模型依赖泄漏线索。
+        </p>
+        <p>
+          动作空间由统一配置维护，包含 Roshan、Push / Defend Tower、Push Barracks、Team Fight、Pickoff、Vision、Rune、Farm 等宏观团队动作。模型输出通过 answer 标签解析，保证训练、推理和评测使用同一套格式约束。
+        </p>
+      </section>
+
+      <section class="section-card" id="data">
+        <h2>数据与防泄漏</h2>
+        <table>
+          <tr><th>Split</th><th>Rows</th></tr>
+          <tr><td>train balanced</td><td>7200</td></tr>
+          <tr><td>train positive</td><td>4696</td></tr>
+          <tr><td>val positive</td><td>593</td></tr>
+          <tr><td>test positive</td><td>1253</td></tr>
+        </table>
+        <div class="highlight-box">
+          <p><strong>泄漏控制：</strong>forbidden prompt hits = 0；train / val / test 的 sample_id、match_id、prompt_hash overlap 均为 0。</p>
+          <p><strong>Strict final holdout：</strong>来自新抓取比赛，保留 74 场有效比赛、2815 条 positive rows，与主 V4.6 数据在 match_id 和 sample_id 上均无重叠。</p>
+        </div>
+        <div class="implementation-list">
+          <div class="implementation-item">
+            <strong>数据构建</strong>
+            数据构建模块负责构建 V4.6 TiG-aligned 数据，统一样本字段、动作标签、prompt 模板和 split 信息。
+          </div>
+          <div class="implementation-item">
+            <strong>严格留出集</strong>
+            留出集构建模块从新比赛抓取数据，重新生成 positive rows，并检查 match_id / sample_id 与主数据零重叠。
+          </div>
+          <div class="implementation-item">
+            <strong>审计口径</strong>
+            对 forbidden prompt hits、split overlap、prompt_hash overlap 做显式审计，避免“模型看到了未来标签”导致虚高。
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" id="method">
+        <h2>方法设计</h2>
+        <p>最终主线方法为：</p>
+        <div class="highlight-box">
+          <strong>Qwen2.5-14B + SFT + GRPO 600 + random-800 OPD-lite 80</strong>
+        </div>
+        <h3>Mixed Reward</h3>
+        <table>
+          <tr><th>Reward 组件</th><th>权重</th><th>作用</th></tr>
+          <tr><td>primary_correct</td><td>1.0</td><td>保证第一个动作命中主目标。</td></tr>
+          <tr><td>action_set_f1</td><td>0.6</td><td>处理 1-2 个动作的集合质量。</td></tr>
+          <tr><td>valid_format</td><td>0.2</td><td>鼓励可解析输出。</td></tr>
+          <tr><td>too_many_actions</td><td>-0.2</td><td>惩罚超过动作数量约束。</td></tr>
+          <tr><td>unknown_actions</td><td>-0.2</td><td>惩罚不在动作空间内的预测。</td></tr>
+        </table>
+        <h3>OPD-lite 口径</h3>
+        <p>
+          OPD-lite 使用 corrected target continuation 做轻量延续训练，是 OpenClaw-inspired 的轻量桥接版本。项目中也跑通了真正 token-level OPD appendix，但 strict holdout 略低于 OPD-lite 起点，因此作为负结果分析，不把它表述为主贡献。
+        </p>
+      </section>
+
+      <section class="section-card" id="implementation">
+        <h2>实现细节</h2>
+        <p>
+          训练代码围绕统一的动作解析和评测函数展开，避免 SFT、GRPO、OPD-lite 各自使用不同答案口径。核心公共逻辑包括答案解析、目标动作读取、预测文本读取和多指标评测。
+        </p>
+        <table>
+          <tr><th>模块</th><th>具体实现</th></tr>
+          <tr><td>动作解析</td><td>从最后一个 answer 标签中抽取文本，支持逗号、中文顿号、分号、换行等分隔，并去重、识别 unknown actions。</td></tr>
+          <tr><td>目标读取</td><td>优先读取人工动作标签，其次组合主动作和辅助动作，保证训练集和生成结果可统一评测。</td></tr>
+          <tr><td>评测统计</td><td>输出 valid format rate、primary accuracy、exact set、micro / macro F1、confusion matrix 和 bad examples。</td></tr>
+          <tr><td>切片分析</td><td>对类别 support、net gain、负迁移和混淆对进行分析，用于解释 OPD-lite 的收益来源。</td></tr>
+        </table>
+        <div class="pipeline-strip">
+          <span class="pipeline-step">OpenDota 数据</span>
+          <span class="pipeline-step">V4.6 清洗</span>
+          <span class="pipeline-step">SFT LoRA</span>
+          <span class="pipeline-step">GRPO Rollout</span>
+          <span class="pipeline-step">OPD-lite Continuation</span>
+          <span class="pipeline-step">Strict Holdout</span>
+        </div>
+        <h3>SFT LoRA</h3>
+        <p>
+          SFT 阶段使用 TRL SFTTrainer 和 PEFT LoRA，对 Qwen2.5-14B 做指令输出格式对齐。训练流程将 user prompt 与 assistant target 拼成 chat template，支持 bf16 / fp16、4-bit、gradient checkpointing、LoRA r / alpha / dropout 和 target modules 配置。
+        </p>
+        <h3>GRPO LoRA</h3>
+        <p>
+          GRPO 阶段每个样本用当前策略生成多个候选回答，解析成动作集合后计算 mixed reward，再在同一 prompt 的候选组内做 reward 标准化得到 advantage。更新时只对 response tokens 计算平均 log probability，优化目标为 advantage-weighted policy loss，并配合梯度累积、clip grad、cosine warmup scheduler 和 rollout log。
+        </p>
+        <h3>OPD-lite</h3>
+        <p>
+          OPD-lite 不是完整 token-level OPD，而是把带 hindsight hint 的 corrected target 作为 assistant continuation，继续训练已有 LoRA adapter。训练流程会记录 adapter、样本规模、训练步数和学习率等摘要信息，便于复现实验口径。
+        </p>
+      </section>
+
+      <section class="section-card" id="results">
+        <h2>实验结果</h2>
+        <table>
+          <tr><th>Run</th><th>Primary Acc</th><th>Macro F1</th><th>Exact Set</th></tr>
+          <tr><td>Qwen2.5-14B Base</td><td>17.24%</td><td>18.49%</td><td>7.10%</td></tr>
+          <tr><td>SFT + GRPO 600 + OPD-lite</td><td>64.88%</td><td>67.74%</td><td>48.84%</td></tr>
+        </table>
+        <table>
+          <tr><th>Strict Holdout 对比</th><th>Primary Acc</th><th>Macro F1</th><th>Exact Set</th></tr>
+          <tr><td>SFT + GRPO 600</td><td>59.50%</td><td>62.78%</td><td>49.24%</td></tr>
+          <tr><td>SFT + GRPO 600 + OPD-lite</td><td>64.30%</td><td>66.12%</td><td>51.94%</td></tr>
+          <tr><td>提升</td><td>+4.80 pp</td><td>+3.34 pp</td><td>+2.70 pp</td></tr>
+        </table>
+      </section>
+
+      <section class="section-card" id="analysis">
+        <h2>误差分析</h2>
+        <p>
+          OPD-lite 主要修复低召回困难类别，尤其是 Team Fight 和 Farm。Strict holdout 上 Team Fight 支持样本 735，net gain +89；Farm 支持样本 496，net gain +82。
+        </p>
+        <p>
+          主要副作用是部分 Pickoff 和 Defend Tower 类标签迁移为 Farm 或 Team Fight。整体仍然正向，但项目保留了这类负迁移分析，避免只报告单一总分。
+        </p>
+        <p>
+          这部分分析反过来指导 reward 设计：例如 Team Fight 召回不足时，可以在类别定向 reward 模式中对正确 Team Fight 加奖励，对把目标类误判成 Team Fight 或把 Team Fight 误判成目标推进类做轻量惩罚，从而验证类别定向 reward 是否会牺牲全局表现。
+        </p>
+      </section>
+
+      <section class="section-card" id="contribution">
+        <h2>个人贡献</h2>
+        <ul>
+          <li>构建 V4.6 TiG-aligned 数据线，清理 prompt-visible label shortcuts 并完成 split / holdout 审计。</li>
+          <li>实现 SFT、GRPO、OPD-lite 训练与评测脚本，完成多版本模型对比。</li>
+          <li>设计 mixed reward，覆盖正确性、集合质量、格式合法性和动作空间约束。</li>
+          <li>撰写最终实验报告、strict holdout 误差分析和 token-level OPD 负结果总结。</li>
+        </ul>
+      </section>
+
+      <div class="detail-footer-actions">
+        <a href="index.html" class="link-button">← 返回主页</a>
+      </div>
+    </div>
+
+    <script>
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (window.innerWidth <= 1200) document.getElementById('toc').classList.remove('show');
+        });
+      });
+      window.addEventListener('scroll', function() {
+        const sections = document.querySelectorAll('.section-card[id]');
+        const tocLinks = document.querySelectorAll('.toc-list a');
+        let currentSection = '';
+        sections.forEach(section => {
+          if (window.pageYOffset >= section.offsetTop - 100) currentSection = section.getAttribute('id');
+        });
+        tocLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + currentSection));
+      });
+      const tocToggle = document.getElementById('tocToggle');
+      const toc = document.getElementById('toc');
+      tocToggle.addEventListener('click', () => toc.classList.toggle('show'));
+    </script>
+  </body>
+</html>

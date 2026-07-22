@@ -4,55 +4,39 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>杨艺 Yang Yi | NLP Researcher</title>
+  <title>杨艺 Yang Yi | LLM Agent & AI Research Engineering</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
   <div class="main-wrapper">
-    <!-- 侧边目录 -->
     <div class="toc-wrapper">
       <nav class="toc">
         <div class="toc-title">目录导航</div>
         <ul class="toc-list">
-          <li class="toc-item">
-            <a href="#education" class="toc-link">教育背景</a>
-          </li>
-          <li class="toc-item">
-            <a href="#publications" class="toc-link">学术论文</a>
-          </li>
-          <li class="toc-item">
-            <a href="#internship" class="toc-link">实习经历</a>
-          </li>
-          <li class="toc-item">
-            <a href="#competitions" class="toc-link">竞赛经历</a>
-          </li>
-          <li class="toc-item">
-            <a href="#projects" class="toc-link">项目经历</a>
-          </li>
-          <li class="toc-item">
-            <a href="#skills" class="toc-link">专业技能</a>
-          </li>
-          <li class="toc-item">
-            <a href="#awards" class="toc-link">荣誉与奖项</a>
-          </li>
-          <li class="toc-item">
-            <a href="#contact" class="toc-link">联系方式</a>
-          </li>
+          <li class="toc-item"><a href="#about" class="toc-link">个人简介</a></li>
+          <li class="toc-item"><a href="#focus" class="toc-link">研究与工程方向</a></li>
+          <li class="toc-item"><a href="#works" class="toc-link">代表工作</a></li>
+          <li class="toc-item"><a href="#publications" class="toc-link">学术论文</a></li>
+          <li class="toc-item"><a href="#experience" class="toc-link">实习经历</a></li>
+          <li class="toc-item"><a href="#engineering" class="toc-link">工程能力</a></li>
+          <li class="toc-item"><a href="#awards" class="toc-link">荣誉奖项</a></li>
+          <li class="toc-item"><a href="#contact" class="toc-link">联系方式</a></li>
         </ul>
       </nav>
     </div>
 
-    <!-- 主内容区域 -->
     <div class="content-wrapper">
       <div class="container">
-        <div class="header">
-          <div class="eyebrow">LLM Agent / NLP 算法实习候选人</div>
+        <header class="header">
+          <div class="eyebrow">LLM Agent / 大模型后训练 / 多智能体仿真 / AI Research Engineering</div>
           <h1>杨艺 Yang Yi</h1>
           <div class="subtitle">
-            <strong>聚焦 Agent Harness、Tool Calling、Trace Feedback 与多智能体仿真</strong>
-            <span class="muted">深圳大学 计算机技术硕士在读（2027届） · 可实习 6 个月 · Base 深圳</span>
+            <strong>我关注大模型 Agent 的学习、评测与系统设计。</strong>
+            <span class="muted">结合后训练算法、工具调用轨迹、Memory / Skill / Context 管理和多智能体仿真，提升模型在真实复杂任务中的决策能力。</span>
+            <span class="muted">深圳大学计算机技术硕士在读（2027 届） · Base 深圳 · 研究与工程并重</span>
           </div>
+
           <div class="hero-metrics" aria-label="核心亮点">
             <div class="hero-metric">
               <span class="metric-value">WWW 2025</span>
@@ -64,273 +48,270 @@
             </div>
             <div class="hero-metric">
               <span class="metric-value">Top 3.6%</span>
-              <span class="metric-label">KDD Cup 2026 25/700</span>
+              <span class="metric-label">KDD Cup 2026 DataAgent-Bench</span>
             </div>
             <div class="hero-metric">
-              <span class="metric-value">100%</span>
-              <span class="metric-label">Terminal-Bench Easy pass@1</span>
+              <span class="metric-value">Qwen2.5-14B</span>
+              <span class="metric-label">SFT + GRPO + OPD-lite</span>
             </div>
           </div>
+
           <div class="hero-actions">
             <a href="mailto:2931564251@qq.com" class="primary-action">联系我</a>
             <a href="https://github.com/yangyi626" target="_blank" class="secondary-action">GitHub</a>
             <a href="https://scholar.google.com/citations?user=r5EdeWEAAAAJ&hl=en" target="_blank" class="secondary-action">Google Scholar</a>
           </div>
-        </div>
+        </header>
 
-        <div class="card">
-          <h2 id="education">🎓 教育背景</h2>
-          <div class="edu-item">
-            <div class="edu-header">
-              <span class="edu-title">深圳大学</span>
-              <span class="edu-date">2024.09 – 2027.06</span>
+        <section class="card" id="about">
+          <h2>个人简介</h2>
+          <p>
+            我是深圳大学计算机技术硕士研究生，本科毕业于广西师范大学数据科学与大数据技术专业。我的工作横跨大模型后训练、Agent Learning、Agent 框架设计、多智能体社会仿真与 NLP 数据集评测。
+          </p>
+          <p>
+            当前主线是：从真实任务轨迹中构造训练数据、奖励信号和评测闭环，用 SFT / GRPO / OPD-lite 等后训练方法提升模型在工具调用、长程决策和多智能体场景中的表现；同时关注 Agent Runtime、Memory、Skill、Context、多 Agent 协同和 Trace Pipeline 等工程抽象。
+          </p>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-number">算法</div>
+              <div class="stat-label">后训练、奖励设计、轨迹学习、多智能体决策</div>
             </div>
-            <div class="edu-detail">
-              <strong>计算机技术</strong> | <strong>硕士（推免）</strong> | 研究方向：NLP、多智能体仿真、立场检测
+            <div class="stat-card">
+              <div class="stat-number">系统</div>
+              <div class="stat-label">Agent Runtime、Memory、Skill、Context、Tool Calling</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">评测</div>
+              <div class="stat-label">Terminal-Bench、DataAgent-Bench、LLM-as-Judge、Trace 复盘</div>
             </div>
           </div>
-          <div class="edu-item">
-            <div class="edu-header">
-              <span class="edu-title">广西师范大学</span>
-              <span class="edu-date">2020.09 – 2024.06</span>
+        </section>
+
+        <section class="card" id="focus">
+          <h2>研究与工程方向</h2>
+          <div class="topic-grid">
+            <div class="topic-card">
+              <h4>LLM Post-training</h4>
+              <p>SFT、GRPO、OPD-lite、Reward Modeling、Trajectory Learning、ablation 与 holdout evaluation。</p>
             </div>
-            <div class="edu-detail">
-              <strong>数据科学与大数据技术</strong> | <strong>本科</strong>
+            <div class="topic-card">
+              <h4>Agent Learning & Evaluation</h4>
+              <p>真实工具调用轨迹、Terminal-Bench、verifier feedback、failure attribution 与 reward / filter 信号构造。</p>
+            </div>
+            <div class="topic-card">
+              <h4>Agent Framework</h4>
+              <p>Agent Runtime、Memory 管理、Skill 管理、多 Agent 协同、上下文管理与工具协议设计。</p>
+            </div>
+            <div class="topic-card">
+              <h4>Multi-agent Simulation</h4>
+              <p>社会事件演化、Full-8 structured action、population fidelity、对话仿真与群体动态评估。</p>
+            </div>
+            <div class="topic-card">
+              <h4>Data-centric NLP</h4>
+              <p>立场检测、多轮对话数据集、社交媒体语义理解、数据质量控制和基准评测。</p>
+            </div>
+            <div class="topic-card">
+              <h4>Research Engineering</h4>
+              <p>vLLM 本地模型服务、8 卡并行生成、断点续跑、日志审计、实验流水线与可复现工程。</p>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div class="card">
-          <h2 id="publications">📝 学术论文</h2>
-          <ul class="pub-list">
-            <li class="pub-item">
-              <div>
-                <span class="venue">EMNLP 2025</span>
-                <span class="ccf">CCF B</span>
-                <span class="author-role">共同一作</span>
-              </div>
-              <span class="pub-title">SPARK: Simulating the Co-evolution of Stance and Topic Dynamics in Online
-                Discourse with LLM-based Agents</span>
-              <a href="https://aclanthology.org/2025.emnlp-main.1176/">[Link]</a>
-            </li>
-            <li class="pub-item">
-              <div>
-                <span class="venue">WWW 2025</span>
-                <span class="ccf">CCF A</span>
-                <span class="author-role">共同一作</span>
-              </div>
-              <span class="pub-title">C-MTCSD: A Chinese Multi-Turn Conversational Stance Detection Dataset</span>
-              <a href="https://dl.acm.org/doi/10.1145/3701716.3715307">[Link]</a>
-            </li>
-          </ul>
-        </div>
+        <section class="card priority-card" id="works">
+          <h2>代表工作</h2>
 
-        <div class="card priority-card">
-          <h2 id="internship">💼 实习经历</h2>
           <div class="project-item clickable-card" data-link="agentone-detail.html">
-            <span class="project-title">深圳市亿道数码技术有限公司 / 亿道研究院 / AI技术组</span>
-            <span class="project-meta"><strong>算法实习生</strong> | 2026.02 – 2026.05</span>
-            <span class="project-title">AIPC Agent One：端云协同的可执行 Agent 系统</span>
-            <ul>
-              <li>面向 AIPC 场景下 <strong>PC 主执行、手机审批协同、NAS 私有归档</strong>等复杂任务链路，参与从 0 到 1 构建端云协同 Agent 系统，负责 Agent Runtime、Skill / Memory、Harness 评测与端侧训练链路核心模块</li>
-              <li>设计云端 <strong>Agent Runtime 与 Skill / Memory 机制</strong>，统一任务输入、步骤规划、工具调用、异常处理、执行日志与上下文管理，将高频流程抽象为可复用 Skill</li>
-              <li>构建 <strong>Agent-One Harness</strong> 评测进化框架，接入 Terminal-Bench 2.0 真实终端任务集，完成批量运行、断点续跑、Trace 保存与 <strong>pass@1</strong> 统计；Easy 子集达到 <span class="highlight">pass@1 = 100%</span></li>
-              <li>基于稳定 Harness 产出的高质量执行轨迹，搭建端侧 Agent 模型训练链路，探索基于 Trace Feedback 的 GRPO、OPD、Atropos online trainer 训练闭环</li>
-            </ul>
-            <div class="skill-item">
-              <span class="skill-category">技术栈：</span>Python、DeepAgents、ReAct Agent、Tool Calling、Agent Harness、Trace Pipeline、GRPO、OPD
+            <span class="project-title">Agent-One：面向 AIPC 的端云协同 Agent 框架与学习闭环</span>
+            <span class="project-meta"><strong>算法实习生</strong> | 亿道研究院 AI 技术组 | 2026.02 – 2026.05</span>
+            <p>参与 Agent 框架设计，覆盖 Runtime、Memory 管理、Skill 管理、多 Agent 协同、上下文管理与 Tool Calling；进一步接入 Terminal-Bench，构建 Trace 采集、失败归因、reward / filter 信号与端侧模型训练数据闭环。</p>
+            <div>
+              <span class="badge badge-venue">Agent Runtime</span>
+              <span class="badge badge-venue">Memory / Skill</span>
+              <span class="badge badge-ccf">Terminal-Bench</span>
+              <span class="badge badge-role">Trace Feedback</span>
             </div>
           </div>
-        </div>
 
-        <div class="card priority-card">
-          <h2 id="competitions">🎯 竞赛经历</h2>
-          <div class="project-item">
-            <span class="project-title">KDD Cup 2026 DataAgent-Bench 多源数据分析 Agent</span>
-            <span class="project-meta"><strong>Agent 框架负责人</strong> | 2026.04 – 2026.05 | KDD Cup 2026 排行榜 Top 3.6%（25/700）</span>
-            <ul>
-              <li>面向 <strong>DataAgent-Bench 多源数据问答</strong>任务，基于 <strong>Qwen3.5-35B-A3B</strong> 构建可控 LLM Agent，支持在 CSV、JSON、SQLite、Markdown 等异构数据上下文中完成数据探查、查询推理、统计计算与标准表格答案生成</li>
-              <li>设计 <strong>ReAct + JSON Action</strong> 多步工具调用框架，将复杂数据问答拆解为 Discovery、Schema Linking、Execution、Verification、Submission 五阶段；通过 ToolRegistry 统一封装文件探查、Schema 解析、SQL 查询、Python 计算与提交工具</li>
-              <li>针对 Schema Linking、跨表/跨文件推理、统计口径判断和答案格式控制中的不稳定问题，引入 <strong>knowledge.md、业务语义文档与结构化 Prompt 规则</strong>，增强字段映射、查询生成和结果校验能力</li>
-              <li>构建 Agent 执行安全边界与评测复盘闭环：通过 action 枚举校验、SQL 只读连接、Python 子进程超时、任务级 max_steps 与 task_timeout 控制工具调用风险；阶段评测得分 <span class="highlight">0.5129</span>，排行榜位列 <span class="highlight">25/700</span></li>
-            </ul>
-            <div class="skill-item">
-              <span class="skill-category">技术栈：</span>Python、Qwen3.5-35B-A3B、ReAct Agent、Tool Calling、JSON Action、Schema Linking、SQLite、Docker
+          <div class="project-item clickable-card" data-link="tig-detail.html">
+            <span class="project-title">TiG 宏观动作预测：Qwen2.5-14B 的 SFT / GRPO / OPD-lite 后训练</span>
+            <span class="project-meta"><strong>个人项目</strong> | 2026.05 – 2026.06</span>
+            <p>面向 Dota 2 团队博弈场景，使用 Qwen2.5-14B 预测队伍下一步宏观动作；构建 TiG-aligned 数据线、strict final holdout 与 mixed-reward GRPO，最终 OPD-lite corrected continuation 在多套评测上取得稳定提升。</p>
+            <div>
+              <span class="badge badge-venue">Qwen2.5-14B</span>
+              <span class="badge badge-ccf">GRPO</span>
+              <span class="badge badge-role">OPD-lite</span>
+              <span class="badge badge-venue">Strict Holdout</span>
             </div>
           </div>
-        </div>
 
-        <div class="card">
-          <h2 id="projects">🚀 项目经历</h2>
-          <div class="project-item clickable-card" data-link="simbotpol-detail.html">
-            <span class="project-title">SimBotPol：基于大语言模型的多智能体社交机器人网络极化仿真与干预评估框架</span>
-            <span class="project-meta"><strong>项目负责人</strong> | 2025.07 – 至今 | 在研</span>
-            <ul>
-              <li>面向社交平台极化分析，搭建 <strong>LLM 驱动的多智能体仿真框架</strong>（角色设定 → 交互生成 → 指标统计 → 干预评估），在真实社交网络结构上模拟 <strong>1,800
-                  个智能体</strong>（1,200 真人 + 600 机器人）交互，量化机器人对用户立场/情绪演化的影响</li>
-              <li>设计<strong>智能体决策引擎</strong>（<strong>7 类操纵策略</strong> + 五大人格特质 +
-                双层记忆）与<strong>社交环境模拟器</strong>（发帖/转发/评论等），实现<strong>双层干预策略</strong>（个体认知反思 + 群体信息流调控）；工程实现：<strong>Mesa
-                  + LLM + MySQL</strong>（日志与指标落库、可复现实验配置）</li>
-              <li><strong>结果</strong>：复现回音室效应与群体极化；谣言传播型机器人显著推动负面情绪（情绪极化指数 <span
-                  class="highlight">+43%</span>），影响力较定向攻击型高 <span class="highlight">28%</span>；双层干预将极化水平降低 <span
-                  class="highlight">31%</span>，成果整理投稿中</li>
-            </ul>
+          <div class="project-item clickable-card" data-link="socioplan-detail.html">
+            <span class="project-title">SocioPlan：结构化社会决策规划与真实事件讨论轨迹模拟</span>
+            <span class="project-meta"><strong>第一作者 / 核心开发</strong> | 2026.02 – 至今 | 拟投稿 AAAI 2027</span>
+            <p>将微博事件评论流演化建模为多智能体序列决策问题，设计 Full-8 structured action，把自由文本生成转化为 state → structured decision → comment 的可解释、可优化接口。</p>
+            <div>
+              <span class="badge badge-venue">Full-8 Action</span>
+              <span class="badge badge-ccf">BC / PPO / GRPO</span>
+              <span class="badge badge-role">Social Simulation</span>
+            </div>
           </div>
 
+          <div class="project-item clickable-card" data-link="kdd-detail.html">
+            <span class="project-title">KDD Cup 2026 DataAgent-Bench：多源数据推理 Agent</span>
+            <span class="project-meta"><strong>Agent 算法负责人</strong> | 2026.04 – 2026.05 | Top 3.6%（25/700）</span>
+            <p>基于 Qwen3.5-35B-A3B 构建 ReAct + JSON Action 多步工具调用 Agent，面向 CSV / JSON / SQLite / Markdown 等多源上下文完成读数、查表、统计计算与标准答案表格生成。</p>
+            <div>
+              <span class="badge badge-venue">DataAgent-Bench</span>
+              <span class="badge badge-ccf">Schema Linking</span>
+              <span class="badge badge-role">JSON Action</span>
+            </div>
+          </div>
 
           <div class="project-item clickable-card" data-link="spark-detail.html">
-            <span class="project-title">SPARK：基于大语言模型的多智能体对话生成与话题-立场协同演化仿真框架</span>
-            <span class="project-meta"><strong>核心开发者</strong> | 2025.02 – 2025.06 | EMNLP 2025 共同一作</span>
-            <ul>
-              <li>提出<strong>话题-立场协同演化建模方案</strong>，解决既有方法对话中"话题漂移/扩展"与"观点更新"割裂的问题；联合模拟 <strong>108 个智能体</strong>在 5
-                个领域开展多轮对话交互，实现个体可追踪、群体可量化的仿真与分析</li>
-              <li>构建<strong>立场感知智能体模块</strong>（个性化角色 + 双层记忆 + 反思式立场更新）与<strong>话题演化模拟器</strong>（话题树动态扩展 +
-                传播路径追踪），实现单次仿真生成 <strong>10,000+ 对话轮次</strong>并输出结构化统计指标；工程实现 <strong>Mesa + LLM +
-                  MySQL</strong>（实验日志/指标统计）</li>
-              <li><strong>结果</strong>：量化验证话题与立场强耦合（相关系数 <span class="highlight">0.88</span>）；科技话题创新速度较科学/医疗高 <span
-                  class="highlight">22.7%</span>；易受影响人格的话题新颖性较稳定人格高 <span class="highlight">22.7%</span></li>
-              <li>代码开源：<a href="https://github.com/yangyi626/SPARK_" onclick="event.stopPropagation();">[Code]</a></li>
-            </ul>
+            <span class="project-title">SPARK：LLM-based Agents 的话题-立场协同演化仿真</span>
+            <span class="project-meta"><strong>共同一作</strong> | EMNLP 2025</span>
+            <p>构建多智能体对话仿真框架，模拟社交媒体中话题演化与立场动态的相互影响，支持个体层面可追踪、群体层面可量化的社会计算研究。</p>
           </div>
-
 
           <div class="project-item clickable-card" data-link="cmtcsd-detail.html">
-            <span class="project-title">C-MTCSD：中文多轮对话立场检测数据集构建与基准评测</span>
-            <span class="project-meta"><strong>数据与评测负责人</strong> | 2024.09 – 2025.01 | WWW 2025 共同一作</span>
+            <span class="project-title">C-MTCSD：中文多轮对话立场检测数据集与基准评测</span>
+            <span class="project-meta"><strong>共同一作</strong> | WWW 2025</span>
+            <p>构建中文多轮对话立场检测数据集，覆盖上下文依赖、隐式立场和多轮语义变化，并完成多类模型的系统评测。</p>
+          </div>
+        </section>
+
+        <section class="card" id="publications">
+          <h2>学术论文</h2>
+          <ul class="pub-list">
+            <li class="pub-item">
+              <div><span class="venue">WWW 2025</span><span class="ccf">CCF A</span><span class="author-role">共同一作</span><span class="badge badge-status">已发表</span></div>
+              <span class="pub-title">C-MTCSD: A Chinese Multi-Turn Conversational Stance Detection Dataset.</span>
+              <a href="https://dl.acm.org/doi/10.1145/3701716.3715307" target="_blank">论文链接</a>
+            </li>
+            <li class="pub-item">
+              <div><span class="venue">EMNLP 2025</span><span class="ccf">CCF B</span><span class="author-role">共同一作</span><span class="badge badge-status">已发表</span></div>
+              <span class="pub-title">SPARK: Simulating the Co-evolution of Stance and Topic Dynamics in Online Discourse with LLM-based Agents.</span>
+              <a href="https://aclanthology.org/2025.emnlp-main.1176/" target="_blank">论文链接</a>
+            </li>
+            <li class="pub-item">
+              <div><span class="venue">IEEE TCE 2026</span><span class="ccf">中科院 2 区</span><span class="author-role">合作者</span><span class="badge badge-status">已发表</span></div>
+              <span class="pub-title">LSE-FRGCN: A Logical Schema-Enhanced Fuzzy Relational Graph Convolutional Network for Stance Detection.</span>
+            </li>
+            <li class="pub-item">
+              <div><span class="venue">EMNLP 2026</span><span class="ccf">CCF B</span><span class="author-role">合作者</span><span class="badge badge-status">已投稿</span></div>
+              <span class="pub-title">A Context-Aware Dataset for Stance Detection in Bioethical Controversies on Reddit.</span>
+            </li>
+          </ul>
+        </section>
+
+        <section class="card" id="experience">
+          <h2>实习经历</h2>
+          <div class="project-item clickable-card" data-link="agentone-detail.html">
+            <span class="project-title">深圳市亿道数码技术有限公司 / 亿道研究院 / AI 技术组</span>
+            <span class="project-meta"><strong>算法实习生</strong> | 2026.02 – 2026.05</span>
             <ul>
-              <li>针对中文多轮对话语义理解中上下文依赖与隐式立场难点，构建<strong>大规模中文多轮对话立场检测数据集</strong>；从微博采集 5 个热点话题，完成 <strong>24,264
-                  条实例标注</strong>（最深 6 轮），规模为同类中文数据集 <span class="highlight">4.2 倍</span></li>
-              <li>设计<strong>三阶段数据处理流水线</strong>与<strong>双人标注 + 专家复审机制</strong>，标注一致性达 <span
-                  class="highlight">0.972</span>；实现 <strong>12
-                  个模型全量评测</strong>（传统深度学习/预训练模型/对话专用模型/大语言模型），并按对话轮次/深度分析性能衰减规律（评测脚本与统计分析可复现）</li>
-              <li><strong>结果</strong>：零样本场景下最优模型 GPT-4 平均 F1 为 <span class="highlight">64.07%</span>，传统模型在隐式立场检测中 F1 低于
-                <span class="highlight">50%</span>；发现对话深度每增加 1 轮性能平均下降 <span class="highlight">6.2%</span>，最高衰减达 <span
-                  class="highlight">37.2%</span></li>
-              <li>数据开源：<a href="https://github.com/yangyi626/C-MTCSD" onclick="event.stopPropagation();">[Data]</a></li>
+              <li>参与 AIPC Agent-One 框架设计，围绕 Runtime、Memory、Skill、多 Agent 协同、上下文管理和工具调用构建端云协同 Agent 能力。</li>
+              <li>接入 vLLM 本地模型服务和 Terminal-Bench 真实终端任务，完成任务适配、批量运行、Trace 保存、失败归因和训练数据构造。</li>
+              <li>将 Agent 执行轨迹转化为 messages、tool traces、actions、observations、tokens、masks、verifier feedback 等结构化样本，为 SFT / GRPO 提供数据基础。</li>
             </ul>
           </div>
+        </section>
 
-
-          <div class="card skills-section">
-            <h2 id="skills">🛠️ 专业技能</h2>
-            <div class="skill-item">
-              <span class="skill-category">NLP：</span>语义理解与文本分类、立场检测、多轮对话建模、NLU、对话状态跟踪、对话策略
+        <section class="card" id="engineering">
+          <h2>工程能力亮点</h2>
+          <div class="topic-grid">
+            <div class="topic-card">
+              <h4>Agent Framework</h4>
+              <p>参与 Runtime、Planner / Executor / Verifier、多 Agent 协同、Memory、Skill、Context 与 Tool Calling 抽象设计。</p>
             </div>
-            <div class="skill-item">
-              <span class="skill-category">深度学习与 LLM 工具链：</span>PyTorch、Prompt Engineering、LLM Agents（记忆/反思/可控生成）
+            <div class="topic-card">
+              <h4>Model Serving</h4>
+              <p>接入 Qwen 系列本地模型与 vLLM OpenAI-compatible 服务，处理工具调用 parser、上下文长度和显存约束。</p>
             </div>
-            <div class="skill-item">
-              <span class="skill-category">工程与数据：</span>Python、MySQL、Linux、Git；数据处理流水线与实验复现（配置管理/日志/统计分析）
+            <div class="topic-card">
+              <h4>Evaluation Pipeline</h4>
+              <p>接入 Terminal-Bench / DataAgent-Bench，搭建批量运行、断点续跑、轨迹记录、预测表和汇总报告复盘流程。</p>
+            </div>
+            <div class="topic-card">
+              <h4>Experiment Engineering</h4>
+              <p>支持 8 卡并行生成、事件级负载均衡、训练缓存、日志审计、数据清洗和可复现实验管理。</p>
             </div>
           </div>
-          <!-- <a href="https://github.com/yangyi626/C-MTCSD"> -->
-            <div class="card">
-              <h2 id="awards">🏆 荣誉与奖项</h2>
+        </section>
 
-              <div class="award-section">
-                <span class="award-category">学业奖学金</span>
-                <ul>
-                  <li>深圳大学硕士研究生学业奖学金<strong>一等奖</strong>（2025）</li>
-                  <li>深圳大学硕士研究生学业奖学金<strong>特等奖</strong>（2024）</li>
-                </ul>
-              </div>
+        <section class="card" id="awards">
+          <h2>荣誉与奖项</h2>
+          <div class="award-section">
+            <span class="award-category">学业与科研</span>
+            <ul>
+              <li>深圳大学硕士研究生学业奖学金<strong>一等奖</strong>（2025）</li>
+              <li>深圳大学硕士研究生学业奖学金<strong>特等奖</strong>（2024）</li>
+            </ul>
+          </div>
+          <div class="award-section">
+            <span class="award-category">竞赛</span>
+            <ul>
+              <li>KDD Cup 2026 DataAgent-Bench 排行榜 <strong>Top 3.6%</strong>（25/700）</li>
+              <li>中国大学生计算机设计大赛<strong>国家级三等奖</strong>（2023）</li>
+              <li>蓝桥杯、广西高校计算机设计大赛、数据建模等多项省级奖项</li>
+            </ul>
+          </div>
+        </section>
 
-              <div class="award-section">
-                <span class="award-category">国家级竞赛</span>
-                <ul>
-                  <li>KDD Cup 2026 DataAgent-Bench 排行榜 <strong>Top 3.6%</strong>（25/700，2026）</li>
-                  <li>第16届全国大学生计算机设计大赛<strong>三等奖</strong>（2023）</li>
-                </ul>
-              </div>
+        <section class="card" id="contact">
+          <h2>联系方式</h2>
+          <div class="contact-links">
+            <a href="mailto:2931564251@qq.com">2931564251@qq.com</a>
+            <a href="https://github.com/yangyi626" target="_blank">GitHub</a>
+            <a href="https://scholar.google.com/citations?user=r5EdeWEAAAAJ&hl=en" target="_blank">Google Scholar</a>
+          </div>
+        </section>
 
-              <div class="award-section">
-                <span class="award-category">省级竞赛</span>
-                <ul>
-                  <li>第五届广西高校计算机设计大赛<strong>一等奖</strong>（2023）</li>
-                  <li>第十四届蓝桥杯全国软件与信息技术人才大赛<strong>三等奖</strong>（2023）</li>
-                  <li>第十三届蓝桥杯全国软件与信息技术人才大赛<strong>二等奖</strong>（2022）</li>
-                  <li>"桂林银行杯"数据建模大赛暨全国大学生数学建模大赛预赛<strong>优秀奖</strong>广西赛区（2022）</li>
-                  <li>中国大学生程序设计大赛（阶梯竞赛）<strong>三等奖</strong>广西"华山讨论组"（2022）</li>
-                  <li>第四届传智杯全国IT技能大赛编程赛道<strong>三等奖</strong>（2021）</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="card">
-              <h2 id="contact">📬 联系方式</h2>
-              <div class="contact-links">
-                <a href="mailto:2931564251@qq.com">📧 2931564251@qq.com</a>
-                <a href="https://github.com/yangyi626" target="_blank">🔗 GitHub</a>
-                <a href="https://scholar.google.com/citations?user=r5EdeWEAAAAJ&hl=en" target="_blank">🎓 Google Scholar</a>
-              </div>
-            </div>
-
-            <div class="footer">
-              <p class="footer-highlight">💡 base深圳 · 随时到岗 · 可实习6个月 · 2027年6月毕业</p>
-            </div>
+        <div class="footer">
+          <p class="footer-highlight">深圳大学计算机技术硕士在读 · 2027 年 6 月毕业 · 关注大模型算法、Agent 系统与可复现实验工程</p>
         </div>
       </div>
     </div>
+  </div>
 
-    <script>
-
-      // 可点击卡片功能
-      document.querySelectorAll('.clickable-card').forEach(card => {
-        card.addEventListener('click', function (e) {
-          // 如果点击的是链接，不触发卡片跳转
-          if (e.target.tagName === 'A' || e.target.closest('a')) {
-            return;
-          }
-          const link = this.getAttribute('data-link');
-          if (link) {
-            window.location.href = link;
-          }
-        });
+  <script>
+    document.querySelectorAll('.clickable-card').forEach(card => {
+      card.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A' || e.target.closest('a')) {
+          return;
+        }
+        const link = this.getAttribute('data-link');
+        if (link) {
+          window.location.href = link;
+        }
       });
+    });
 
-
-      // 平滑滚动
-      document.querySelectorAll('.toc-link').forEach(link => {
-        link.addEventListener('click', function (e) {
-          e.preventDefault();
-          const targetId = this.getAttribute('href');
-          const targetElement = document.querySelector(targetId);
-
-          if (targetElement) {
-            targetElement.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
-          }
-        });
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetElement = document.querySelector(this.getAttribute('href'));
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       });
+    });
 
-      // 滚动时高亮当前章节
-      const sections = document.querySelectorAll('h2[id]');
-      const tocLinks = document.querySelectorAll('.toc-link');
-
-      function highlightTOC() {
-        let current = '';
-
-        sections.forEach(section => {
-          const sectionTop = section.offsetTop;
-          const sectionHeight = section.clientHeight;
-          if (window.pageYOffset >= sectionTop - 100) {
-            current = section.getAttribute('id');
-          }
-        });
-
-        tocLinks.forEach(link => {
-          link.classList.remove('active');
-          if (link.getAttribute('href') === '#' + current) {
-            link.classList.add('active');
-          }
-        });
-      }
-
-      window.addEventListener('scroll', highlightTOC);
-      highlightTOC(); // 初始化
-    </script>
+    const sections = document.querySelectorAll('section[id]');
+    const tocLinks = document.querySelectorAll('.toc-link');
+    function highlightTOC() {
+      let current = '';
+      sections.forEach(section => {
+        if (window.pageYOffset >= section.offsetTop - 120) {
+          current = section.getAttribute('id');
+        }
+      });
+      tocLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+      });
+    }
+    window.addEventListener('scroll', highlightTOC);
+    highlightTOC();
+  </script>
 </body>
 
 </html>

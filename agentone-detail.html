@@ -8,21 +8,20 @@
   </head>
   <body>
     <div class="container">
-      <a href="index.html" class="back-button">
-        ← 返回主页
-      </a>
+      <a href="index.html" class="back-button">← 返回主页</a>
 
       <div class="header">
-        <div class="eyebrow">实习经历 · LLM Agent 工程</div>
-        <h1>AIPC Agent One：端云协同的可执行 Agent 系统</h1>
+        <div class="eyebrow">实习经历 · Agent Framework · Agent Learning</div>
+        <h1>Agent-One：面向 AIPC 的端云协同 Agent 框架与学习闭环</h1>
         <div class="project-meta">
-          <strong>深圳市亿道数码技术有限公司 / 亿道研究院 / AI技术组 · 算法实习生</strong> | 2026.02 – 2026.05
+          <strong>深圳市亿道数码技术有限公司 / 亿道研究院 / AI 技术组 · 算法实习生</strong> | 2026.02 – 2026.05
         </div>
         <div>
           <span class="badge badge-venue">Agent Runtime</span>
-          <span class="badge badge-venue">Agent Harness</span>
-          <span class="badge badge-ccf">Trace Feedback</span>
-          <span class="badge badge-role">端侧训练</span>
+          <span class="badge badge-venue">Memory / Skill</span>
+          <span class="badge badge-ccf">Multi-Agent</span>
+          <span class="badge badge-role">Trace Feedback</span>
+          <span class="badge badge-venue">Terminal-Bench</span>
         </div>
       </div>
 
@@ -30,98 +29,200 @@
         <div class="toc-title">目录导航</div>
         <ul class="toc-list">
           <li><a href="#overview">经历概览</a></li>
-          <li><a href="#framework">阶段一：Framework</a></li>
-          <li><a href="#harness">阶段二：Harness</a></li>
-          <li><a href="#learning">阶段三：Learning</a></li>
-          <li><a href="#capability">能力沉淀</a></li>
+          <li><a href="#background">项目背景</a></li>
+          <li><a href="#framework">Agent 框架设计</a></li>
+          <li><a href="#runtime">运行时实现</a></li>
+          <li><a href="#memory">Memory 管理</a></li>
+          <li><a href="#skill">Skill 管理</a></li>
+          <li><a href="#context">Context 管理</a></li>
+          <li><a href="#contract">任务 Contract</a></li>
+          <li><a href="#learning">评测与学习闭环</a></li>
+          <li><a href="#contribution">个人贡献</a></li>
         </ul>
       </nav>
+      <button class="toc-toggle" id="tocToggle" aria-label="目录">☰</button>
 
-      <button class="toc-toggle" id="tocToggle" aria-label="目录">
-        ☰
-      </button>
-
-      <div class="section-card" id="overview">
+      <section class="section-card" id="overview">
         <h2>经历概览</h2>
         <p>
-          项目启动初期加入，主导 Agent-One 核心模块从 0 到 1 搭建，围绕云端 Agent 运行框架、Skill / Memory 系统、Harness 评测进化与端侧 Agent 模型训练，构建“任务执行—轨迹采集—失败归因—版本评估—策略优化”的 Agent 工程闭环。
+          Agent-One 面向 AIPC 场景下的端云协同任务：PC 侧负责主要执行，手机侧负责审批与协同，NAS 侧负责私有归档和长期数据管理。项目涉及文件处理、终端执行、浏览器操作、审批流、知识检索、长期上下文和多轮任务状态维护。
         </p>
         <p>
-          系统面向 AIPC 场景下 <strong>PC 主执行、手机审批协同、NAS 私有归档</strong> 等复杂任务链路，在 Terminal-Bench 2.0 Easy 子集上将 Harness 评测后 <span class="highlight">pass@1 提升至 100%</span>，并基于稳定 Harness 产出的高质量轨迹进一步支撑端侧 Agent 模型训练。
+          我参与了 Agent 框架设计与学习闭环建设：一方面参与 Runtime、Memory、Skill、多 Agent 协同、Context 与 Tool Calling 等核心抽象；另一方面接入 Terminal-Bench 和 vLLM，把真实任务轨迹转化为 Trace、失败归因、reward / filter 信号和后训练数据。
         </p>
-
         <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-number">0 → 1</div>
-            <div class="stat-label">核心模块搭建</div>
+          <div class="stat-card"><div class="stat-number">89</div><div class="stat-label">Terminal-Bench 2.0 Easy / Medium / Hard 任务接入</div></div>
+          <div class="stat-card"><div class="stat-number">3/4</div><div class="stat-label">Qwen3.5-4B Easy 单次 full run</div></div>
+          <div class="stat-card"><div class="stat-number">4 类</div><div class="stat-label">Memory / Skill / Context / Tool 抽象</div></div>
+          <div class="stat-card"><div class="stat-number">闭环</div><div class="stat-label">Trace → Attribution → Reward → Data</div></div>
+        </div>
+      </section>
+
+      <section class="section-card" id="background">
+        <h2>项目背景</h2>
+        <p>
+          AIPC Agent 和普通聊天机器人不同，它需要长期执行真实任务：读写文件、调用终端、操作浏览器、管理 NAS、处理权限审批，并在多轮任务中保持状态一致。核心难点包括长链路规划、上下文污染、工具误用、多 Agent 协同、执行安全和结果可评测性。
+        </p>
+        <div class="challenge-box">
+          <p><strong>关键问题：</strong>如果只靠 prompt，很难稳定解决 Agent 在真实任务中的失败。需要把运行过程结构化为 trace，把失败归因到模型、工具、上下文、workflow、verifier 或环境，再决定是修框架、修数据，还是进入后训练。</p>
+        </div>
+      </section>
+
+      <section class="section-card" id="framework">
+        <h2>Agent 框架设计</h2>
+        <p>
+          我参与的框架设计围绕“任务输入 → 意图理解 → 计划生成 → 多 Agent 协同 → 工具调用 → 结果校验 → Trace 记录 → 状态更新”展开。
+        </p>
+        <table>
+          <tr><th>模块</th><th>职责</th></tr>
+          <tr><td>Planner Agent</td><td>理解任务目标，拆解步骤，决定是否需要工具、记忆或子任务协同。</td></tr>
+          <tr><td>Executor Agent</td><td>执行文件、终端、浏览器、NAS 等工具调用，并把环境反馈写入轨迹。</td></tr>
+          <tr><td>Verifier / Critic</td><td>检查结果是否满足任务 contract，识别格式、逻辑或执行失败。</td></tr>
+          <tr><td>Tool Layer</td><td>统一工具 schema、异常处理、超时控制、权限边界和日志格式。</td></tr>
+          <tr><td>Trace Pipeline</td><td>记录 messages、tool calls、observations、scores、失败类型和中间状态。</td></tr>
+        </table>
+        <p>
+          在落地时，我把框架拆成可版本化的 Harness 组件，而不是把 prompt、工具和评测逻辑写死在一次运行中。组件包括 model caller、prompts、context、memory、skills、tools、workflows、validators、sandbox、runtime 和 trace，每个 HarnessVersion 绑定一组 ComponentVersion，便于灰度对比、失败回滚和针对任务族做局部优化。
+        </p>
+        <div class="pipeline-strip">
+          <span class="pipeline-step">ComponentVersion</span>
+          <span class="pipeline-step">HarnessVersion</span>
+          <span class="pipeline-step">Runtime Binding</span>
+          <span class="pipeline-step">Trace / EvalRun</span>
+          <span class="pipeline-step">EvidencePack</span>
+          <span class="pipeline-step">Candidate Patch</span>
+        </div>
+      </section>
+
+      <section class="section-card" id="runtime">
+        <h2>运行时实现</h2>
+        <p>
+          Runtime binding 负责把注册表中的 HarnessVersion 解析成一次任务可见的运行时快照。该层会汇总组件 profile、prompt overrides、context hints、tool policy、workflow policy、validator policy、sandbox policy 和 trace policy。
+        </p>
+        <div class="implementation-list">
+          <div class="implementation-item">
+            <strong>组件解析</strong>
+            从组件注册表读取版本信息，加载对应组件产物，把 artifact payload 和 semantic patch 合并成 runtime-visible policy。
           </div>
-          <div class="stat-card">
-            <div class="stat-number">89</div>
-            <div class="stat-label">Terminal-Bench 2.0 任务接入</div>
+          <div class="implementation-item">
+            <strong>Prompt 注入</strong>
+            对 context、memory、skills 三类组件提取 prompt hints，只把当前 Harness 声明的能力注入模型上下文，避免无关能力污染任务。
           </div>
-          <div class="stat-card">
-            <div class="stat-number">100%</div>
-            <div class="stat-label">Easy 子集 pass@1</div>
+          <div class="implementation-item">
+            <strong>运行参数收敛</strong>
+            对 validators、sandbox、retry 等组件声明的 CLI 参数做白名单过滤，只允许安全的 runtime flags，例如 max turns、sandbox、shell allow-list 和 no-stream。
           </div>
-          <div class="stat-card">
-            <div class="stat-number">闭环</div>
-            <div class="stat-label">Trace → Reward → Policy</div>
+          <div class="implementation-item">
+            <strong>Trace 元数据</strong>
+            每次运行会记录 runtime profile、evaluator / parser / trace / sandbox / tool / validator / workflow policy，后续可以按组件维度归因失败。
           </div>
         </div>
+      </section>
 
-        <div class="skill-item">
-          <span class="skill-category">技术栈：</span>Python、DeepAgents、ReAct Agent、Tool Calling、Skill System、Trace Pipeline、Reward Modeling、GRPO、OPD、Atropos
+      <section class="section-card" id="memory">
+        <h2>Memory 管理</h2>
+        <p>
+          Memory 用来解决长任务和多轮任务中的“状态丢失”问题。它不是把所有历史消息塞进上下文，而是按任务、用户和状态类型做结构化写入与召回。
+        </p>
+        <div class="topic-grid">
+          <div class="topic-card"><h4>用户偏好记忆</h4><p>记录用户常用格式、审批习惯、输出偏好和长期约束。</p></div>
+          <div class="topic-card"><h4>任务事实记忆</h4><p>记录当前任务目标、已完成步骤、关键文件、工具反馈和中间结果。</p></div>
+          <div class="topic-card"><h4>项目状态记忆</h4><p>维护项目路径、环境依赖、历史实验状态和未完成事项。</p></div>
+          <div class="topic-card"><h4>失败经验记忆</h4><p>沉淀工具失败、verifier 错误、环境异常和修复经验，用于后续任务规避。</p></div>
         </div>
-      </div>
+        <p>
+          设计重点包括写入策略、召回策略、冲突处理、过期机制和敏感信息边界，避免上下文污染和错误记忆放大。在 HARE-X 实现中，Memory 作为独立组件进入版本注册表。这种设计让记忆策略可以单独升级、回滚和评测，而不需要同时改动工具层或 prompt 层。
+        </p>
+      </section>
 
-      <div class="section-card" id="framework">
-        <h2>阶段一：Agent-One Framework</h2>
-        <h3>云端 Agent 运行框架与 Skill / Memory 系统</h3>
+      <section class="section-card" id="skill">
+        <h2>Skill 管理</h2>
+        <p>
+          Skill 是可复用能力单元，不只是 prompt。一个 Skill 通常包含触发条件、参数 schema、工具依赖、执行 workflow、约束规则、参考资源和产物格式。
+        </p>
+        <table>
+          <tr><th>设计点</th><th>说明</th></tr>
+          <tr><td>按需加载</td><td>根据任务类型选择相关 Skill，避免把所有能力塞进上下文。</td></tr>
+          <tr><td>工具依赖</td><td>显式声明文件、终端、浏览器、NAS 等工具需求。</td></tr>
+          <tr><td>权限边界</td><td>对高风险操作设置审批、沙箱或只读限制。</td></tr>
+          <tr><td>版本管理</td><td>保留 Skill 修改历史，便于回滚和评测对比。</td></tr>
+          <tr><td>失败沉淀</td><td>从成功经验和失败修复中生成新的 Skill 或更新旧 Skill。</td></tr>
+        </table>
+        <p>
+          Skill 组件也进入同一套版本系统。面试里可以把它解释成“能力包管理”：模型不直接记住所有操作细节，而是在任务触发时加载相应 skill，skill 再声明工具依赖、输入输出 schema、失败处理方式和验证条件。
+        </p>
+      </section>
+
+      <section class="section-card" id="context">
+        <h2>Context 管理</h2>
+        <p>
+          Context 管理负责在有限窗口内保留对当前任务最有价值的信息。核心不是“越多越好”，而是让模型在每一步看到正确的任务状态、工具反馈和约束。
+        </p>
         <ul>
-          <li>负责 Agent-One 云端 Agent 运行框架设计与核心链路实现，围绕任务输入、意图解析、步骤规划、工具调用、结果校验与执行日志，构建可扩展的 <strong>Agent Runtime</strong>，为后续 Harness 评测与端侧模型训练提供统一执行入口。</li>
-          <li>设计并实现 <strong>Skill 管理机制</strong>，将文档处理、文件操作、终端执行、数据归档等高频任务流程抽象为可复用 Skill，统一维护 Skill 的参数配置、触发条件、工具依赖与权限边界。</li>
-          <li>构建 Agent <strong>Memory 与上下文管理</strong>模块，对用户偏好、历史任务、工具反馈、执行状态与中间结果进行结构化组织，支持多轮任务中的上下文注入、历史压缩与状态恢复。</li>
-          <li>封装文件、终端、浏览器、NAS 等基础工具调用接口，统一工具输入输出协议、异常处理、超时控制与执行日志，为 Trace 采集、失败归因和版本回归评测提供可观测的工具执行层。</li>
+          <li>长任务上下文压缩：压缩历史消息，保留目标、已完成步骤、失败原因和关键证据。</li>
+          <li>状态恢复：在任务中断或重试后恢复当前状态，减少重复执行。</li>
+          <li>Memory / RAG 注入：根据任务动态召回用户偏好、项目事实和相关文档。</li>
+          <li>上下文去噪：裁剪无关工具输出、重复日志和过长 stdout，降低模型注意力干扰。</li>
+          <li>任务 contract 保留：将输出格式、工具限制和 verifier 条件放在高优先级上下文中。</li>
         </ul>
-      </div>
+        <p>
+          具体实现上，Context 不是纯文本拼接，而是以组件 policy 的方式进入 runtime，runtime 再抽取可注入提示。这样可以把“长期记忆”“当前任务状态”“工具反馈摘要”“任务 contract”分层管理。
+        </p>
+      </section>
 
-      <div class="section-card" id="harness">
-        <h2>阶段二：Agent-One Harness</h2>
-        <h3>Agent 评测进化、Trace 采集与失败归因</h3>
+      <section class="section-card" id="contract">
+        <h2>任务 Contract</h2>
+        <p>
+          为了让 Agent 失败可诊断、可训练，我参与了 task contract 抽取与修复链路。
+        </p>
+        <table>
+          <tr><th>能力</th><th>实现细节</th></tr>
+          <tr><td>输出路径抽取</td><td>从任务描述、测试日志和 shell 命令中抽取 required output file / directory，避免 Agent 只写解释不落盘。</td></tr>
+          <tr><td>服务与端口识别</td><td>识别 HTTP URL、端口、service hints 和 subprocess 路径，帮助 Agent 判断是否需要启动服务或检查进程。</td></tr>
+          <tr><td>断言和指标解析</td><td>从 pytest assertion、CSV 行列约束、expected numbers、semantic metrics 中提取 verifier 条件。</td></tr>
+          <tr><td>失败修复工具</td><td>实现 substitution contract helper：在沙箱内多轮尝试同义替换，运行编译/验证命令，选择能减少 failure signal 的候选。</td></tr>
+        </table>
+        <div class="highlight-box">
+          <p><strong>工程价值：</strong>task contract 把自然语言任务转成可执行约束，Trace 再把每一步工具调用和验证结果记录下来。这样后训练数据不只是“最终成功/失败”，而是能定位到哪类组件和哪类动作导致失败。</p>
+        </div>
+      </section>
+
+      <section class="section-card" id="learning">
+        <h2>评测与学习闭环</h2>
+        <p>
+          在框架设计之外，我还参与了 Agent-One 的评测与学习闭环建设：使用 Terminal-Bench 作为真实可执行任务环境，用 vLLM 接入 Qwen 系列本地模型，并把运行过程转为训练数据。
+        </p>
+        <table>
+          <tr><th>环节</th><th>内容</th></tr>
+          <tr><td>Model Serving</td><td>Qwen3.5-4B / 9B + vLLM OpenAI-compatible 接口，处理 tool parser 和上下文长度。</td></tr>
+          <tr><td>Benchmark</td><td>接入 Terminal-Bench 2.0，支持 Easy / Medium / Hard 共 89 道任务。</td></tr>
+          <tr><td>Trace</td><td>记录 messages、tool traces、actions、observations、tokens、masks、verifier feedback。</td></tr>
+          <tr><td>Attribution</td><td>区分模型策略错误、工具协议错误、环境依赖错误、verifier 错误和上下文错误。</td></tr>
+          <tr><td>Reward / Filter</td><td>根据任务通过率、动作合法性、工具有效性、步骤冗余和失败类型构造训练信号。</td></tr>
+        </table>
+        <p>
+          Terminal-Bench 适配层负责把 Harbor job 转换成 HARE-X 的 Trace、EvalRun、TaskResult 和 EvidencePack；批量运行层负责选择任务、并发执行、断点续跑、Docker 拉取失败识别和 pass@1 汇总。
+        </p>
+        <p>
+          Trace schema 中显式区分模型调用、工具调用、工具结果、状态更新、校验决策、沙箱事件、重试、修复、最终响应和错误事件。这些事件类型使得失败归因可以从自然语言复盘转为结构化统计。
+        </p>
+        <div class="highlight-box">
+          <p><strong>结果口径：</strong>Qwen3.5-4B 在 Terminal-Bench Easy 4 题单次 full run 达到 3/4。历史累计进度用于失败归因和训练数据分析，不作为严格同口径排行榜 pass@1。</p>
+        </div>
+      </section>
+
+      <section class="section-card" id="contribution">
+        <h2>个人贡献</h2>
         <ul>
-          <li>面向 Agent 在复杂终端与跨工具任务中<strong>执行不稳定、失败原因难定位、Prompt / Tool 改动难评估</strong>等问题，构建 Agent-One Harness 评测进化框架。</li>
-          <li>将 Prompt、Tool、Runtime、Sandbox、Validator、Trace、Evaluator 等能力抽象为可版本化组件，支持 Harness 版本的候选评估、回归对比与晋升发布。</li>
-          <li>接入 <strong>Terminal-Bench 2.0</strong> 真实终端任务集，开发任务适配、环境初始化、批量运行、断点续跑、Trace 保存与 <strong>pass@1</strong> 统计流程，支持 Easy / Medium / Hard 共 <strong>89</strong> 道任务的自动化评测。</li>
-          <li>基于真实失败样本迭代 Harness 版本，系统优化 Runtime 超时控制、LLM retry 策略、Sandbox 隔离逻辑、工具调用约束、任务 contract 解析与 verifier 适配流程；优化后 Easy 子集达到 <span class="highlight">pass@1 = 100%</span>。</li>
-          <li>构建 <strong>Trace 采集与失败归因</strong>流程，对 Agent 运行轨迹、工具调用结果、环境反馈、失败证据、错误类型与任务得分进行结构化建模，将失败原因归因到 Prompt、工具协议、运行时、沙箱环境、任务 contract 或 verifier 层面。</li>
+          <li>参与 Agent 框架设计，覆盖 Runtime、Memory、Skill、多 Agent 协同、Context 和 Tool Calling 核心抽象。</li>
+          <li>参与 Memory 写入 / 召回、Skill 按需加载、长任务上下文压缩和任务状态恢复设计。</li>
+          <li>接入 vLLM 本地模型服务和 Terminal-Bench 评测环境，支持批量运行、断点续跑和 trace 复盘。</li>
+          <li>设计 Agent 轨迹数据结构和失败归因口径，将真实任务反馈转为 reward / filter 信号，为 SFT / GRPO 数据构造服务。</li>
         </ul>
-      </div>
+      </section>
 
-      <div class="section-card" id="learning">
-        <h2>阶段三：Agent-One Learning</h2>
-        <h3>基于稳定轨迹的端侧 Agent 模型训练</h3>
-        <ul>
-          <li>基于阶段二稳定 Harness 产出的高质量执行轨迹，搭建端侧 Agent 模型训练流程，打通任务 rollout、轨迹清洗、reward 构造、在线训练、policy 回灌与 holdout 评估链路。</li>
-          <li>使用 <strong>Qwen3.5-4B</strong> 作为端侧候选模型，设计多步轨迹数据结构，记录 messages、tool traces、tokens、masks、logprobs、reasoning、环境反馈与任务结果，将 Agent 执行过程转化为可训练、可评估、可复盘的结构化样本。</li>
-          <li>构建 <strong>Trace Feedback 与 Reward Modeling</strong> 机制，结合任务通过率、动作合法性、工具调用有效性、步骤冗余度、答案一致性、失败类型与轨迹质量等信号，对轨迹进行自动化打分、样本筛选与训练数据构造，为 <strong>GRPO</strong> 策略优化提供奖励信号。</li>
-          <li>接入 <strong>Atropos online trainer</strong> 开展 rollout 在线强化学习，在 holdout 任务集上对比 base / trained policy，验证轨迹反馈到策略优化的闭环效果。</li>
-        </ul>
-      </div>
-
-      <div class="section-card" id="capability">
-        <h2>能力沉淀</h2>
-        <ul>
-          <li><strong>Agent 工程能力：</strong>从 Runtime、Skill、Memory 到 Tool Calling 协议，完成可扩展、可观测、可复用的 Agent 执行底座设计。</li>
-          <li><strong>评测与稳定性能力：</strong>将真实终端任务、Trace 证据、失败归因与版本晋升连接成持续进化闭环，支持 Prompt / Tool / Runtime 改动的可量化评估。</li>
-          <li><strong>训练数据与反馈建模：</strong>将 Agent 执行轨迹转化为结构化训练样本，并通过 reward 信号把任务结果、动作质量和轨迹质量反馈到策略优化过程。</li>
-          <li><strong>AIPC 场景理解：</strong>围绕 PC、手机、NAS 多端协作链路处理权限、审批、归档、上下文恢复与任务状态管理等实际工程约束。</li>
-        </ul>
-      </div>
-
-      <div style="text-align: center; margin-top: 48px;">
-        <a href="index.html" class="link-button">
-          ← 返回主页
-        </a>
+      <div class="detail-footer-actions">
+        <a href="index.html" class="link-button">← 返回主页</a>
       </div>
     </div>
 
@@ -130,54 +231,22 @@
         anchor.addEventListener('click', function (e) {
           e.preventDefault();
           const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
-
-            if (window.innerWidth <= 1200) {
-              document.getElementById('toc').classList.remove('show');
-            }
-          }
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (window.innerWidth <= 1200) document.getElementById('toc').classList.remove('show');
         });
       });
-
       window.addEventListener('scroll', function() {
         const sections = document.querySelectorAll('.section-card[id]');
         const tocLinks = document.querySelectorAll('.toc-list a');
-
         let currentSection = '';
         sections.forEach(section => {
-          const sectionTop = section.offsetTop - 100;
-          const sectionHeight = section.offsetHeight;
-          if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionTop + sectionHeight) {
-            currentSection = section.getAttribute('id');
-          }
+          if (window.pageYOffset >= section.offsetTop - 100) currentSection = section.getAttribute('id');
         });
-
-        tocLinks.forEach(link => {
-          link.classList.remove('active');
-          if (link.getAttribute('href') === '#' + currentSection) {
-            link.classList.add('active');
-          }
-        });
+        tocLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + currentSection));
       });
-
       const tocToggle = document.getElementById('tocToggle');
       const toc = document.getElementById('toc');
-
-      tocToggle.addEventListener('click', function() {
-        toc.classList.toggle('show');
-      });
-
-      document.addEventListener('click', function(e) {
-        if (window.innerWidth <= 1200) {
-          if (!toc.contains(e.target) && !tocToggle.contains(e.target)) {
-            toc.classList.remove('show');
-          }
-        }
-      });
+      tocToggle.addEventListener('click', () => toc.classList.toggle('show'));
     </script>
   </body>
 </html>
