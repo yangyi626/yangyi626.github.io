@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="NovelSim 项目详情：规则约束的多智能体叙事世界、长期记忆、权威状态与系统评测。" />
+    <title>NovelSim 项目详情 | 杨艺 Yang Yi</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <a href="index.html" class="back-button">← 返回主页</a>
+
+      <div class="header">
+        <div class="eyebrow">Game AI Agent · Multi-agent · Rule-grounded Simulation</div>
+        <h1>NovelSim：规则约束的多智能体叙事世界模拟系统</h1>
+        <div class="project-meta"><strong>个人项目</strong> | 2026.07 – 2026.08</div>
+        <div>
+          <span class="badge badge-venue">Python / FastAPI</span>
+          <span class="badge badge-ccf">Vue 3 / Unity</span>
+          <span class="badge badge-role">Qdrant / SQLite FTS5</span>
+          <span class="badge badge-venue">Pydantic</span>
+        </div>
+        <div class="detail-summary" aria-label="项目摘要">
+          <div><span>定位</span><strong>服务器权威 AI 叙事游戏原型</strong></div>
+          <div><span>架构</span><strong>LLM 决策 + 确定性状态机</strong></div>
+          <div><span>测试</span><strong>333 项回归 + 9/9 场景</strong></div>
+          <div><span>一致性</span><strong>非法写入与知识泄漏为 0</strong></div>
+        </div>
+      </div>
+
+      <nav class="toc-container" id="toc">
+        <div class="toc-title">目录导航</div>
+        <ul class="toc-list">
+          <li><a href="#overview">项目概览</a></li>
+          <li><a href="#problem">问题与原则</a></li>
+          <li><a href="#architecture">系统架构</a></li>
+          <li><a href="#agents">多智能体流程</a></li>
+          <li><a href="#memory">长期记忆</a></li>
+          <li><a href="#runtime">运行与可视化</a></li>
+          <li><a href="#evaluation">系统评测</a></li>
+          <li><a href="#contribution">个人贡献</a></li>
+        </ul>
+      </nav>
+      <button class="toc-toggle" id="tocToggle" aria-label="目录">☰</button>
+
+      <div class="detail-content">
+
+      <section class="section-card" id="overview">
+        <h2>项目概览</h2>
+        <p>
+          NovelSim 是一个服务器权威的多智能体叙事游戏原型。玩家和 NPC 的自然语言先被解析为候选行动，LLM 只负责高层意图、角色决策与叙事表达，不能直接修改世界；所有事实变化都必须通过工具权限、世界规则、角色认知和因果授权校验，再以原子 StatePatch 提交为可回放的 WorldEvent。
+        </p>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-number">333</div><div class="stat-label">自动化回归测试通过</div></div>
+          <div class="stat-card"><div class="stat-number">9/9</div><div class="stat-label">确定性场景通过</div></div>
+          <div class="stat-card"><div class="stat-number">0</div><div class="stat-label">非法 Patch / 越权 / 泄漏</div></div>
+          <div class="stat-card"><div class="stat-number">100%</div><div class="stat-label">状态回放与因果一致率</div></div>
+        </div>
+      </section>
+
+      <section class="section-card" id="problem">
+        <h2>问题与设计原则</h2>
+        <p>
+          生成式游戏若让大模型直接修改世界状态，容易产生不存在的实体或技术、角色使用未掌握的信息、能力越界以及叙事与真实状态互相矛盾等问题。NovelSim 将“生成能力”和“事实权威”解耦：模型可以提出行动，但只有确定性引擎能够提交状态变化。
+        </p>
+        <table>
+          <tr><th>风险</th><th>系统约束</th></tr>
+          <tr><td>世界观幻觉</td><td>校验实体、时代技术、世界概念、Capability 与 Affordance。</td></tr>
+          <tr><td>角色知识泄漏</td><td>按 session 与 character 隔离记忆，并校验角色已知信息和证据链。</td></tr>
+          <tr><td>状态矛盾</td><td>所有变化通过结构化 StatePatch 原子提交，由事件版本链维护权威状态。</td></tr>
+          <tr><td>叙事脱离事实</td><td>叙事必须引用已提交事件，并通过实体、说话者、认知边界与事件依据检查。</td></tr>
+        </table>
+      </section>
+
+      <section class="section-card" id="architecture">
+        <h2>系统架构</h2>
+        <div class="pipeline-strip">
+          <span class="pipeline-step">玩家 / NPC 意图</span>
+          <span class="pipeline-step">候选 Action</span>
+          <span class="pipeline-step">规则与认知校验</span>
+          <span class="pipeline-step">StatePatch</span>
+          <span class="pipeline-step">WorldEvent</span>
+          <span class="pipeline-step">叙事与前端表现</span>
+        </div>
+        <div class="implementation-list">
+          <div class="implementation-item">
+            <strong>提议</strong>
+            LLM 基于角色状态、局部观察、记忆与玩家输入，生成符合 Pydantic Schema 的候选行为和工具参数。
+          </div>
+          <div class="implementation-item">
+            <strong>校验</strong>
+            ToolRegistry 和规则引擎检查工具权限、实体存在性、世界设定、角色能力、空间位置、已知信息与 Action-Patch 因果关系。
+          </div>
+          <div class="implementation-item">
+            <strong>执行</strong>
+            通过校验的行为被转化为原子 StatePatch，并提交为带版本号、因果证据和状态哈希的权威 WorldEvent。
+          </div>
+          <div class="implementation-item">
+            <strong>叙事</strong>
+            Narrator 只解释已发生的事件；Web 和 Unity 客户端消费事件流，表现移动、物品、对话、关系和联盟变化。
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" id="agents">
+        <h2>多智能体流程</h2>
+        <p>
+          每个角色 Agent 运行“感知—记忆检索—决策—工具执行—观察—反思”闭环。角色只看到自身可感知的世界状态与角色隔离记忆，信息通过对话和事件逐跳传播，并保留来源证据，避免全知视角造成知识泄漏。
+        </p>
+        <table>
+          <tr><th>模块</th><th>职责</th></tr>
+          <tr><td>Perception</td><td>构造角色局部观察，过滤不可见实体和未知事实。</td></tr>
+          <tr><td>Planner</td><td>根据目标、关系、记忆和当前状态生成结构化候选行动。</td></tr>
+          <tr><td>Agent Tools</td><td>提供移动、交互、物品、对话、信息传播与联盟等受控能力。</td></tr>
+          <tr><td>Reflection</td><td>从新事件提炼长期记忆，更新关系与后续决策依据。</td></tr>
+          <tr><td>Scheduler</td><td>调度 NPC 行动和回合推进，保证状态版本与事件顺序一致。</td></tr>
+        </table>
+      </section>
+
+      <section class="section-card" id="memory">
+        <h2>长期记忆</h2>
+        <p>
+          记忆系统以 session_id + character_id 严格隔离角色数据，结合 SQLite FTS5 词法检索和 Qdrant 向量检索，并将语义相关度、词法相关度、重要度与新近性组合排序。召回内容携带 source_event_id，用于证据引用、冲突检测和角色认知审计。
+        </p>
+        <table>
+          <tr><th>方案</th><th>Hit@4</th><th>MRR</th><th>nDCG@4</th></tr>
+          <tr><td>SQLite FTS5 基线</td><td>0.840</td><td>0.805</td><td>0.814</td></tr>
+          <tr><td>最终混合检索</td><td>1.000</td><td>0.957</td><td>0.967</td></tr>
+        </table>
+        <p>
+          评测使用 25 条易混淆剧情记忆和 50 个中文查询；简历采用可直接复现的 FTS5 基线 Hit@4 / MRR = 0.84 / 0.805，项目中另完成了 Qdrant 混合检索优化。
+        </p>
+      </section>
+
+      <section class="section-card" id="runtime">
+        <h2>运行与可视化</h2>
+        <ul>
+          <li>基于事件日志、版本链和状态哈希实现存档恢复、断点续传与剧情回放。</li>
+          <li>使用 FastAPI 与 Vue 3 构建 Web 控制台，展示角色状态、世界规则、关系图、行为轨迹、工具调用与规则拒绝原因。</li>
+          <li>接入 Unity 6.3 LTS，支持 NavMesh 移动、场景交互、物品 / 对话 / 联盟 HUD 和可续传事件游标。</li>
+          <li>提供编译器与创作者流程，可将书籍或场景素材转化为世界包、角色、规则和可运行场景。</li>
+        </ul>
+      </section>
+
+      <section class="section-card" id="evaluation">
+        <h2>系统评测</h2>
+        <div class="highlight-box">
+          <p><strong>确定性基线：</strong>333 项 Python 回归测试通过，9/9 个固定场景通过；合法工具、预期拒绝、状态回放、信息传播和证据链均为 100%。</p>
+          <p><strong>安全一致性：</strong>非法状态写入、未知实体接受、因果越权提交与角色认知泄漏均为 0；门禁 G0 → G3 的违规放过数由 6 降至 0。</p>
+        </div>
+        <table>
+          <tr><th>评测</th><th>结果</th></tr>
+          <tr><td>确定性场景</td><td>9/9 通过，Free / Script 权威终态和工具链一致率 100%。</td></tr>
+          <tr><td>真实模型回归</td><td>20/20 完整运行，18/20 目标成功；14 个提交事件的回放、因果证据、叙事覆盖和结构化事件依据均为 100%。</td></tr>
+          <tr><td>真实模型调用</td><td>45 次调用、49,255 Token，P50 / P95 为 10.554s / 16.469s。</td></tr>
+          <tr><td>强基线盲测</td><td>与同模型 direct-prompt 强基线为 3–3；不将主观叙事质量表述为领先结论。</td></tr>
+        </table>
+      </section>
+
+      <section class="section-card" id="contribution">
+        <h2>个人贡献</h2>
+        <ul>
+          <li>独立设计并实现 LLM 高层决策、Agent 状态机、ToolRegistry、StatePatch 与 WorldEvent 组成的混合架构。</li>
+          <li>实现世界规则、角色能力、时空、认知与 Action-Patch 因果校验，建立服务器权威状态边界。</li>
+          <li>构建多 Agent 感知、记忆、决策、反思和信息传播流程，并接入 SQLite FTS5 与 Qdrant 长期记忆。</li>
+          <li>完成 FastAPI / Vue 3 控制台、Unity 运行时、存档回放以及确定性、真实 LLM 和记忆检索评测。</li>
+        </ul>
+      </section>
+
+      <div class="detail-footer-actions">
+        <a href="index.html" class="link-button">← 返回主页</a>
+      </div>
+      </div>
+    </div>
+
+    <script>
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (window.innerWidth <= 1200) document.getElementById('toc').classList.remove('show');
+        });
+      });
+      window.addEventListener('scroll', function() {
+        const sections = document.querySelectorAll('.section-card[id]');
+        const tocLinks = document.querySelectorAll('.toc-list a');
+        let currentSection = '';
+        sections.forEach(section => {
+          if (window.pageYOffset >= section.offsetTop - 100) currentSection = section.getAttribute('id');
+        });
+        tocLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + currentSection));
+      });
+      const tocToggle = document.getElementById('tocToggle');
+      const toc = document.getElementById('toc');
+      tocToggle.addEventListener('click', () => toc.classList.toggle('show'));
+    </script>
+  </body>
+</html>

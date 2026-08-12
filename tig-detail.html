@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TiG 后训练项目详情 | 杨艺 Yang Yi</title>
+    <meta name="description" content="Dota 2 宏观决策预测项目详情：Qwen2.5-14B 多阶段后训练、纠错优化与严格留出集评测。" />
+    <title>Dota 2 宏观决策预测项目详情 | 杨艺 Yang Yi</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -12,13 +13,19 @@
 
       <div class="header">
         <div class="eyebrow">大模型后训练 · 决策预测 · 严格 Holdout 验证</div>
-        <h1>TiG 风格宏观动作预测：Qwen2.5-14B 的 SFT / GRPO / OPD-lite 后训练</h1>
+        <h1>Dota 2 宏观决策预测：Qwen2.5-14B 多阶段后训练与纠错优化</h1>
         <div class="project-meta"><strong>个人项目</strong> | 2026.05 – 2026.06</div>
         <div>
           <span class="badge badge-venue">Qwen2.5-14B</span>
           <span class="badge badge-ccf">GRPO</span>
           <span class="badge badge-role">OPD-lite</span>
           <span class="badge badge-venue">OpenDota</span>
+        </div>
+        <div class="detail-summary" aria-label="项目摘要">
+          <div><span>角色</span><strong>独立研究与开发</strong></div>
+          <div><span>模型</span><strong>Qwen2.5-14B</strong></div>
+          <div><span>方法</span><strong>SFT + GRPO + OPD-lite</strong></div>
+          <div><span>结果</span><strong>Strict holdout +4.80 pp</strong></div>
         </div>
       </div>
 
@@ -37,10 +44,12 @@
       </nav>
       <button class="toc-toggle" id="tocToggle" aria-label="目录">☰</button>
 
+      <div class="detail-content">
+
       <section class="section-card" id="overview">
         <h2>项目概览</h2>
         <p>
-          该项目面向 Dota 2 复杂团队博弈场景，研究大模型能否根据当前比赛状态预测队伍下一步宏观动作，例如 Farm、Team Fight、Push Tower、Defend Tower、Pickoff 等。项目重点不是做一个普通分类器，而是用 Qwen2.5-14B 在指令生成范式下完成决策预测，并通过 SFT、GRPO 和 OPD-lite corrected continuation 做后训练。
+          该项目面向 Dota 2 长时序、强对抗的团队博弈场景，研究大模型能否根据当前及近期比赛状态，从推进、防守、打团、抓单、Roshan 和发育等 16 类策略中预测队伍下一阶段的 1–2 个团队动作。项目以 Qwen2.5-14B 在指令生成范式下完成决策预测，并通过 SFT、GRPO 和 OPD-lite corrected continuation 做多阶段后训练与纠错优化。
         </p>
         <div class="stats-grid">
           <div class="stat-card"><div class="stat-number">64.88%</div><div class="stat-label">原始 V4.6 test 最终 primary acc</div></div>
@@ -63,7 +72,7 @@
           V4.6 数据线保留游戏状态事实和有限动作候选集，但移除了 prompt 中可见的标签捷径，例如 decision hints、future summary、label evidence 等，避免模型依赖泄漏线索。
         </p>
         <p>
-          动作空间由统一配置维护，包含 Roshan、Push / Defend Tower、Push Barracks、Team Fight、Pickoff、Vision、Rune、Farm 等宏观团队动作。模型输出通过 answer 标签解析，保证训练、推理和评测使用同一套格式约束。
+          动作空间由统一配置维护，包含 Roshan，推进上、中、下路防御塔 / 兵营 / 遗迹，防守上、中、下路防御塔 / 兵营 / 遗迹，以及 Team Fight、Pickoff、Vision、Rune、Farm 共 16 类宏观团队动作。模型输出通过 answer 标签解析，保证训练、推理和评测使用同一套格式约束。
         </p>
       </section>
 
@@ -182,15 +191,16 @@
       <section class="section-card" id="contribution">
         <h2>个人贡献</h2>
         <ul>
-          <li>构建 V4.6 TiG-aligned 数据线，清理 prompt-visible label shortcuts 并完成 split / holdout 审计。</li>
-          <li>实现 SFT、GRPO、OPD-lite 训练与评测脚本，完成多版本模型对比。</li>
-          <li>设计 mixed reward，覆盖正确性、集合质量、格式合法性和动作空间约束。</li>
-          <li>撰写最终实验报告、strict holdout 误差分析和 token-level OPD 负结果总结。</li>
+          <li>基于 OpenDota 职业比赛回放构建 V4.6 TiG-aligned 数据线，清理 prompt-visible label shortcuts 并完成 split / holdout 审计。</li>
+          <li>使用 BF16 LoRA 实现 Qwen2.5-14B 的 SFT、GRPO、OPD-lite 训练与评测脚本，完成多版本和不同训练步数对比。</li>
+          <li>设计 mixed reward，覆盖主动作正确性、动作集合 F1、格式合法性和异常动作惩罚。</li>
+          <li>完成 74 场新比赛严格留出集评测、类别切片误差分析及 token-level OPD 探索性负结果总结。</li>
         </ul>
       </section>
 
       <div class="detail-footer-actions">
         <a href="index.html" class="link-button">← 返回主页</a>
+      </div>
       </div>
     </div>
 

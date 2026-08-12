@@ -13,10 +13,10 @@
       <div class="header">
         <div class="eyebrow">KDD Cup 2026 · 多源数据推理 · Tool-use Agent</div>
         <h1>KDD Cup 2026 DataAgent-Bench：多源数据分析 Agent</h1>
-        <div class="project-meta"><strong>Agent 算法负责人</strong> | 2026.04 – 2026.05 | Top 3.6%（25/700）</div>
+        <div class="project-meta"><strong>Agent 算法与框架核心开发</strong> | 2026.04 – 2026.05 | Top 7.7%（54/703）</div>
         <div>
           <span class="badge badge-venue">Qwen3.5-35B-A3B</span>
-          <span class="badge badge-ccf">ReAct + JSON Action</span>
+          <span class="badge badge-ccf">ReAct + JSON Schema</span>
           <span class="badge badge-role">Schema Linking</span>
           <span class="badge badge-venue">SQLite / CSV / JSON</span>
         </div>
@@ -37,16 +37,18 @@
       </nav>
       <button class="toc-toggle" id="tocToggle" aria-label="目录">☰</button>
 
+      <div class="detail-content">
+
       <section class="section-card" id="overview">
         <h2>竞赛概览</h2>
         <p>
           DataAgent-Bench 要求 Agent 在给定 CSV、JSON、SQLite、Markdown 等多源上下文中自动读数、查表、计算，并生成标准答案表格。Hidden test 只提供 input，不提供 gold output，因此 Agent 必须具备可靠的数据发现、schema linking、执行验证和最终提交能力。
         </p>
         <div class="stats-grid">
-          <div class="stat-card"><div class="stat-number">Top 3.6%</div><div class="stat-label">排行榜排名</div></div>
-          <div class="stat-card"><div class="stat-number">25/700</div><div class="stat-label">最终阶段排名</div></div>
+          <div class="stat-card"><div class="stat-number">Top 7.7%</div><div class="stat-label">排行榜排名</div></div>
+          <div class="stat-card"><div class="stat-number">54/703</div><div class="stat-label">竞赛排名</div></div>
           <div class="stat-card"><div class="stat-number">0.5129</div><div class="stat-label">阶段评测得分</div></div>
-          <div class="stat-card"><div class="stat-number">5 阶段</div><div class="stat-label">Discovery → Submission</div></div>
+          <div class="stat-card"><div class="stat-number">37/50</div><div class="stat-label">最优消融精确匹配</div></div>
         </div>
       </section>
 
@@ -63,10 +65,10 @@
       <section class="section-card" id="agent">
         <h2>Agent 设计</h2>
         <p>
-          我基于 Qwen3.5-35B-A3B 构建 ReAct + JSON Action Agent，把复杂数据问答拆解为 Discovery、Schema Linking、Execution、Verification、Submission 五个阶段。
+          我基于官方 ReAct Baseline 与 Qwen3.5-35B-A3B 构建可控 Data Agent，把复杂数据问答拆解为 Discovery、Schema Linking、Execution、Verification、Submission 五个阶段。
         </p>
         <p>
-          Agent 主循环采用严格的 JSON Action 协议。模型每一步必须输出 think、action、action_input 三个字段；响应 schema 会把 action 限制在已注册工具枚举内，解析失败则记录错误 step 并继续下一轮修复。
+          Agent 主循环采用 JSON Schema 约束的 ReAct 协议。模型每一步必须输出 think、action、action_input 三个字段；响应 schema 将 action 限制在已注册工具枚举内，解析失败则记录错误 step 并进入重试自修复。
         </p>
         <table>
           <tr><th>阶段</th><th>作用</th></tr>
@@ -99,7 +101,7 @@
           <tr><td>finishtask</td><td>提交最终标准答案表格。</td></tr>
         </table>
         <p>
-          JSON Action 相比自由文本工具调用更容易做 action 枚举校验、参数解析、错误定位和 trace 复盘。
+          JSON Schema 约束的结构化 Action 相比自由文本工具调用更容易做 action 枚举校验、参数解析、错误定位和 trace 复盘。
         </p>
         <p>
           工具注册表负责管理所有工具能力。每个工具实现统一接口，声明 name、description、input_schema、permissions 和 handler；工具描述会被注入 system prompt，执行器则按 action 名称分发执行。
@@ -114,11 +116,11 @@
         <div class="implementation-list">
           <div class="implementation-item">
             <strong>上下文窗口监控</strong>
-            用字符级启发式估算 token 使用量，记录 progress bar、used / remaining tokens 和 message_count，防止长 observation 把上下文撑爆。
+            对长 Observation 进行截断，并监控 128K 上下文窗口的 used / remaining tokens 与 message_count，防止多步工具结果挤占推理空间。
           </div>
           <div class="implementation-item">
             <strong>业务语义增强</strong>
-            系统会解析数据库业务语义手册，把 business rules、measures、scenario hints 和 candidate tables 注入 task prompt，但要求最终字段仍以工具观测为准。
+            从 500 条 Evidence / SQL 样本中抽取业务规则和跨表关系，构建覆盖 11 个数据库、75 张表的语义文档；将 business rules、measures、scenario hints 和 candidate tables 注入 task prompt，但最终字段仍以工具观测为准。
           </div>
           <div class="implementation-item">
             <strong>任务并发与超时</strong>
@@ -148,7 +150,7 @@
       <section class="section-card" id="result">
         <h2>结果</h2>
         <div class="highlight-box">
-          <p><strong>KDD Cup 2026 DataAgent-Bench：</strong>阶段评测得分 0.5129，排行榜 25/700，Top 3.6%。</p>
+          <p><strong>KDD Cup 2026 DataAgent-Bench：</strong>三组 50 题消融中，最优方案取得 37/50 精确匹配、75% Recall；竞赛得分 0.5129，排行榜 54/703，Top 7.7%。</p>
         </div>
         <p>
           这个项目证明了我在真实 benchmark 中构建可控 Tool-use Agent 的能力，也为后续 Agent Learning 提供了多源数据推理、schema linking 和 trace 复盘经验。
@@ -158,15 +160,16 @@
       <section class="section-card" id="contribution">
         <h2>个人贡献</h2>
         <ul>
-          <li>负责 Agent 工具调用框架和 JSON Action 策略设计。</li>
+          <li>负责 Agent 工具调用框架和 JSON Schema 约束的 ReAct 协议设计。</li>
           <li>构建 Schema Linking、SQL / Python 执行、最终答案提交等工具链路。</li>
-          <li>设计工具调用安全边界、任务超时控制和 trace 复盘流程。</li>
-          <li>基于错误类型迭代 prompt 规则、业务语义文档和结果校验策略。</li>
+          <li>构建覆盖 11 个数据库、75 张表的业务语义文档，迭代字段映射、查询逻辑和答案格式约束。</li>
+          <li>设计路径隔离、只读 SQL、Python 超时与写入保护，并完成三组 50 题消融和 trace 复盘。</li>
         </ul>
       </section>
 
       <div class="detail-footer-actions">
         <a href="index.html" class="link-button">← 返回主页</a>
+      </div>
       </div>
     </div>
 
