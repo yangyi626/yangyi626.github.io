@@ -733,15 +733,6 @@ strong {
   box-shadow: 0 0 0 3px #e1f5ee;
 }
 
-.status-submitted {
-  color: #a46018;
-}
-
-.status-submitted::before {
-  background: #d58a32;
-  box-shadow: 0 0 0 3px #fff1dd;
-}
-
 .award-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

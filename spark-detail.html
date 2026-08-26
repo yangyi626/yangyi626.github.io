@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="SPARK 项目详情：使用 LLM 多智能体模拟在线讨论中的话题与立场协同演化。" />
+    <meta name="description" content="SPARK 项目详情：基于 LLM 多智能体的长期交互与行为演化仿真框架。" />
     <title>SPARK 项目详情 | 杨艺 Yang Yi</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -14,9 +14,9 @@
       </a>
 
       <div class="header">
-        <h1>SPARK：基于LLM的多智能体对话系统与话题-立场协同演化研究框架</h1>
+        <h1>SPARK：基于 LLM 多智能体的长期交互与行为演化仿真框架</h1>
         <div class="project-meta">
-          <strong>核心研究员 &amp; 算法工程师</strong> | 2025.02 – 2025.06
+          <strong>共同第一作者</strong> | 2025.02 – 2025.06
         </div>
         <div>
           <span class="badge badge-venue">EMNLP 2025</span>
@@ -64,7 +64,7 @@
       <div class="section-card" id="overview">
         <h2><span class="emoji">📋</span>项目概览</h2>
         <p>
-          SPARK 是<strong>首个基于大语言模型的多智能体对话系统</strong>，用于模拟社交媒体中<strong>话题演化</strong>与<strong>立场动态</strong>的协同演化机制。该框架通过 108 个具有独特人格特质的 LLM 智能体，在 5 个真实领域（政治、科技、社会、医疗、科学）开展大规模对话仿真，实现了个体层面可追踪、群体层面可量化的社会计算研究。
+          SPARK 是基于 LLM 多智能体的长期交互与行为演化仿真框架。系统构建 108 个具有独立 Persona 的 LLM Agent，引入短期记忆、长期记忆与反思机制，使 Agent 能够结合角色属性与历史交互持续更新内部状态，并在 5 类真实场景中自主产生新话题与差异化群体行为。
         </p>
         
         <div class="stats-grid">
@@ -73,8 +73,8 @@
             <div class="stat-label">智能体规模</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number">10,000+</div>
-            <div class="stat-label">对话轮次</div>
+            <div class="stat-number">0.504</div>
+            <div class="stat-label">完整记忆下的立场多样性</div>
           </div>
           <div class="stat-card">
             <div class="stat-number">5</div>
@@ -82,7 +82,7 @@
           </div>
           <div class="stat-card">
             <div class="stat-number">0.88</div>
-            <div class="stat-label">话题-立场相关系数</div>
+            <div class="stat-label">立场变化与新话题产生的 Pearson 相关系数</div>
           </div>
         </div>
       </div>
@@ -241,7 +241,7 @@
             <strong>消融实验</strong>
             <ul>
               <li>验证双层记忆对立场多样性的贡献</li>
-              <li>移除短期记忆导致多样性下降 <span class="highlight">40%</span></li>
+              <li>完整模型的立场多样性为 <span class="highlight">0.504</span>；分别移除短期与长期记忆后下降至 <span class="highlight">0.300 / 0.309</span></li>
             </ul>
           </li>
         </ul>

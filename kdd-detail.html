@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KDD Cup DataAgent-Bench 详情 | 杨艺 Yang Yi</title>
+    <meta name="description" content="DataAgent 项目详情：KDD Cup 2026 DataAgent-Bench、冠军方案复现、DuckDB 多源处理与任务自适应路由。" />
+    <title>DataAgent · KDD Cup 2026 详情 | 杨艺 Yang Yi</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -11,165 +12,123 @@
       <a href="index.html" class="back-button">← 返回主页</a>
 
       <div class="header">
-        <div class="eyebrow">KDD Cup 2026 · 多源数据推理 · Tool-use Agent</div>
-        <h1>KDD Cup 2026 DataAgent-Bench：多源数据分析 Agent</h1>
-        <div class="project-meta"><strong>Agent 算法与框架核心开发</strong> | 2026.04 – 2026.05 | Top 7.7%（54/703）</div>
+        <div class="eyebrow">KDD Cup 2026 · DataAgent-Bench · Adaptive Routing</div>
+        <h1>DataAgent：KDD Cup 2026 DataAgent-Bench</h1>
+        <div class="project-meta"><strong>个人参赛 · 冠军方案复现与赛后优化</strong> | 2026.04 – 2026.08 | 排名 54/703</div>
         <div>
-          <span class="badge badge-venue">Qwen3.5-35B-A3B</span>
-          <span class="badge badge-ccf">ReAct + JSON Schema</span>
-          <span class="badge badge-role">Schema Linking</span>
-          <span class="badge badge-venue">SQLite / CSV / JSON</span>
+          <span class="badge badge-venue">DuckDB</span>
+          <span class="badge badge-role">Task Routing</span>
+          <span class="badge badge-ccf">SQL / Python Solver</span>
+          <span class="badge badge-venue">Multi-source Data</span>
+        </div>
+        <div class="detail-summary" aria-label="项目摘要">
+          <div><span>角色</span><strong>个人参赛</strong></div>
+          <div><span>排名</span><strong>54 / 703</strong></div>
+          <div><span>Token</span><strong>-33.4%</strong></div>
+          <div><span>耗时</span><strong>-37.4%</strong></div>
         </div>
       </div>
 
       <nav class="toc-container" id="toc">
         <div class="toc-title">目录导航</div>
         <ul class="toc-list">
-          <li><a href="#overview">竞赛概览</a></li>
-          <li><a href="#task">任务特点</a></li>
-          <li><a href="#agent">Agent 设计</a></li>
-          <li><a href="#tools">工具体系</a></li>
-          <li><a href="#runtime">运行时实现</a></li>
-          <li><a href="#safety">安全与复盘</a></li>
-          <li><a href="#result">结果</a></li>
+          <li><a href="#overview">项目概览</a></li>
+          <li><a href="#analysis">冠军方案分析</a></li>
+          <li><a href="#routing">自适应路由</a></li>
+          <li><a href="#execution">数据与求解</a></li>
+          <li><a href="#evaluation">实验评测</a></li>
           <li><a href="#contribution">个人贡献</a></li>
         </ul>
       </nav>
       <button class="toc-toggle" id="tocToggle" aria-label="目录">☰</button>
 
       <div class="detail-content">
-
-      <section class="section-card" id="overview">
-        <h2>竞赛概览</h2>
-        <p>
-          DataAgent-Bench 要求 Agent 在给定 CSV、JSON、SQLite、Markdown 等多源上下文中自动读数、查表、计算，并生成标准答案表格。Hidden test 只提供 input，不提供 gold output，因此 Agent 必须具备可靠的数据发现、schema linking、执行验证和最终提交能力。
-        </p>
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-number">Top 7.7%</div><div class="stat-label">排行榜排名</div></div>
-          <div class="stat-card"><div class="stat-number">54/703</div><div class="stat-label">竞赛排名</div></div>
-          <div class="stat-card"><div class="stat-number">0.5129</div><div class="stat-label">阶段评测得分</div></div>
-          <div class="stat-card"><div class="stat-number">37/50</div><div class="stat-label">最优消融精确匹配</div></div>
-        </div>
-      </section>
-
-      <section class="section-card" id="task">
-        <h2>任务特点</h2>
-        <ul>
-          <li>上下文异构：同一任务可能同时包含 CSV、JSON、SQLite / DB、Markdown 或普通文档。</li>
-          <li>问题复杂：需要跨文件、跨表、跨字段推理，且经常涉及统计口径理解。</li>
-          <li>输出严格：最终答案必须是标准表格，格式错误会直接影响得分。</li>
-          <li>评测真实：每个任务输出轨迹记录和预测表，便于复盘每一步工具调用。</li>
-        </ul>
-      </section>
-
-      <section class="section-card" id="agent">
-        <h2>Agent 设计</h2>
-        <p>
-          我基于官方 ReAct Baseline 与 Qwen3.5-35B-A3B 构建可控 Data Agent，把复杂数据问答拆解为 Discovery、Schema Linking、Execution、Verification、Submission 五个阶段。
-        </p>
-        <p>
-          Agent 主循环采用 JSON Schema 约束的 ReAct 协议。模型每一步必须输出 think、action、action_input 三个字段；响应 schema 将 action 限制在已注册工具枚举内，解析失败则记录错误 step 并进入重试自修复。
-        </p>
-        <table>
-          <tr><th>阶段</th><th>作用</th></tr>
-          <tr><td>Discovery</td><td>扫描任务上下文，识别可用文件、数据库和文档。</td></tr>
-          <tr><td>Schema Linking</td><td>将自然语言问题中的业务字段映射到真实列名、表名和文件路径。</td></tr>
-          <tr><td>Execution</td><td>执行只读 SQL、Python 计算或文件读取。</td></tr>
-          <tr><td>Verification</td><td>检查统计口径、结果范围和答案格式。</td></tr>
-          <tr><td>Submission</td><td>通过 finishtask 提交标准表格答案。</td></tr>
-        </table>
-        <div class="pipeline-strip">
-          <span class="pipeline-step">build messages</span>
-          <span class="pipeline-step">schema-constrained response</span>
-          <span class="pipeline-step">parse model step</span>
-          <span class="pipeline-step">execute tool</span>
-          <span class="pipeline-step">append observation</span>
-          <span class="pipeline-step">finishtask</span>
-        </div>
-      </section>
-
-      <section class="section-card" id="tools">
-        <h2>工具体系</h2>
-        <table>
-          <tr><th>工具</th><th>用途</th></tr>
-          <tr><td>listdir</td><td>列出 context 下文件和目录，支持控制扫描深度。</td></tr>
-          <tr><td>inspectfile</td><td>读取 CSV / JSON / 文档等文件的结构、列名、样例和行数信息。</td></tr>
-          <tr><td>readfile</td><td>按路径读取文本或结构化文件内容，用于核对字段含义和证据。</td></tr>
-          <tr><td>inspect_sqlite_schema</td><td>查看 SQLite / DB 表结构。</td></tr>
-          <tr><td>execute_context_sql</td><td>在 context 内执行只读 SQL。</td></tr>
-          <tr><td>python</td><td>在任务 context 内执行受限 Python 计算。</td></tr>
-          <tr><td>finishtask</td><td>提交最终标准答案表格。</td></tr>
-        </table>
-        <p>
-          JSON Schema 约束的结构化 Action 相比自由文本工具调用更容易做 action 枚举校验、参数解析、错误定位和 trace 复盘。
-        </p>
-        <p>
-          工具注册表负责管理所有工具能力。每个工具实现统一接口，声明 name、description、input_schema、permissions 和 handler；工具描述会被注入 system prompt，执行器则按 action 名称分发执行。
-        </p>
-      </section>
-
-      <section class="section-card" id="runtime">
-        <h2>运行时实现</h2>
-        <p>
-          运行层会加载 DABench task、创建任务级输出目录、初始化 Agent、执行主循环，并把结果持久化为轨迹记录和标准预测表。
-        </p>
-        <div class="implementation-list">
-          <div class="implementation-item">
-            <strong>上下文窗口监控</strong>
-            对长 Observation 进行截断，并监控 128K 上下文窗口的 used / remaining tokens 与 message_count，防止多步工具结果挤占推理空间。
+        <section class="section-card" id="overview">
+          <h2>项目概览</h2>
+          <p>
+            DataAgent-Bench 面向 CSV、JSON、数据库与文档等异构数据上的复杂问答任务。竞赛阶段以个人身份参赛并取得 54/703；赛后进一步复现冠军 Data Agent，分析其 SQL / Python Solver 推理链路，并围绕冗余上下文与不必要模型调用进行系统优化。
+          </p>
+          <div class="stats-grid">
+            <div class="stat-card"><div class="stat-number">54/703</div><div class="stat-label">KDD Cup 2026 排名</div></div>
+            <div class="stat-card"><div class="stat-number">0.8190</div><div class="stat-label">50 题同配置对比得分</div></div>
+            <div class="stat-card"><div class="stat-number">-33.4%</div><div class="stat-label">Token 消耗下降</div></div>
+            <div class="stat-card"><div class="stat-number">-37.4%</div><div class="stat-label">整体运行耗时下降</div></div>
           </div>
-          <div class="implementation-item">
-            <strong>业务语义增强</strong>
-            从 500 条 Evidence / SQL 样本中抽取业务规则和跨表关系，构建覆盖 11 个数据库、75 张表的语义文档；将 business rules、measures、scenario hints 和 candidate tables 注入 task prompt，但最终字段仍以工具观测为准。
+        </section>
+
+        <section class="section-card" id="analysis">
+          <h2>冠军方案分析</h2>
+          <p>
+            复现冠军方案后，对完整求解链路进行拆解，重点分析数据加载、SQL 查询、Python 计算、文档检索和答案生成之间的调用关系。
+          </p>
+          <div class="implementation-list">
+            <div class="implementation-item"><strong>统一数据层</strong>基于 DuckDB 统一处理 CSV、JSON、数据库与结构化文档，减少不同文件类型之间的工具切换。</div>
+            <div class="implementation-item"><strong>Solver 链路</strong>分析 SQL 与 Python Solver 的职责边界，区分关系查询、聚合统计与复杂计算。</div>
+            <div class="implementation-item"><strong>冗余定位</strong>通过运行轨迹识别简单任务中的过度检索、重复读取、无效模型调用与上下文膨胀。</div>
           </div>
-          <div class="implementation-item">
-            <strong>任务并发与超时</strong>
-            提交流程支持从环境变量读取模型、输入、输出、日志、并发数和任务超时配置，使用线程池批量跑任务；单任务则以 subprocess timeout 兜底。
+        </section>
+
+        <section class="section-card" id="routing">
+          <h2>自适应路由</h2>
+          <p>
+            设计任务路由器，根据题目是否涉及文档检索、复杂计算、多表关联与排序筛选判断任务复杂度。简单任务直接进入求解，复杂任务按需启用业务知识检索和输出约束。
+          </p>
+          <table>
+            <tr><th>判断信号</th><th>路由策略</th></tr>
+            <tr><td>单表读取、简单筛选或直接聚合</td><td>直接使用 DuckDB / SQL 求解，避免额外检索和多轮模型规划。</td></tr>
+            <tr><td>复杂计算或统计转换</td><td>启用 Python Solver，并只传递必要字段与中间结果。</td></tr>
+            <tr><td>多表关联、排序与组合条件</td><td>启用结构分析和跨表查询，约束表、字段与连接路径。</td></tr>
+            <tr><td>业务文档或隐含规则依赖</td><td>按需检索业务知识，并将证据与输出格式要求注入求解阶段。</td></tr>
+          </table>
+          <div class="highlight-box">
+            <p><strong>优化原则：</strong>让任务复杂度决定工具与上下文预算，简单任务减少模型调用，复杂任务保留必要的检索、计算与输出约束。</p>
           </div>
-          <div class="implementation-item">
-            <strong>结果落盘</strong>
-            AgentRunResult 会序列化 step records、answer、failure_reason 和 succeeded；若 answer 存在，运行层会额外写出标准预测表供官方评测。
+        </section>
+
+        <section class="section-card" id="execution">
+          <h2>数据与求解</h2>
+          <div class="pipeline-strip">
+            <span class="pipeline-step">任务解析</span>
+            <span class="pipeline-step">复杂度判断</span>
+            <span class="pipeline-step">DuckDB 数据加载</span>
+            <span class="pipeline-step">SQL / Python Solver</span>
+            <span class="pipeline-step">按需知识检索</span>
+            <span class="pipeline-step">答案约束与输出</span>
           </div>
+          <ul>
+            <li>使用 DuckDB 统一组织多源数据，减少文件格式差异对查询逻辑的影响。</li>
+            <li>将简单关系查询优先交给 SQL，复杂数值计算和自定义逻辑交给 Python。</li>
+            <li>仅在题目需要业务语义时加载相关文档，避免把完整知识库塞入上下文。</li>
+            <li>在最终阶段约束答案格式与字段顺序，减少正确计算后的提交格式错误。</li>
+          </ul>
+        </section>
+
+        <section class="section-card" id="evaluation">
+          <h2>实验评测</h2>
+          <p>
+            在 50 个任务、相同配置下比较路由方案与原始方案。两者得分均为 0.8190，说明效率优化没有牺牲任务效果。
+          </p>
+          <table>
+            <tr><th>指标</th><th>原始方案</th><th>路由方案</th><th>变化</th></tr>
+            <tr><td>得分</td><td>0.8190</td><td>0.8190</td><td>保持一致</td></tr>
+            <tr><td>Token 消耗</td><td>15.99M</td><td>10.65M</td><td>-33.4%</td></tr>
+            <tr><td>整体运行耗时</td><td>94.7 min</td><td>59.3 min</td><td>-37.4%</td></tr>
+          </table>
+        </section>
+
+        <section class="section-card" id="contribution">
+          <h2>个人贡献</h2>
+          <ul>
+            <li>以个人身份参加 KDD Cup 2026 DataAgent-Bench，取得 54/703。</li>
+            <li>复现冠军 Data Agent，梳理 DuckDB、SQL / Python Solver 与文档检索的完整推理链路。</li>
+            <li>设计任务自适应路由器，按任务复杂度控制检索、计算、模型调用与上下文预算。</li>
+            <li>完成 50 题同配置对照实验，在保持 0.8190 得分的同时显著降低 Token 与运行耗时。</li>
+          </ul>
+        </section>
+
+        <div class="detail-footer-actions">
+          <a href="index.html" class="link-button">← 返回主页</a>
         </div>
-      </section>
-
-      <section class="section-card" id="safety">
-        <h2>安全与复盘</h2>
-        <ul>
-          <li>SQL 使用只读连接，并只允许 SELECT / WITH / PRAGMA 语句，避免误写数据库。</li>
-          <li>Python 子进程设置 30 秒超时，避免无限循环或长时间阻塞。</li>
-          <li>任务级 max_steps 与 task_timeout 控制 Agent 长程执行风险。</li>
-          <li>Python 工具通过 audit hook 限制文件写入范围，只允许写到 task output directory。</li>
-          <li>保留轨迹记录、预测表和汇总报告，用于失败复盘和 prompt / tool 策略迭代。</li>
-        </ul>
-        <p>
-          Python 工具把代码放到独立 multiprocessing 子进程运行，捕获 stdout / stderr，并安装 filesystem guard：读操作可以查看 context，写操作必须落在任务输出目录，chmod、mkdir、remove、rename 等变更操作都会经过路径审计。
-        </p>
-      </section>
-
-      <section class="section-card" id="result">
-        <h2>结果</h2>
-        <div class="highlight-box">
-          <p><strong>KDD Cup 2026 DataAgent-Bench：</strong>三组 50 题消融中，最优方案取得 37/50 精确匹配、75% Recall；竞赛得分 0.5129，排行榜 54/703，Top 7.7%。</p>
-        </div>
-        <p>
-          这个项目证明了我在真实 benchmark 中构建可控 Tool-use Agent 的能力，也为后续 Agent Learning 提供了多源数据推理、schema linking 和 trace 复盘经验。
-        </p>
-      </section>
-
-      <section class="section-card" id="contribution">
-        <h2>个人贡献</h2>
-        <ul>
-          <li>负责 Agent 工具调用框架和 JSON Schema 约束的 ReAct 协议设计。</li>
-          <li>构建 Schema Linking、SQL / Python 执行、最终答案提交等工具链路。</li>
-          <li>构建覆盖 11 个数据库、75 张表的业务语义文档，迭代字段映射、查询逻辑和答案格式约束。</li>
-          <li>设计路径隔离、只读 SQL、Python 超时与写入保护，并完成三组 50 题消融和 trace 复盘。</li>
-        </ul>
-      </section>
-
-      <div class="detail-footer-actions">
-        <a href="index.html" class="link-button">← 返回主页</a>
-      </div>
       </div>
     </div>
 
