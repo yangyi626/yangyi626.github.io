@@ -6,15 +6,18 @@
     <meta name="description" content="DataAgent 项目详情：KDD Cup 2026 DataAgent-Bench、冠军方案复现、DuckDB 多源处理与任务自适应路由。" />
     <title>DataAgent · KDD Cup 2026 详情 | 杨艺 Yang Yi</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="canonical" href="https://yangyi626.github.io/kdd-detail.html" />
+    <meta property="og:title" content="DataAgent · KDD Cup 2026 详情 | 杨艺 Yang Yi" />
+    <meta property="og:description" content="DataAgent 项目详情：KDD Cup 2026 DataAgent-Bench、DuckDB 求解底座、风险路由与严格本地对照。" />
   </head>
   <body>
     <div class="container">
       <a href="index.html" class="back-button">← 返回主页</a>
 
-      <div class="header">
+      <header class="header">
         <div class="eyebrow">KDD Cup 2026 · DataAgent-Bench · Adaptive Routing</div>
         <h1>DataAgent：KDD Cup 2026 DataAgent-Bench</h1>
-        <div class="project-meta"><strong>个人参赛 · 冠军方案复现与赛后优化</strong> | 2026.04 – 2026.08 | 排名 54/703</div>
+        <div class="project-meta"><strong>参赛系统 · 冠军方案复现与赛后优化</strong> | 2026.04 – 2026.08 | 阶段一排名 54/703</div>
         <div>
           <span class="badge badge-venue">DuckDB</span>
           <span class="badge badge-role">Task Routing</span>
@@ -27,132 +30,32 @@
           <div><span>Token</span><strong>-33.4%</strong></div>
           <div><span>耗时</span><strong>-37.4%</strong></div>
         </div>
-      </div>
+      </header>
 
       <nav class="toc-container" id="toc">
         <div class="toc-title">目录导航</div>
-        <ul class="toc-list">
-          <li><a href="#overview">项目概览</a></li>
-          <li><a href="#analysis">冠军方案分析</a></li>
-          <li><a href="#routing">自适应路由</a></li>
-          <li><a href="#execution">数据与求解</a></li>
-          <li><a href="#evaluation">实验评测</a></li>
-          <li><a href="#contribution">个人贡献</a></li>
-        </ul>
+        <ul class="toc-list"><li><a href="#overview">项目背景</a></li><li><a href="#challenges">现有挑战</a></li><li><a href="#method">方法与贡献</a></li><li><a href="#competition">参赛：字段语义</a></li><li><a href="#execution">一：程序求解底座</a></li><li><a href="#routing">二：风险路由</a></li><li><a href="#memory">三：知识与约束</a></li><li><a href="#validation">四：校验与修复</a></li><li><a href="#evaluation">最终结果</a></li><li><a href="#limitations">局限与改进</a></li></ul>
       </nav>
-      <button class="toc-toggle" id="tocToggle" aria-label="目录">☰</button>
+      <button class="toc-toggle" id="tocToggle" aria-controls="toc" aria-expanded="false" aria-label="打开目录">☰</button>
 
-      <div class="detail-content">
-        <section class="section-card" id="overview">
-          <h2>项目概览</h2>
-          <p>
-            DataAgent-Bench 面向 CSV、JSON、数据库与文档等异构数据上的复杂问答任务。竞赛阶段以个人身份参赛并取得 54/703；赛后进一步复现冠军 Data Agent，分析其 SQL / Python Solver 推理链路，并围绕冗余上下文与不必要模型调用进行系统优化。
-          </p>
-          <div class="stats-grid">
-            <div class="stat-card"><div class="stat-number">54/703</div><div class="stat-label">KDD Cup 2026 排名</div></div>
-            <div class="stat-card"><div class="stat-number">0.8190</div><div class="stat-label">50 题同配置对比得分</div></div>
-            <div class="stat-card"><div class="stat-number">-33.4%</div><div class="stat-label">Token 消耗下降</div></div>
-            <div class="stat-card"><div class="stat-number">-37.4%</div><div class="stat-label">整体运行耗时下降</div></div>
-          </div>
-        </section>
-
-        <section class="section-card" id="analysis">
-          <h2>冠军方案分析</h2>
-          <p>
-            复现冠军方案后，对完整求解链路进行拆解，重点分析数据加载、SQL 查询、Python 计算、文档检索和答案生成之间的调用关系。
-          </p>
-          <div class="implementation-list">
-            <div class="implementation-item"><strong>统一数据层</strong>基于 DuckDB 统一处理 CSV、JSON、数据库与结构化文档，减少不同文件类型之间的工具切换。</div>
-            <div class="implementation-item"><strong>Solver 链路</strong>分析 SQL 与 Python Solver 的职责边界，区分关系查询、聚合统计与复杂计算。</div>
-            <div class="implementation-item"><strong>冗余定位</strong>通过运行轨迹识别简单任务中的过度检索、重复读取、无效模型调用与上下文膨胀。</div>
-          </div>
-        </section>
-
-        <section class="section-card" id="routing">
-          <h2>自适应路由</h2>
-          <p>
-            设计任务路由器，根据题目是否涉及文档检索、复杂计算、多表关联与排序筛选判断任务复杂度。简单任务直接进入求解，复杂任务按需启用业务知识检索和输出约束。
-          </p>
-          <table>
-            <tr><th>判断信号</th><th>路由策略</th></tr>
-            <tr><td>单表读取、简单筛选或直接聚合</td><td>直接使用 DuckDB / SQL 求解，避免额外检索和多轮模型规划。</td></tr>
-            <tr><td>复杂计算或统计转换</td><td>启用 Python Solver，并只传递必要字段与中间结果。</td></tr>
-            <tr><td>多表关联、排序与组合条件</td><td>启用结构分析和跨表查询，约束表、字段与连接路径。</td></tr>
-            <tr><td>业务文档或隐含规则依赖</td><td>按需检索业务知识，并将证据与输出格式要求注入求解阶段。</td></tr>
-          </table>
-          <div class="highlight-box">
-            <p><strong>优化原则：</strong>让任务复杂度决定工具与上下文预算，简单任务减少模型调用，复杂任务保留必要的检索、计算与输出约束。</p>
-          </div>
-        </section>
-
-        <section class="section-card" id="execution">
-          <h2>数据与求解</h2>
-          <div class="pipeline-strip">
-            <span class="pipeline-step">任务解析</span>
-            <span class="pipeline-step">复杂度判断</span>
-            <span class="pipeline-step">DuckDB 数据加载</span>
-            <span class="pipeline-step">SQL / Python Solver</span>
-            <span class="pipeline-step">按需知识检索</span>
-            <span class="pipeline-step">答案约束与输出</span>
-          </div>
-          <ul>
-            <li>使用 DuckDB 统一组织多源数据，减少文件格式差异对查询逻辑的影响。</li>
-            <li>将简单关系查询优先交给 SQL，复杂数值计算和自定义逻辑交给 Python。</li>
-            <li>仅在题目需要业务语义时加载相关文档，避免把完整知识库塞入上下文。</li>
-            <li>在最终阶段约束答案格式与字段顺序，减少正确计算后的提交格式错误。</li>
-          </ul>
-        </section>
-
-        <section class="section-card" id="evaluation">
-          <h2>实验评测</h2>
-          <p>
-            在 50 个任务、相同配置下比较路由方案与原始方案。两者得分均为 0.8190，说明效率优化没有牺牲任务效果。
-          </p>
-          <table>
-            <tr><th>指标</th><th>原始方案</th><th>路由方案</th><th>变化</th></tr>
-            <tr><td>得分</td><td>0.8190</td><td>0.8190</td><td>保持一致</td></tr>
-            <tr><td>Token 消耗</td><td>15.99M</td><td>10.65M</td><td>-33.4%</td></tr>
-            <tr><td>整体运行耗时</td><td>94.7 min</td><td>59.3 min</td><td>-37.4%</td></tr>
-          </table>
-        </section>
-
-        <section class="section-card" id="contribution">
-          <h2>个人贡献</h2>
-          <ul>
-            <li>以个人身份参加 KDD Cup 2026 DataAgent-Bench，取得 54/703。</li>
-            <li>复现冠军 Data Agent，梳理 DuckDB、SQL / Python Solver 与文档检索的完整推理链路。</li>
-            <li>设计任务自适应路由器，按任务复杂度控制检索、计算、模型调用与上下文预算。</li>
-            <li>完成 50 题同配置对照实验，在保持 0.8190 得分的同时显著降低 Token 与运行耗时。</li>
-          </ul>
-        </section>
-
+      <main class="detail-content">
+<section class="section-card" id="overview"><h2>项目背景</h2><p>DataAgent-Bench 要求 Agent 根据自然语言问题，结合业务知识和 CSV、JSON、SQLite、文档等数据完成查询与计算，最终提交标准表格答案，而不是只在对话中给出结论。</p><p>我先基于官方 ReAct 基线完成参赛系统，阶段一排名 <strong>54/703（Top 7.7%）</strong>；赛后复现冠军方案，再围绕推理成本和结果语义错误做优化。以下重点介绍结构化数据主链。</p><figure class="project-figure"><a href="assets/dataagent-evolution.png" target="_blank" rel="noopener"><img src="assets/dataagent-evolution.png" width="1672" height="941" alt="DataAgent 官方基线、个人参赛、冠军方案与赛后风险路由优化的架构对比" loading="lazy" decoding="async"></a><figcaption>四个阶段的架构对比。冠军底座属于上游工作；个人增量是字段语义增强，以及赛后的风险路由、知识检索、答案约束和校验反馈。点击查看原图。</figcaption></figure></section><section class="section-card" id="challenges"><h2>现有挑战</h2><ul><li><strong>看见字段，不等于理解字段：</strong>缩写、枚举编码和隐含计算口径容易导致错误筛选、关联与聚合。</li><li><strong>简单题也走重流程：</strong>相关性判断、全量知识和反复探索会增加模型调用与上下文成本。</li><li><strong>程序运行成功，不代表答案正确：</strong>错误去重、聚合粒度、排序键和额外输出列，都可能让结果失分。</li></ul></section><section class="section-card" id="method"><h2>我的方法与贡献边界</h2><table><thead><tr><th>阶段</th><th>工作内容</th><th>归属</th></tr></thead><tbody><tr><td>参赛系统</td><td>在 ReAct 工具反馈中补充字段语义，并管理长程对话历史</td><td>个人参赛工作</td></tr><tr><td>程序求解底座</td><td>DuckDB 多源查询、持久化求解程序、受限工具和执行反馈</td><td>复现上游冠军方案</td></tr><tr><td>赛后优化</td><td>风险路由 → 任务级知识检索与答案约束 → 确定性校验与修复</td><td>个人优化增量</td></tr></tbody></table><p>优化没有替换冠军 ReAct 主循环，也不是用路由器直接决定 SQL 或 Python。路由决定的是<strong>要不要增加知识、检查规则和前置相关性调用</strong>，实际求解仍由 Agent 完成。</p></section><section class="section-card" id="competition"><h2>参赛阶段：字段语义增强</h2><ol class="method-steps"><li><h3>1. 建立表与字段的语义目录</h3><p>把字段名、格式、取值含义和来源组织起来，避免模型只靠列名猜业务。</p><details class="implementation-deep"><summary>具体实现：建立表与字段的语义目录</summary><ol><li>结合任务知识、实际 Schema 与补充业务说明，按数据库、表、字段组织语义条目。</li><li>条目包含 meaning、data_format、value_meaning 和来源；缺失说明时支持配置化模型补全或启发式回退，推断内容不等同于原始数据事实。</li><li>目录缓存和构建锁避免重复生成；运行时按任务解析数据库，再按归一化表名查找。</li></ol></details></li><li><h3>2. 在工具结果中按需补充语义</h3><p>模型查到哪张表、哪些列，就在对应 Observation 中看到解释。</p><details class="implementation-deep"><summary>具体实现：在工具结果中按需补充语义</summary><ol><li>CSV / JSON 检查结果增加 table_role 与 column_semantics；SQLite Schema 检查则把解释附到对应列。</li><li>根据实际输出列筛选语义，不把整个目录直接塞入每轮上下文；缺失字段单独补全。</li><li>模型结合样例、类型和语义再生成查询；语义层增强工具反馈，并未替代 SQL 执行或结果验证。</li></ol><div class="data-walk"><h4>数据走读</h4><p>以下为简化教学示例，不是实际任务运行记录。</p><pre><code>检查返回列：status
+附加解释：meaning、value_meaning、semantic_source
+模型：结合实际样例确认 status 编码，再选择过滤条件</code></pre></div></details></li><li><h3>3. 区分工作上下文与完整轨迹</h3><p>保留可审计的原始步骤，压缩模型下一轮实际读取的历史。</p><details class="implementation-deep"><summary>具体实现：区分工作上下文与完整轨迹</summary><ol><li>每步记录 action、action_input、observation、ok 与 model_usage。</li><li>上下文利用率达到配置阈值时压缩较早步骤；当前实现默认阈值 80%，保留最近 3 步。</li><li>摘要保留文件路径、字段、SQL、数值和待检查事项；原始轨迹用于复盘，摘要不能保证所有细节无损。</li></ol></details></li></ol></section><section class="section-card" id="execution"><h2>模块一：统一数据与程序求解底座</h2><p>这一模块来自冠军方案。我的工作是复现与梳理其行为，为后续优化建立可比较的基线。</p><ol class="method-steps"><li><h3>1. 统一注册数据</h3><p>让数据探索与最终求解使用同一套数据加载、表名映射和 SQL 方言处理。</p><details class="implementation-deep"><summary>具体实现：统一注册数据</summary><ol><li>CSV 通过 DuckDB 自动读取；记录型 JSON 转为 DataFrame 后注册；SQLite 表通过只读读取接入。文档需先结构化，不能直接当关系表查询。</li><li>维护标准表名、原名与别名映射；探索工具和求解子进程复用同一份运行时实现，而不是共享同一个进程内连接。</li><li>同一进程的 DuckDB 连接加锁，避免并发工具调用冲突；不支持的输入形态需记录或跳过。</li></ol></details></li><li><h3>2. 把推理写成可反复修改的程序</h3><p>Agent 使用探索、读取、编辑、运行四类工具，将求解逻辑保存下来。</p><details class="implementation-deep"><summary>具体实现：把推理写成可反复修改的程序</summary><ol><li>探索工具返回表结构、查询样例与执行错误；模型据此编写 SQL 或 Python 计算。</li><li>读取与编辑工具围绕持久化求解程序工作，修改后继续运行同一个程序，而不是每轮重建临时代码。</li><li>运行工具固定执行求解程序，不暴露任意 Shell 命令参数；这收窄了工具动作，但不是完整安全沙箱。</li></ol></details></li><li><h3>3. 用执行反馈驱动下一轮</h3><p>运行状态与输出自检共同决定 Agent 继续修复还是结束。</p><details class="implementation-deep"><summary>具体实现：用执行反馈驱动下一轮</summary><ol><li>非零退出或异常返回 FAILED；运行完成但未产出结果返回 NO OUTPUT；正常输出回读 CSV。</li><li>回传行列数、列名、非空数和前几行；折叠重复 Schema 与冗长异常栈，保留可操作的错误信息。</li><li>模型基于 Observation 继续修改；CSV 可读只证明产物有效，不证明业务答案正确。</li></ol></details></li></ol></section><section class="section-card" id="routing"><h2>模块二：风险路由与预算分配</h2><p>在进入求解前，用可解释规则选择上下文策略，不额外调用一个路由模型。</p><ol class="method-steps"><li><h3>1. 提取任务风险特征</h3><p>读取问题文本、源文档是否存在和表类文件数量，累加风险分。</p><details class="implementation-deep"><summary>具体实现：提取任务风险特征</summary><ol><li>源文档 +3，指标计算 +3，业务语义或隐式枚举 +2，序数选择 +2，类别 tally +1。</li><li>出现关联表达且表类文件数不少于 3 时 +2；否则文件数不少于 6 时 +1。</li><li>这里统计的是 csv / json / db 目录中的文件数，不是数据库真实表数；它是低成本代理特征，不是学习得到的难度概率。</li></ol></details></li><li><h3>2. 生成可执行路由配置</h3><p>低、中、高风险分别控制知识条数与答案约束等级。</p><details class="implementation-deep"><summary>具体实现：生成可执行路由配置</summary><ol><li>分数小于 3：不构建额外 Memory，contract=none。</li><li>分数 3–5：最多检索 2 条事实；指标任务使用 metric 约束，其余 minimal。</li><li>分数不少于 6：最多 4 条事实，使用 full 约束；保存 risk_score、risk_level、reason，方便回溯。</li></ol><div class="data-walk"><h4>数据走读</h4><p>以下为简化教学示例，不是实际任务运行记录。</p><pre><code>问题含 average，有源文档
+风险分 = 3（指标）+ 3（文档）= 6
+use_memory = true
+memory_top_k = 4
+contract_level = full</code></pre></div></details></li><li><h3>3. 跳过没有筛选价值的模型调用</h3><p>先检查是否存在选择空间，再启动文档或表相关性判断。</p><details class="implementation-deep"><summary>具体实现：跳过没有筛选价值的模型调用</summary><ol><li>源文档为 0 或 1 个时，直接确定候选集合；多文档才调用相关性 Agent。</li><li>仅在非低风险且表类文件数大于 3 时，启用表相关性判断；优化版默认 1 轮，可配置。</li><li>相关性筛选只影响上下文展示，不删除底层数据；判断失败保留全部表。低风险任务仍走 ReAct，不是绕过模型直接执行 SQL。</li></ol></details></li></ol></section><section class="section-card" id="memory"><h2>模块三：知识检索与答案约束</h2><ol class="method-steps"><li><h3>1. 把业务知识拆为带来源的事实</h3><p>按标题、空行与列表项拆分知识，保留字段、关系、枚举、公式等类别。</p><details class="implementation-deep"><summary>具体实现：把业务知识拆为带来源的事实</summary><ol><li>每项保存 kind、heading、text、source 和检索词集合。</li><li>建立任务内词法索引，使用 IDF 提升区分度高的词；不依赖 Embedding 服务或向量数据库。</li><li>查询词做有限别名扩展，例如 average 对应 avg / mean；不进行开放式语义改写。</li></ol></details></li><li><h3>2. 检索少量相关知识并过滤冲突</h3><p>结合词重合、稀有词与事实类型打分，防止相似表达召回相反口径。</p><details class="implementation-deep"><summary>具体实现：检索少量相关知识并过滤冲突</summary><ol><li>对显著词重合加权，对相反语义或维度冲突减分；例如 carcinogenic 与 non-carcinogenic 不应仅因词面相似而混用。</li><li>按路由选择 Top-2 / Top-4，渲染总长度上限 7000 字符，输出中保留来源。</li><li>当前版本仍保留原始 knowledge，并额外突出相关事实；不能将成本下降全部解释为删除全量知识。</li></ol></details></li><li><h3>3. 在生成前明确答案约束</h3><p>根据风险等级，提醒模型核对输出属性、聚合粒度与关联方式。</p><details class="implementation-deep"><summary>具体实现：在生成前明确答案约束</summary><ol><li>minimal：只输出题目要求的列，检查 CSV 的形状和值。</li><li>metric：区分 AVG / SUM / COUNT，明确百分比分母、周期粒度与极值是否需要聚合。</li><li>full：进一步核对枚举、JOIN 基数、排序键与去重。它是 Prompt 中的检查要求，不是程序强制保证。</li></ol><div class="data-walk"><h4>数据走读</h4><p>以下为简化教学示例，不是实际任务运行记录。</p><pre><code>问题：最低单笔成本对应的活动
+约束：先找原始 cost 最小记录，再关联活动
+不要擅自改为：按活动 SUM(cost) 后排序</code></pre></div></details></li></ol></section><section class="section-card" id="validation"><h2>模块四：确定性校验与修复</h2><ol class="method-steps"><li><h3>1. 从问题、程序和结果中查找已知错误</h3><p>只检查有限模式，不调用 Gold 答案，也不让另一个模型主观判分。</p><details class="implementation-deep"><summary>具体实现：从问题、程序和结果中查找已知错误</summary><ol><li>检查直接极值问题中是否出现未要求的 SUM / AVG。</li><li>检查原子等序数标识符是否使用 LIKE '%_4' 一类模式：下划线是通配符，并非字面分隔符。</li><li>检查特定类别 tally 问题是否返回重复行；规则基于文本和正则，不是 SQL 语义证明器，存在误报与漏报。</li></ol></details></li><li><h3>2. 能局部修复就修复，否则给出明确反馈</h3><p>区分重复类别与需要重新计算的查询错误。</p><details class="implementation-deep"><summary>具体实现：能局部修复就修复，否则给出明确反馈</summary><ol><li>适用类别去重规则时，对完整输出行保序去重，保留首次出现的行。</li><li>错误聚合、序数解析等问题不直接猜答案，而是返回修改方向，再交给 Agent 重算。</li><li>内层继续编辑—执行；完整尝试失败时恢复初始脚手架、清理旧结果并携带校验反馈重试，避免把残留文件当成新结果。</li></ol><div class="data-walk"><h4>数据走读</h4><p>以下为简化教学示例，不是实际任务运行记录。</p><pre><code>输入行：[('C',), ('H',), ('C',)]
+仅在类别集合规则适用时：
+输出行：[('C',), ('H',)]
+若任务要求计数或保留记录，不可直接套用去重</code></pre></div></details></li><li><h3>3. 用任务级对照检查效果与回退</h3><p>联合记录得分、Token、轮数和时间，不能只看总平均分。</p><details class="implementation-deep"><summary>具体实现：用任务级对照检查效果与回退</summary><ol><li>使用同一任务集合、模型配置和评分程序比较基线与优化版。</li><li>按 task_id 对齐结果，检查修复与回退，并单独解释复用结果、长尾修复和重试开销。</li><li>本轮不重新调用模型跑比赛；页面数字来自已有实验记录，实验口径在下方列明。</li></ol></details></li></ol></section><section class="section-card" id="evaluation"><h2>最终结果</h2><p><strong>参赛成绩：</strong>阶段一 54/703。以下为赛后 50 题本地对照，不是官方榜单提升，也不与冠军仓库的另一组离线结果混用。</p><table><thead><tr><th>指标</th><th>冠军方案复现基线</th><th>赛后优化版</th><th>变化</th></tr></thead><tbody><tr><td>平均分</td><td>0.8190</td><td>0.8190</td><td>持平</td></tr><tr><td>完全正确</td><td>40/50</td><td>40/50</td><td>持平</td></tr><tr><td>总 Token</td><td>15,987,105</td><td>10,649,537</td><td>−33.4%</td></tr><tr><td>ReAct 轮数</td><td>688</td><td>619</td><td>−10.0%</td></tr><tr><td>完整历史流程耗时</td><td>约 94.7 min</td><td>约 59.3 min</td><td>−37.4%</td></tr></tbody></table><p>任务级修复：19、379、418；回退：173、199、303。<strong>总体持平不代表每道题都不退化。</strong></p><details class="implementation-deep"><summary>实验口径与复现限制</summary><ul><li>task_25、task_379 使用此前已验证结果；task_418 在长尾运行后由确定性规则补齐。</li><li>59.3 分钟使用包含历史流程的保守口径，不替换为仅主批次的 52.7 分钟。</li><li>这些数字是已有本地记录，不是本次重新运行，也不是一次空缓存、无人工介入的完整测试证明。</li></ul></details></section><section class="section-card" id="limitations"><h2>局限与下一步</h2><ul><li><strong>路由是启发式规则：</strong>文件数不等于表数，词面特征也可能漏掉隐式复杂任务；需要在新任务上检查错分。</li><li><strong>知识增强并非越多越好：</strong>原始知识仍保留，Top-k 召回也可能引入错误口径；需要逐项消融区分各模块贡献。</li><li><strong>校验覆盖有限：</strong>目前只处理少量已知模式，程序成功和校验通过都不等于业务正确。</li><li><strong>下一步先补证据：</strong>从空缓存完整重跑 50 题，再用新 Holdout 和多次运行检查质量、成本与任务回退，避免对这批任务过拟合。</li></ul></section>
         <div class="detail-footer-actions">
           <a href="index.html" class="link-button">← 返回主页</a>
         </div>
-      </div>
+      </main>
     </div>
-
-    <script>
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          if (window.innerWidth <= 1200) document.getElementById('toc').classList.remove('show');
-        });
-      });
-      window.addEventListener('scroll', function() {
-        const sections = document.querySelectorAll('.section-card[id]');
-        const tocLinks = document.querySelectorAll('.toc-list a');
-        let currentSection = '';
-        sections.forEach(section => {
-          if (window.pageYOffset >= section.offsetTop - 100) currentSection = section.getAttribute('id');
-        });
-        tocLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + currentSection));
-      });
-      const tocToggle = document.getElementById('tocToggle');
-      const toc = document.getElementById('toc');
-      tocToggle.addEventListener('click', () => toc.classList.toggle('show'));
-    </script>
+      <script src="site.js" defer></script>
   </body>
 </html>

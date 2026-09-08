@@ -3,8 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="C-MTCSD 项目详情：中文多轮对话立场检测数据集、标注流程与基准评测。" />
     <title>C-MTCSD 项目详情 | 杨艺 Yang Yi</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="canonical" href="https://yangyi626.github.io/cmtcsd-detail.html" />
+    <meta property="og:title" content="C-MTCSD 项目详情 | 杨艺 Yang Yi" />
+    <meta property="og:description" content="C-MTCSD 项目详情：中文多轮对话立场检测数据集、标注流程与基准评测。" />
   </head>
   <body>
     <div class="container">
@@ -12,7 +16,7 @@
         ← 返回主页
       </a>
 
-      <div class="header">
+      <header class="header">
         <h1>C-MTCSD：中文多轮对话立场检测数据集构建与基准评测</h1>
         <div class="project-meta">
           <strong>共同第一作者 · 数据构建、模型评测与实验分析</strong> | 2024.09 – 2025.01
@@ -30,35 +34,39 @@
             💾 数据开源
           </a>
         </div>
-      </div>
+      </header>
 
       <!-- 目录导航 -->
       <nav class="toc-container" id="toc">
         <div class="toc-title">📑 目录导航</div>
         <ul class="toc-list">
           <li><a href="#overview">项目概览</a></li>
-          <li><a href="#situation">研究背景</a></li>
-          <li><a href="#task">核心任务</a></li>
-          <li><a href="#action">技术实现</a></li>
-          <li><a href="#result">研究成果</a></li>
-          <li><a href="#capability">技术能力体现</a></li>
-          <li><a href="#application">实际应用价值</a></li>
-          <li><a href="#future">局限性与未来工作</a></li>
+          <li><a href="#situation">问题与背景</a></li>
+          <li><a href="#task">我的工作</a></li>
+          <li><a href="#action">数据与评测方法</a></li>
+          <li><a href="#result">结果与发现</a></li>
+          <li><a href="#capability">贡献与方法</a></li>
+          <li><a href="#application">可用场景</a></li>
+          <li><a href="#future">局限与下一步</a></li>
         </ul>
       </nav>
 
       <!-- 移动端目录切换按钮 -->
-      <button class="toc-toggle" id="tocToggle" aria-label="目录">
+      <button class="toc-toggle" id="tocToggle" aria-controls="toc" aria-expanded="false" aria-label="打开目录">
         ☰
       </button>
 
-      <div class="detail-content">
+      <main class="detail-content">
 
       <!-- 项目概览 -->
-      <div class="section-card" id="overview">
+<div class="section-card" id="overview">
         <h2><span class="emoji">📋</span>项目概览</h2>
+        <figure class="project-figure">
+          <a href="assets/cmtcsd-overview.png" target="_blank" rel="noopener"><img src="assets/cmtcsd-overview.png" width="714" height="716" alt="C-MTCSD 数据集与立场识别评测设置" loading="lazy" decoding="async"></a>
+          <figcaption>C-MTCSD：数据规模、对话输入与评测设置。 点击图片查看原图。</figcaption>
+        </figure>
         <p>
-          C-MTCSD 是<strong>目前最大的中文多轮对话立场检测数据集</strong>，包含从新浪微博采集的 <strong>24,264 条精心标注的实例</strong>，规模是现有唯一中文对话立场检测数据集 CANT-CSD 的 <strong>4.2 倍</strong>。该数据集覆盖科技与社会热点话题，支持最深 <strong>6 轮</strong>对话深度，为中文立场检测研究提供了具有挑战性的新基准。
+          C-MTCSD 包含从新浪微博采集并标注的 <strong>24,264 条中文多轮对话样本</strong>，覆盖 5 类议题，最长为 <strong>6 轮</strong>。与 CANT-CSD 的规模比较和数据构成见论文；项目同时提供多种模型与评测设置，便于后续对照。
         </p>
         
         <div class="stats-grid">
@@ -89,9 +97,9 @@
         </div>
       </div>
 
-      <!-- Situation -->
+      <!-- 问题与背景 -->
       <div class="section-card" id="situation">
-        <h2><span class="emoji">🎯</span>Situation（研究背景）</h2>
+        <h2>问题与背景</h2>
         
         <h3>核心问题</h3>
         <p>
@@ -99,9 +107,9 @@
         </p>
         
         <div class="challenge-box">
-          <strong>研究空白：</strong>
+          <strong>现有资源的限制：</strong>
           <ul style="margin: 12px 0 0 0;">
-            <li><strong>语言资源不足</strong>：现有研究主要集中在英文，中文立场检测资源严重匮乏</li>
+            <li><strong>语言资源不足</strong>：现有公开资源更多集中在英文，中文多轮对话数据相对有限</li>
             <li><strong>对话上下文缺失</strong>：现有方法主要分析单句，忽略社交媒体中立场表达的对话性质</li>
             <li><strong>隐式立场难题</strong>：上下文依赖的隐式立场表达难以被独立句子分析方法捕捉</li>
             <li><strong>深度对话挑战</strong>：多轮对话中的指代消解、话题漂移、立场演化缺乏系统研究</li>
@@ -110,19 +118,19 @@
 
         <h3>现有数据集局限</h3>
         <ul>
-          <li><strong>CANT-CSD</strong>：唯一的中文对话立场检测数据集，但规模较小（仅 5,775 条），且聚焦粤语而非标准中文</li>
+          <li><strong>CANT-CSD</strong>：已有的中文对话立场检测数据集，但规模较小（约 5,775 条），且聚焦粤语而非标准中文</li>
           <li><strong>深度对话不足</strong>：CANT-CSD 中仅 <span class="highlight">6.3%</span> 的数据深度超过 3 轮，难以支持深度对话研究</li>
           <li><strong>英文数据集</strong>：虽然规模较大，但不适用于中文语言特性（如语序、省略、指代等）</li>
         </ul>
 
         <div class="highlight-box">
-          <strong>研究目标：</strong>构建大规模、高质量的中文多轮对话立场检测数据集，填补中文对话立场检测资源空白，为中文 NLP 研究提供具有挑战性的新基准。
+          <strong>项目目标：</strong>补充中文多轮对话立场检测数据，并用统一协议比较传统模型、预训练模型和大语言模型在不同场景下的表现。
         </div>
       </div>
 
-      <!-- Task -->
+      <!-- 我的工作 -->
       <div class="section-card" id="task">
-        <h2><span class="emoji">📝</span>Task（核心任务）</h2>
+        <h2>我的工作</h2>
         
         <h3>1. 数据采集与预处理</h3>
         <ul>
@@ -155,9 +163,9 @@
         </ul>
       </div>
 
-      <!-- Action -->
+      <!-- 数据与评测方法 -->
       <div class="section-card" id="action">
-        <h2><span class="emoji">⚙️</span>Action（技术实现）</h2>
+        <h2>数据与评测方法</h2>
 
         <h3>1. 数据采集流程</h3>
         
@@ -474,13 +482,13 @@
         </ul>
       </div>
 
-      <!-- Result -->
+      <!-- 结果与发现 -->
       <div class="section-card" id="result">
-        <h2><span class="emoji">🏆</span>Result（研究成果）</h2>
+        <h2>结果与发现</h2>
 
         <h3>目标内立场检测（In-Target）</h3>
         
-        <p><strong>最优模型：</strong>GLAN 在所有目标上实现最高 F_avg（平均 <span class="highlight">66.10%</span>），突显了融合对话关系等背景知识的有效性。</p>
+        <p><strong>目标内设置：</strong>GLAN 的平均 F_avg 为 <span class="highlight">66.10%</span>，在这组目标和评测协议下取得最高结果。</p>
         
         <div style="overflow-x: auto;">
           <table>
@@ -563,7 +571,7 @@
 
         <h3>跨目标立场检测（Cross-Target）</h3>
         
-        <p><strong>最优模型：</strong>GLAN 在所有跨目标场景中表现最佳，验证了模型在迁移立场表示方面的鲁棒性。</p>
+        <p><strong>跨目标设置：</strong>GLAN 在列出的跨目标场景中平均表现最好；结果反映的是这些目标组合下的迁移能力。</p>
         
         <div style="overflow-x: auto;">
           <table>
@@ -631,7 +639,7 @@
 
         <h3>零样本立场检测（Zero-Shot）</h3>
         
-        <p><strong>最优模型：</strong>GPT-4 实现最佳性能，平均准确率 <span class="highlight">64.07%</span>，超越所有基线模型。</p>
+        <p><strong>零样本设置：</strong>GPT-4 平均 F1 为 <span class="highlight">64.07%</span>，高于表中其他模型；该比较只针对当前零样本协议。</p>
         
         <div style="overflow-x: auto;">
           <table>
@@ -740,7 +748,7 @@
         </ul>
 
         <div class="challenge-box">
-          <strong>挑战性基准：</strong>即使最先进的 GPT-4 模型在零样本设置下仅达到 64.07% F1 分数，突显了 C-MTCSD 的挑战性，为未来改进提供了巨大空间。
+          <strong>结果边界：</strong>GPT-4 在零样本设置下为 64.07% F1；该数字说明任务仍有难度，但不代表所有模型或场景都达到同一水平。
         </div>
 
         <h3>对话深度影响分析</h3>
@@ -809,9 +817,9 @@
         </div>
       </div>
 
-      <!-- 技术能力体现 -->
+      <!-- 贡献与方法 -->
       <div class="section-card" id="capability">
-        <h2><span class="emoji">💡</span>技术能力体现</h2>
+        <h2>贡献与方法</h2>
         
         <table>
           <thead>
@@ -857,16 +865,16 @@
         </table>
       </div>
 
-      <!-- 实际应用价值 -->
+      <!-- 可用场景 -->
       <div class="section-card" id="application">
-        <h2><span class="emoji">🌟</span>实际应用价值</h2>
+        <h2>可用场景</h2>
         
         <h3>1. 学术研究价值</h3>
         <ul>
-          <li><strong>填补资源空白</strong>：首个大规模中文多轮对话立场检测数据集</li>
-          <li><strong>挑战性基准</strong>：为中文 NLP 研究提供具有挑战性的评测标准</li>
+          <li><strong>数据资源</strong>：提供中文多轮对话样本、标注和评测脚本</li>
+          <li><strong>基准评测</strong>：为中文多轮立场检测提供统一的比较入口</li>
           <li><strong>方法论贡献</strong>：三阶段预处理 + 双人标注 + 专家复审的质量保证体系</li>
-          <li><strong>可复现研究</strong>：开源数据集 + 评测脚本 + 统计分析</li>
+          <li><strong>后续研究</strong>：可用于模型对比、跨目标迁移和对话深度分析</li>
         </ul>
 
         <h3>2. 社交媒体分析</h3>
@@ -894,9 +902,9 @@
         </ul>
       </div>
 
-      <!-- 局限性与未来工作 -->
+      <!-- 局限与下一步 -->
       <div class="section-card" id="future">
-        <h2><span class="emoji">🔮</span>局限性与未来工作</h2>
+        <h2>局限与下一步</h2>
         
         <h3>当前局限性</h3>
         <ul>
@@ -923,67 +931,8 @@
           ← 返回主页
         </a>
       </div>
-      </div>
+      </main>
     </div>
-
-    <script>
-      // 平滑滚动到锚点
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
-            
-            // 移动端点击后关闭目录
-            if (window.innerWidth <= 1200) {
-              document.getElementById('toc').classList.remove('show');
-            }
-          }
-        });
-      });
-      
-      // 目录高亮跟随滚动
-      window.addEventListener('scroll', function() {
-        const sections = document.querySelectorAll('.section-card[id]');
-        const tocLinks = document.querySelectorAll('.toc-list a');
-        
-        let currentSection = '';
-        sections.forEach(section => {
-          const sectionTop = section.offsetTop - 100;
-          const sectionHeight = section.offsetHeight;
-          if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionTop + sectionHeight) {
-            currentSection = section.getAttribute('id');
-          }
-        });
-        
-        tocLinks.forEach(link => {
-          link.classList.remove('active');
-          if (link.getAttribute('href') === '#' + currentSection) {
-            link.classList.add('active');
-          }
-        });
-      });
-      
-      // 移动端目录切换
-      const tocToggle = document.getElementById('tocToggle');
-      const toc = document.getElementById('toc');
-      
-      tocToggle.addEventListener('click', function() {
-        toc.classList.toggle('show');
-      });
-      
-      // 点击页面其他地方关闭目录（移动端）
-      document.addEventListener('click', function(e) {
-        if (window.innerWidth <= 1200) {
-          if (!toc.contains(e.target) && !tocToggle.contains(e.target)) {
-            toc.classList.remove('show');
-          }
-        }
-      });
-    </script>
+      <script src="site.js" defer></script>
   </body>
 </html>

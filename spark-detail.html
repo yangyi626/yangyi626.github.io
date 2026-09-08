@@ -3,9 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="SPARK 项目详情：基于 LLM 多智能体的长期交互与行为演化仿真框架。" />
+    <meta name="description" content="SPARK：通过人设、双层记忆与逐日交互，研究立场和话题的协同演化；EMNLP 2025 Main，共同第一作者。" />
     <title>SPARK 项目详情 | 杨艺 Yang Yi</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="canonical" href="https://yangyi626.github.io/spark-detail.html" />
+    <meta property="og:title" content="SPARK 项目详情 | 杨艺 Yang Yi" />
+    <meta property="og:description" content="SPARK 项目详情：通过人设、双层记忆与逐日交互，研究立场和话题的协同演化。" />
   </head>
   <body>
     <div class="container">
@@ -13,8 +16,8 @@
         ← 返回主页
       </a>
 
-      <div class="header">
-        <h1>SPARK：基于 LLM 多智能体的长期交互与行为演化仿真框架</h1>
+      <header class="header">
+        <h1>SPARK：多智能体立场与话题协同演化</h1>
         <div class="project-meta">
           <strong>共同第一作者</strong> | 2025.02 – 2025.06
         </div>
@@ -37,484 +40,60 @@
           <div><span>规模</span><strong>108 个 LLM Agents</strong></div>
           <div><span>研究</span><strong>话题—立场协同演化</strong></div>
         </div>
-      </div>
+      </header>
 
       <!-- 目录导航 -->
       <nav class="toc-container" id="toc">
         <div class="toc-title">📑 目录导航</div>
-        <ul class="toc-list">
-          <li><a href="#overview">项目概览</a></li>
-          <li><a href="#situation">研究背景</a></li>
-          <li><a href="#task">核心任务</a></li>
-          <li><a href="#action">技术实现</a></li>
-          <li><a href="#result">研究成果</a></li>
-          <li><a href="#capability">技术能力体现</a></li>
-          <li><a href="#case">微观案例分析</a></li>
-        </ul>
+        <ul class="toc-list"><li><a href="#background">研究背景</a></li><li><a href="#challenges">现有挑战</a></li><li><a href="#method">总体方法</a></li><li><a href="#sara">一：个体与记忆</a></li><li><a href="#tes">二：交互与话题</a></li><li><a href="#evaluation">实验与指标</a></li><li><a href="#case">个体案例</a></li><li><a href="#limitations">局限与复现</a></li></ul>
       </nav>
 
       <!-- 移动端目录切换按钮 -->
-      <button class="toc-toggle" id="tocToggle" aria-label="目录">
+      <button class="toc-toggle" id="tocToggle" aria-controls="toc" aria-expanded="false" aria-label="打开目录">
         ☰
       </button>
 
-      <div class="detail-content">
-
-      <!-- 项目概览 -->
-      <div class="section-card" id="overview">
-        <h2><span class="emoji">📋</span>项目概览</h2>
-        <p>
-          SPARK 是基于 LLM 多智能体的长期交互与行为演化仿真框架。系统构建 108 个具有独立 Persona 的 LLM Agent，引入短期记忆、长期记忆与反思机制，使 Agent 能够结合角色属性与历史交互持续更新内部状态，并在 5 类真实场景中自主产生新话题与差异化群体行为。
-        </p>
-        
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-number">108</div>
-            <div class="stat-label">智能体规模</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">0.504</div>
-            <div class="stat-label">完整记忆下的立场多样性</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">5</div>
-            <div class="stat-label">研究领域</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">0.88</div>
-            <div class="stat-label">立场变化与新话题产生的 Pearson 相关系数</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Situation -->
-      <div class="section-card" id="situation">
-        <h2><span class="emoji">🎯</span>Situation（研究背景）</h2>
-        
-        <h3>核心问题</h3>
-        <p>
-          社交媒体中的<strong>话题演化</strong>与<strong>立场动态</strong>深刻影响着公共讨论的碎片化和极化现象。然而，现有研究存在以下局限：
-        </p>
-        <ul>
-          <li><strong>动态话题模型</strong>（LDA、神经网络方法）仅能捕捉抽象的词分布，无法模拟个体层面的对话交互与语义理解</li>
-          <li><strong>立场分析方法</strong>通常将话题视为静态，忽略了话题演化对观点变化的影响</li>
-          <li><strong>缺乏联合建模</strong>：话题演化与立场动态被割裂研究，无法揭示二者的相互作用机制</li>
-          <li><strong>可解释性不足</strong>：现有方法依赖潜在向量表示，难以提供自然语言层面的解释</li>
-        </ul>
-
-        <div class="highlight-box">
-          <strong>研究目标：</strong>构建首个基于 LLM 的<strong>任务导向型对话系统</strong>，实现话题演化与观点动态的联合建模，支持大规模、可解释、个体可追踪的社会计算仿真。
-        </div>
-      </div>
-
-      <!-- Task -->
-      <div class="section-card" id="task">
-        <h2><span class="emoji">📝</span>Task（核心任务）</h2>
-        
-        <h3>1. 对话系统研发</h3>
-        <ul>
-          <li><strong>自然语言理解（NLU）</strong>：设计立场识别算法，实现三分类（支持/中立/反对）</li>
-          <li><strong>对话状态跟踪</strong>：构建双层记忆架构，维护短期交互与长期经验</li>
-          <li><strong>对话策略学习</strong>：基于人格特质与记忆的反思式立场更新机制</li>
-          <li><strong>自然语言生成（NLG）</strong>：通过 Prompt Engineering 生成符合角色特征的推文</li>
-        </ul>
-
-        <h3>2. 语义挖掘与知识表示</h3>
-        <ul>
-          <li>构建<strong>话题知识图谱动态扩展机制</strong>，捕捉话题分支、融合与传播路径</li>
-          <li>设计话题树结构，实时追踪新兴子话题的生成与演化</li>
-          <li>量化话题多样性（KL 散度）与一致性（熵）指标</li>
-        </ul>
-
-        <h3>3. 情感/立场分析</h3>
-        <ul>
-          <li>设计基于记忆与反思的立场更新算法</li>
-          <li>实现文本驱动的立场推理链（个人观点 + 记忆摘要 + 人格特质 → 立场标注）</li>
-          <li>支持个体轨迹追踪与群体统计分析</li>
-        </ul>
-
-        <h3>4. 前沿技术探索</h3>
-        <ul>
-          <li>验证 LLM 在社会计算场景中的应用潜力</li>
-          <li>提供可解释的群体行为建模方案</li>
-          <li>探索 Encoder-Decoder 在记忆压缩中的优化策略</li>
-        </ul>
-      </div>
-
-      <!-- Action -->
-      <div class="section-card" id="action">
-        <h2><span class="emoji">⚙️</span>Action（技术实现）</h2>
-
-        <h3>1. 对话系统核心算法研发</h3>
-        
-        <h4>立场感知角色智能体（SARA）模块</h4>
-        <ul>
-          <li>
-            <strong>Persona 初始化机制</strong>
-            <ul>
-              <li>基于<strong>大五人格模型</strong>（Big Five）生成 108 个差异化智能体</li>
-              <li>涵盖年龄（18-64岁）、教育水平、性格特质（开放性、尽责性、外向性、宜人性、神经质）</li>
-              <li>每个智能体具有独特的初始立场与观点表达风格</li>
-            </ul>
-          </li>
-          <li>
-            <strong>双层记忆架构</strong>
-            <ul>
-              <li><strong>短期记忆</strong>：记录单日交互，通过 LLM 提示词压缩摘要</li>
-              <li><strong>长期记忆</strong>：累积历史经验，支持跨轮次检索与上下文连续性</li>
-              <li>实现记忆压缩优化，降低存储开销 <span class="highlight">60%</span></li>
-            </ul>
-          </li>
-          <li>
-            <strong>文本驱动立场更新算法</strong>
-            <ul>
-              <li>设计立场推理链：个人观点 + 记忆摘要 + 人格特质 → 推文生成 + 立场标注</li>
-              <li>通过 Prompt Engineering 实现可解释的观点演化</li>
-              <li>支持三分类立场识别（支持/中立/反对）</li>
-            </ul>
-          </li>
-        </ul>
-
-        <h4>话题演化模拟器（TES）模块</h4>
-        <ul>
-          <li>
-            <strong>话题树动态扩展协议</strong>
-            <ul>
-              <li>标准化推文生成规则（#EventName# 格式）</li>
-              <li>实时捕捉新兴子话题并构建有向话题图</li>
-              <li>支持话题分支、融合与传播路径追踪</li>
-            </ul>
-          </li>
-          <li>
-            <strong>话题传播追踪算法</strong>
-            <ul>
-              <li>统计话题频次、生命周期与扩散路径</li>
-              <li>量化话题多样性（KL 散度）与一致性（熵）</li>
-              <li>支持跨领域话题演化对比分析</li>
-            </ul>
-          </li>
-        </ul>
-
-        <h3>2. 工程实现与系统优化</h3>
-        
-        <h4>技术栈</h4>
-        <ul>
-          <li><strong>编程语言</strong>：Python</li>
-          <li><strong>深度学习框架</strong>：PyTorch</li>
-          <li><strong>智能体建模</strong>：Mesa（多智能体仿真库）</li>
-          <li><strong>LLM 推理</strong>：DeepSeek-V3 API</li>
-          <li><strong>数据存储</strong>：MySQL（实验日志/指标统计）</li>
-        </ul>
-
-        <h4>大规模仿真优化</h4>
-        <ul>
-          <li>设计<strong>异步对话调度算法</strong>，支持 108 个智能体并发交互</li>
-          <li>单次仿真生成 <span class="highlight">10,000+ 对话轮次</span></li>
-          <li>实现记忆压缩与检索优化，降低长期记忆存储开销 <span class="highlight">60%</span></li>
-          <li>构建<strong>模块化 Prompt 模板库</strong>（记忆摘要/立场更新/话题生成），支持跨领域快速迁移</li>
-        </ul>
-
-        <h4>实验设计</h4>
-        <ul>
-          <li>在<strong>5 个领域</strong>开展对照实验：政治、科技、社会、医疗、科学</li>
-          <li>验证人格特质与领域差异对话题-立场动态的影响</li>
-          <li>设计消融实验，评估双层记忆对立场多样性的贡献</li>
-        </ul>
-
-        <h3>3. 前沿问题研究与技术创新</h3>
-        <ul>
-          <li>
-            <strong>知识图谱与对话融合</strong>
-            <ul>
-              <li>将话题演化建模为动态知识图谱构建问题</li>
-              <li>节点表示话题/立场，边表示衍生/影响关系</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Encoder-Decoder 优化</strong>
-            <ul>
-              <li>探索记忆压缩的最优编码策略</li>
-              <li>短期→长期记忆的信息损失最小化</li>
-            </ul>
-          </li>
-          <li>
-            <strong>消融实验</strong>
-            <ul>
-              <li>验证双层记忆对立场多样性的贡献</li>
-              <li>完整模型的立场多样性为 <span class="highlight">0.504</span>；分别移除短期与长期记忆后下降至 <span class="highlight">0.300 / 0.309</span></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Result -->
-      <div class="section-card" id="result">
-        <h2><span class="emoji">🏆</span>Result（研究成果）</h2>
-
-        <h3>核心发现</h3>
-        
-        <h4>1. 话题-立场耦合机制量化</h4>
-        <ul>
-          <li>Pearson 相关系数 <span class="highlight">0.88</span>，首次证实立场变化与新话题出现的<strong>双向强化关系</strong></li>
-          <li>新话题出现时，群体立场一致性显著下降（政治领域从 0.79 降至 0.67）</li>
-          <li>立场变化主动促进话题生成，形成自我强化循环</li>
-        </ul>
-
-        <h4>2. 领域差异发现</h4>
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>领域</th>
-                <th>立场偏见（OB）</th>
-                <th>立场多样性（OD）</th>
-                <th>话题创新速度</th>
-                <th>特征</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>政治</strong></td>
-                <td>1.00</td>
-                <td>0.00</td>
-                <td>低（0.14）</td>
-                <td>快速形成极端共识</td>
-              </tr>
-              <tr>
-                <td><strong>科技</strong></td>
-                <td>-0.20</td>
-                <td>0.97</td>
-                <td>高（0.22）</td>
-                <td>高多样性，创新速度较科学/医疗高 <span class="highlight">22.7%</span></td>
-              </tr>
-              <tr>
-                <td><strong>社会</strong></td>
-                <td>0.35</td>
-                <td>0.80</td>
-                <td>中（0.34）</td>
-                <td>观点分布均衡</td>
-              </tr>
-              <tr>
-                <td><strong>医疗</strong></td>
-                <td>0.48</td>
-                <td>0.67</td>
-                <td>中（0.32）</td>
-                <td>中等偏见与多样性</td>
-              </tr>
-              <tr>
-                <td><strong>科学</strong></td>
-                <td>0.89</td>
-                <td>0.46</td>
-                <td>中（0.43）</td>
-                <td>强共识但话题多样</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h4>3. 人格影响规律</h4>
-        <ul>
-          <li><strong>"轻信型"智能体</strong>（高宜人性/高神经质）：
-            <ul>
-              <li>话题新颖性较"怀疑型"高 <span class="highlight">22.7%</span></li>
-              <li>立场变化幅度高 <span class="highlight">10.2%</span></li>
-              <li>平均话题多样性（TD）：0.81 vs 0.66</li>
-            </ul>
-          </li>
-          <li><strong>低神经质智能体</strong>：立场更稳定，对新话题抵抗力强</li>
-        </ul>
-
-        <h4>4. 系统性能指标</h4>
-        <ul>
-          <li>单次仿真生成 <span class="highlight">10,000+ 结构化对话</span></li>
-          <li>支持个体轨迹追踪与群体统计分析</li>
-          <li>话题一致性（TC）稳定在 0.23，显示讨论聚焦性</li>
-          <li>记忆压缩优化降低存储开销 <span class="highlight">60%</span></li>
-        </ul>
-
-        <h3>学术与工程影响</h3>
-        <ul>
-          <li>论文被 <strong>EMNLP 2025</strong> 接收（NLP 顶会，共同一作）</li>
-          <li>首次提出 LLM 多智能体用于话题-立场协同建模</li>
-          <li>代码开源（<a href="https://github.com/yangyi626/SPARK_" target="_blank" rel="noopener noreferrer">GitHub</a>），为对话系统、社会计算与舆情分析提供可复用框架</li>
-        </ul>
-
-        <h3>实际应用价值</h3>
-        <ul>
-          <li><strong>社交媒体治理</strong>：极化预警与干预策略评估</li>
-          <li><strong>虚假信息传播</strong>：话题演化追踪与谣言扩散路径分析</li>
-          <li><strong>个性化推荐</strong>：基于人格特质的内容分发优化</li>
-          <li><strong>公共政策制定</strong>：评估不同话题在不同群体中的演化模式</li>
-        </ul>
-      </div>
-
-      <!-- 技术能力体现 -->
-      <div class="section-card" id="capability">
-        <h2><span class="emoji">💡</span>技术能力体现</h2>
-        
-        <table>
-          <thead>
-            <tr>
-              <th>能力领域</th>
-              <th>具体体现</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>对话系统全栈能力</strong></td>
-              <td>NLU（立场识别）+ 状态跟踪（记忆管理）+ 策略学习（反思推理）+ NLG（推文生成）</td>
-            </tr>
-            <tr>
-              <td><strong>知识图谱构建</strong></td>
-              <td>动态话题图谱扩展与传播路径挖掘</td>
-            </tr>
-            <tr>
-              <td><strong>深度学习工程化</strong></td>
-              <td>PyTorch + Transformer + Prompt Engineering + 大规模仿真优化</td>
-            </tr>
-            <tr>
-              <td><strong>语义挖掘</strong></td>
-              <td>话题树动态扩展、传播路径追踪、多样性量化</td>
-            </tr>
-            <tr>
-              <td><strong>情感/立场分析</strong></td>
-              <td>三分类立场识别、基于记忆的立场更新、个体轨迹追踪</td>
-            </tr>
-            <tr>
-              <td><strong>前沿问题探索</strong></td>
-              <td>LLM 社会计算应用、可解释 AI、多智能体协作</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 微观案例 -->
-      <div class="section-card" id="case">
-        <h2><span class="emoji">🔍</span>微观案例：智能体 Joe 的立场演化轨迹</h2>
-        
-        <div class="highlight-box">
-          <strong>智能体信息：</strong>Joe，58岁，本科学历，"轻信型"人格（高宜人性、高神经质）
-        </div>
-
-        <h3>讨论话题：自动驾驶汽车</h3>
-        
-        <h4>立场演化过程</h4>
-        <ul>
-          <li>
-            <strong>Day 1-2：初始反对</strong>
-            <ul>
-              <li>关注 #SafetyFirst、#EconomicBurden、#RegulatoryChallenges</li>
-              <li>推文："谨慎对待...经济负担和监管挑战不容忽视"</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Day 3-4：转向中立</strong>
-            <ul>
-              <li>接触 #InclusiveTech、#GreenTech 等正面话题</li>
-              <li>推文："潜力巨大...但需要在包容性技术和绿色科技之间找到平衡"</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Day 5-6：犹豫波动</strong>
-            <ul>
-              <li>新话题 #TechEthics、#FutureOfMobility 引发思考</li>
-              <li>推文："在创新的同时不能忘记技术伦理"</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Day 7-9：倾向支持</strong>
-            <ul>
-              <li>持续接触 #InclusiveTech、#GreenTech 正面讨论</li>
-              <li>推文："拥抱未来...包容性技术和绿色科技的结合令人期待"</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Day 10-14：再次反对</strong>
-            <ul>
-              <li>出现 #IroncladRegulations、#NotYetReady、#PrivacyRights、#EconomicJustice</li>
-              <li>推文："必须踩刹车...安全第一不仅是口号，是必需品...还没准备好"</li>
-            </ul>
-          </li>
-        </ul>
-
-        <h4>机制揭示</h4>
-        <p>
-          该案例展示了<strong>话题-立场双向强化机制</strong>：
-        </p>
-        <ul>
-          <li><strong>话题驱动立场</strong>：新兴话题（如 #GreenTech）引入新视角，促使 Joe 从反对转向中立/支持</li>
-          <li><strong>立场驱动话题</strong>：Joe 的观点变化使其更积极参与相关话题讨论，推动话题传播</li>
-          <li><strong>人格调节作用</strong>："轻信型"特质使 Joe 对新信息更敏感，立场变化更频繁</li>
-        </ul>
-      </div>
-
-      <!-- 返回按钮 -->
-      <div style="text-align: center; margin-top: 48px;">
-        <a href="index.html" class="link-button">
-          ← 返回主页
-        </a>
-      </div>
-      </div>
+      <main class="detail-content">
+      <section class="section-card" id="background">
+        <h2>研究背景</h2>
+<p>一场持续讨论中，人们不仅会改变对原议题的态度，也会提出新的讨论方向。SPARK 研究的是：<strong>立场变化与话题扩展怎样在多轮交互中共同发生？</strong></p><p>我以共同第一作者参与这项研究。系统用具有不同人设的 LLM Agent 模拟讨论，保留个人发言、记忆与立场轨迹，再分析群体变化。研究对象是合成人物的仿真行为，不是真实用户预测或任务型助手。</p><p>论文发表于 EMNLP 2025 Main；方法与实验以 <a href="https://aclanthology.org/2025.emnlp-main.1176.pdf" target="_blank" rel="noopener">论文正文与附录</a> 为依据，实现说明另与 <a href="https://github.com/yangyi626/SPARK_" target="_blank" rel="noopener">公开代码</a> 对照。</p>
+      </section>
+      <section class="section-card" id="challenges">
+        <h2>现有挑战</h2>
+<ul><li><strong>话题和立场容易被分开研究：</strong>只看词分布难以解释“谁听到了什么、为什么改变表达”；只看立场标签，又会忽略讨论对象已经变化。</li><li><strong>长期交互需要持续状态：</strong>只保留最近发言容易遗忘历史，直接累积全部对话又会使上下文不断增长。</li><li><strong>生成对话不等于完成分析：</strong>需要把发言、话题和立场按人物与时间对齐，才能做群体统计、消融与个体回溯。</li></ul>
+      </section>
+      <section class="section-card" id="method">
+        <h2>总体方法：两个核心模块</h2>
+<figure class="project-figure"><a href="assets/spark-architecture.png" target="_blank" rel="noopener"><img src="assets/spark-architecture.png" width="1621" height="760" alt="SPARK 架构：SARA 的人设、双层记忆与立场更新，以及 TES 的群体交互和话题演化" loading="lazy" decoding="async"></a><figcaption>SPARK 架构：左侧为 SARA 的人设、双层记忆与立场更新，右侧为 TES 的群体交互与话题演化。点击图片查看原图。</figcaption></figure><table><thead><tr><th>模块</th><th>解决的问题</th><th>输出</th></tr></thead><tbody><tr><td>SARA：立场感知角色 Agent</td><td>个体如何结合人设与记忆形成新观点</td><td>更新后的记忆、发言与立场</td></tr><tr><td>TES：话题演化模拟器</td><td>个体怎样接触彼此，话题怎样进入后续讨论</td><td>交互关系、话题演化与群体轨迹</td></tr></tbody></table><p><strong>每天的主循环：</strong>选择接触对象 → 收集观点 → 更新记忆 → 生成发言与立场 → 记录新话题 → 进入下一天。</p>
+      </section>
+      <section class="section-card" id="sara">
+        <h2>模块一：个体状态与记忆更新</h2>
+<ol class="method-steps"><li><h3>1. 初始化人设与独立状态</h3><p>每个 Agent 拥有自己的身份、初始观点与历史，不共用一份对话记忆。</p><details class="implementation-deep"><summary>具体实现：初始化人设与独立状态</summary><ol><li>公开实现为每个个体保存 unique_id、name、age、traits、qualification、topic 和 opinion，并维护 opinions、stances、reasonings 等时间序列。</li><li>人口由支持、反对、中立三类初始人数相加得到；公开样例默认各 36 人，共 108 人，初始发言从对应类别的句子集合中选择。</li><li>初始类别映射为 −1 / 0 / 1。人设作为提示条件影响生成，不是单独训练的人格模型，也不能保证角色行为始终一致。</li></ol></details></li><li><h3>2. 收集当天接触到的观点</h3><p>对选中的其他 Agent，读取其最近一条观点并记录来源。</p><details class="implementation-deep"><summary>具体实现：收集当天接触到的观点</summary><ol><li>逐个读取接触对象的 unique_id 与 opinions[-1]；观点列表写入 short_opinion_memory，接触 ID 写入 contact_ids。</li><li>完整方法将当天观点摘要化，再把旧长期记忆与新摘要交给另一次模型调用，得到新的长期记忆文本。</li><li>两次摘要调用承担不同职责：短期摘要整合当天信息，长期更新保留跨日连续性。这不是向量检索，也没有独立的 Encoder–Decoder 压缩训练。</li><li>当前公开默认入口把短期摘要设为 'none'，因此这一入口不能直接代表完整双层记忆实验。</li></ol></details></li><li><h3>3. 生成新观点并解析立场</h3><p>将人物属性、原观点、当前议题和更新后的长期记忆组合为提示。</p><details class="implementation-deep"><summary>具体实现：生成新观点并解析立场</summary><ol><li>调用接口请求 JSON 对象，读取 tweet、stance、reasoning；stance 转为整数，发言与解释追加到个体历史。</li><li>生成后的 opinion 成为后续交互可读的最新观点；长期记忆同步更新并追加到 long_memory_full。</li><li>当前解析异常会回退为 tweet='none'、reasoning='none'、stance=0。这个 0 可能是技术失败，分析时应与真实中立区分。</li><li>模型生成的 reasoning 是随输出保存的解释文本，不等同于可验证的内部推理过程。</li></ol></details></li></ol><div class="data-walk"><h4>一次更新如何理解</h4><p>教学示例，不是论文中的原始发言。</p><pre><code>原观点：担心自动驾驶的安全性
+当天接触：事故风险、出行便利两类观点
+短期摘要：记录双方观点与分歧
+长期更新：结合过去的安全顾虑与当天新信息
+新发言：保留顾虑，但认可部分便利性
+立场标签：由模型输出并解析，不能由摘要规则直接决定</code></pre></div>
+      </section>
+      <section class="section-card" id="tes">
+        <h2>模块二：交互调度与话题演化</h2>
+<ol class="method-steps"><li><h3>1. 选择当天的接触对象</h3><p>通过群体调度器决定个体可以看到哪些人的观点。</p><details class="implementation-deep"><summary>具体实现：选择当天的接触对象</summary><ol><li>公开实现先排除自己，将其他个体随机打乱，取 contact_rate 个对象；默认样例为每天 3 个接触对象、运行 14 天。</li><li>使用 Mesa RandomActivation 执行个体更新，这是随机顺序调度，不是“108 个模型请求并发执行”。</li><li>接触关系不一定互相对称；公开实现读取的是执行当时的最新观点，更新顺序可能让后执行者读到当天的新观点，不能表述为严格同步快照。</li></ol></details></li><li><h3>2. 从发言中观察话题扩展</h3><p>让生成内容显式包含事件标签，以便把讨论变化转为可分析对象。</p><details class="implementation-deep"><summary>具体实现：从发言中观察话题扩展</summary><ol><li>论文要求发言使用事件话题标签；TES 在出现未见过的子话题时扩展话题结构，并追踪后续出现情况。</li><li>话题来自交互后的发言，而不是预先列出所有分支供 Agent 选择；立场和话题因此在同一轮输出中关联。</li><li>当前公开包的核心运行文件能够核对发言与轨迹记录，但不足以核实完整话题树构建、同义标签合并和全部指标计算；这里按论文方法介绍，不补写未见到的实现。</li></ol></details></li><li><h3>3. 保存逐日状态与可追踪记录</h3><p>既保留人物级输出，也保存群体运行状态，方便回溯。</p><details class="implementation-deep"><summary>具体实现：保存逐日状态与可追踪记录</summary><ol><li>公开样例记录人物 ID、人设、立场、tweet、reasoning 与时间戳，群体层使用 DataCollector 收集统计并导出 CSV。</li><li>每轮保存模型 Checkpoint，支持从历史状态继续；公开实现使用 pickle，仅适合读取可信的自有文件。</li><li>运行日志、人物轨迹与统计必须区分：例如 JSON 解析失败造成的中立标签不应直接作为真实态度变化统计。</li></ol></details></li></ol>
+      </section>
+      <section class="section-card" id="evaluation">
+        <h2>实验设计与结果</h2>
+<p>论文使用 Python、Mesa 与 DeepSeek-V3-0324，在政治、科技、社会、医疗、科学五个领域开展 108 个合成 Agent 的仿真。以下数值对应 <a href="https://aclanthology.org/2025.emnlp-main.1176.pdf" target="_blank" rel="noopener">论文正文与附录</a> 的第 4 节、表 1 与附录表 2。</p><h3>先明确指标含义</h3><table><thead><tr><th>指标</th><th>计算含义</th><th>解读边界</th></tr></thead><tbody><tr><td>OB：立场偏向</td><td>最终时刻立场标签的均值</td><td>接近 0 可能是人人中立，也可能是支持与反对相互抵消</td></tr><tr><td>OD：立场多样性</td><td>最终立场标签的标准差</td><td>衡量分散程度，不是任务准确率，也不是越高越“好”</td></tr><tr><td>TC：话题一致性</td><td>论文按单个时间片的话题分布熵定义</td><td>按该定义，值越低表示话题越集中</td></tr><tr><td>TD：话题多样性</td><td>相邻时间片话题分布的 KL 散度</td><td>衡量分布变化，不直接等于新增话题数量或创新速度</td></tr></tbody></table><h3>关键结果</h3><table><thead><tr><th>分析</th><th>论文结果</th><th>说明</th></tr></thead><tbody><tr><td>立场变化与新话题出现</td><td>Pearson r = 0.88</td><td>仿真时间序列中的正相关，不能单凭相关系数证明双向因果</td></tr><tr><td>完整记忆架构</td><td>OD = 0.504</td><td>记忆消融实验基线</td></tr><tr><td>移除短期记忆</td><td>OD = 0.300</td><td>较完整架构下降约 40.5%</td></tr><tr><td>移除长期记忆</td><td>OD = 0.309</td><td>较完整架构下降约 38.7%</td></tr><tr><td>人格分组的话题变化</td><td>Credulous / Skeptical 平均 TD：0.81 / 0.66</td><td>属于人格组对比，不能改写成科技领域相对其他领域的提升</td></tr></tbody></table><p>消融结果支持记忆组件会影响群体立场分布；它不是模型后训练带来的准确率提升，也不能据此推导存储或 Token 成本下降。</p>
+      </section>
+      <section class="section-card" id="case">
+        <h2>个体案例：怎样解释一次立场变化</h2>
+<p>论文以自动驾驶议题中的 Joe 为例，观察到其态度随安全、便利、伦理和监管等子话题变化而反复调整。案例的价值在于：可以回到同一个人的发言与接触信息，解释群体统计背后的具体过程，而不是只展示一条总量曲线。</p><p>复盘时按“接触了什么观点 → 记忆如何更新 → 新发言表达什么 → 标签是否一致 → 后续出现什么话题”检查。不能仅因某个话题先出现，就认定它单独导致了态度改变。</p>
+      </section>
+      <section class="section-card" id="limitations">
+        <h2>局限与复现边界</h2>
+<ul><li><strong>仿真不等于真实社会：</strong>人物由模型生成，共用底层模型偏好；网络结构和信息流简化，不能直接推出真实群体的行为规律。</li><li><strong>记忆会损失信息：</strong>摘要可能遗漏少数观点或放大已有偏向，需要对照原始接触记录，而不是把摘要视作完整事实。</li><li><strong>指标需要完整计算口径：</strong>话题标签归一、KL 零概率处理、时间片划分和失败样本处理都会影响结论。</li><li><strong>公开样例与完整实验需要对齐：</strong>当前默认关闭短期摘要，部分路径固定，随机种子设置也需检查；不能直接运行默认入口就声称复现论文全部结果。</li></ul><p><strong>后续改进：</strong>先固定配置、种子和模型版本，区分解析失败与中立状态，再补充多次运行、真实数据校准和更丰富的交互网络。</p>
+      </section>
+      <div class="detail-footer-actions"><a href="index.html" class="link-button">← 返回主页</a></div>
+      </main>
     </div>
-
-    <script>
-      // 平滑滚动到锚点
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
-            
-            // 移动端点击后关闭目录
-            if (window.innerWidth <= 1200) {
-              document.getElementById('toc').classList.remove('show');
-            }
-          }
-        });
-      });
-      
-      // 目录高亮跟随滚动
-      window.addEventListener('scroll', function() {
-        const sections = document.querySelectorAll('.section-card[id]');
-        const tocLinks = document.querySelectorAll('.toc-list a');
-        
-        let currentSection = '';
-        sections.forEach(section => {
-          const sectionTop = section.offsetTop - 100;
-          const sectionHeight = section.offsetHeight;
-          if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionTop + sectionHeight) {
-            currentSection = section.getAttribute('id');
-          }
-        });
-        
-        tocLinks.forEach(link => {
-          link.classList.remove('active');
-          if (link.getAttribute('href') === '#' + currentSection) {
-            link.classList.add('active');
-          }
-        });
-      });
-      
-      // 移动端目录切换
-      const tocToggle = document.getElementById('tocToggle');
-      const toc = document.getElementById('toc');
-      
-      tocToggle.addEventListener('click', function() {
-        toc.classList.toggle('show');
-      });
-      
-      // 点击页面其他地方关闭目录（移动端）
-      document.addEventListener('click', function(e) {
-        if (window.innerWidth <= 1200) {
-          if (!toc.contains(e.target) && !tocToggle.contains(e.target)) {
-            toc.classList.remove('show');
-          }
-        }
-      });
-    </script>
+      <script src="site.js" defer></script>
   </body>
 </html>

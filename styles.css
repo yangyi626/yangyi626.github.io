@@ -1,3 +1,19 @@
+.data-walk { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+.data-walk h4 { margin: 0 0 10px; font-size: 15px; }
+.data-walk .example-label { font-size: 12px; color: var(--ink-soft); }
+.data-walk pre { max-width: 100%; padding: 16px; white-space: pre-wrap; overflow-wrap: anywhere; background: white; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; line-height: 1.8; }
+.data-walk p { font-size: 14px; }
+.implementation-deep { margin: 14px 0; padding: 14px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.implementation-deep summary { color: var(--teal); font-weight: 600; cursor: pointer; }
+.implementation-deep summary:focus-visible { outline: 2px solid var(--teal); outline-offset: 4px; }
+.implementation-deep ol { margin: 16px 0 0; padding-left: 24px; font-size: 14px; }
+.implementation-deep li { padding: 4px 0; overflow-wrap: anywhere; }
+.method-steps { padding-left: 0; list-style: none; }
+.method-steps > li { padding: 8px 0 18px 8px; border-bottom: 1px solid var(--line); }
+.method-steps > li:last-child { border-bottom: 0; }
+.method-steps h3 { font-size: 17px; margin: 8px 0; }
+.method-steps .implementation-detail { padding: 14px 16px; background: var(--surface); border-left: 3px solid var(--line-strong); font-size: 14px; overflow-wrap: anywhere; }
+.section-card code { overflow-wrap: anywhere; }
 :root {
   --navy: #f7faf9;
   --navy-soft: #d9e5e1;
@@ -22,6 +38,49 @@
   --radius-lg: 18px;
   --radius-md: 12px;
   --radius-sm: 8px;
+}
+
+/* Portfolio imagery and public, print-friendly resume. */
+.homepage .hero-header { border-top: 4px solid var(--teal); }
+.resume-banner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 28px 32px; margin-bottom: 24px; background: #e9f2ef; border: 1px solid var(--line); border-radius: 14px; scroll-margin-top: 24px; }
+.resume-banner h2 { margin: 8px 0; font-size: 22px; line-height: 1.4; }
+.resume-banner p { margin: 0; color: var(--ink-soft); font-size: 13px; }
+.resume-banner .primary-action { flex-shrink: 0; }
+.project-image-link { display: block; margin: 24px 0; overflow: hidden; background: white; border: 1px solid var(--line); border-radius: 10px; }
+.project-image-link img { display: block; width: 100%; height: auto; }
+.project-image-link > span { display: flex; justify-content: space-between; padding: 12px 18px; border-top: 1px solid var(--line); font-size: 13px; font-weight: 600; }
+.project-image-link:hover { border-color: var(--teal); }
+.project-figure { margin: 24px 0; padding: 12px; background: white; border: 1px solid var(--line); border-radius: 12px; }
+.project-figure img { display: block; width: 100%; height: auto; }
+.project-figure figcaption { padding: 12px 8px 4px; color: var(--ink-soft); font-size: 12px; }
+.portrait-figure { max-width: 640px; margin-inline: auto; }
+.diagram-details { border-top: 1px solid var(--line); padding-top: 16px; }
+.diagram-details summary { cursor: pointer; color: var(--teal); font-weight: 600; padding: 8px 0; }
+.diagram-details summary:focus-visible { outline: 2px solid var(--teal); outline-offset: 4px; }
+caption { text-align: left; padding-bottom: 10px; font-size: 13px; color: var(--ink-soft); }
+.resume-toolbar { max-width: 900px; margin: 24px auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 20px; }
+.resume-sheet { max-width: 900px; margin: 0 auto 48px; padding: 48px 56px; background: white; border: 1px solid var(--line); box-shadow: var(--shadow); }
+.resume-sheet h1 { margin: 8px 0; font-size: 38px; line-height: 1.25; }
+.resume-sheet header { border-bottom: 2px solid var(--teal); padding-bottom: 12px; }
+.resume-sheet h2 { margin: 24px 0 10px; color: var(--teal); font-size: 18px; }
+.resume-sheet h3 { margin: 14px 0 5px; font-size: 15px; }
+.resume-sheet p, .resume-sheet li { font-size: 14px; }
+.resume-sheet ul { padding-left: 20px; }
+.resume-sheet li + li { margin-top: 8px; }
+.resume-date { float: right; color: var(--ink-soft); font-size: 13px; }
+@media(max-width: 760px) { .resume-banner { align-items: flex-start; flex-direction: column; padding: 24px; } .resume-sheet { margin: 0 12px 24px; padding: 28px 20px; } .resume-date { float: none; display: block; } }
+@media print { @page { size: A4; margin: 12mm; } .resume-page { background: white; } .resume-toolbar { display: none; } .resume-sheet { padding: 0; margin: 0; border: 0; box-shadow: none; max-width: none; } .resume-sheet h1 { font-size: 25px; } .resume-sheet h2 { margin: 12px 0 6px; font-size: 14px; break-after: avoid; } .resume-sheet h3 { margin-top: 8px; font-size: 11px; break-after: avoid; } .resume-sheet p, .resume-sheet li { font-size: 10px; line-height: 1.5; } .resume-sheet p { margin-bottom: 6px; } .resume-sheet li { break-inside: avoid; } .resume-sheet li + li { margin-top: 4px; } .resume-date { font-size: 10px; } }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 * {
@@ -565,6 +624,11 @@ strong {
   gap: 6px;
 }
 
+.research-project-footer {
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
 .badge {
   margin: 0;
   padding: 5px 9px;
@@ -619,6 +683,10 @@ strong {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
   margin-top: 16px;
+}
+
+.research-project-grid {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .project-mini-card {
@@ -1373,5 +1441,147 @@ td {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+.resume-image-page .resume-toolbar { max-width: 1100px; flex-wrap: wrap; }
+.resume-image-sheet { max-width: 1100px; margin: 0 auto 40px; background: white; box-shadow: var(--shadow); }
+.resume-image-sheet img { display: block; width: 100%; height: auto; }
+@media (max-width: 760px) { .resume-image-page .resume-toolbar { padding: 0 12px; } .resume-image-page .hero-actions { gap: 8px; } }
+@media print { .resume-image-sheet { width: 100%; max-width: none; margin: 0; box-shadow: none; } .resume-image-sheet img { width: auto; height: auto; max-width: 100%; max-height: 272mm; margin: auto; } .resume-image-sheet a { display: block; } }
+
+/* Quiet portfolio pass: let evidence and writing carry the page. */
+body {
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+.header {
+  background: var(--paper);
+  box-shadow: 0 4px 18px rgba(38, 52, 56, 0.045);
+}
+
+.card,
+.section-card {
+  border-top-width: 1px;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.card h2::before,
+.section-card h2::before {
+  box-shadow: 0 0 0 5px rgba(15, 118, 110, 0.1);
+}
+
+#about,
+#internship,
+#competitions,
+#research,
+#projects,
+#awards {
+  --accent: var(--teal);
+}
+
+.hero-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.project-item-featured,
+.project-mini-card {
+  background: transparent;
+  border-right: 0;
+  border-bottom: 1px solid var(--line);
+  border-left: 0;
+  border-radius: 0;
+}
+
+.project-item-featured:last-child,
+.project-mini-card:last-child {
+  border-bottom: 0;
+}
+
+.research-pill-list span,
+.badge {
+  border-radius: 6px;
+  font-weight: 650;
+}
+
+.project-result {
+  background: #fbfdfc;
+}
+
+.detail-content > .section-card {
+  border-top-width: 1px;
+}
+
+@media (max-width: 960px) {
+  body > .container {
+    display: block;
+    width: min(100% - 32px, 900px);
+  }
+
+  body > .container > .detail-content {
+    margin-left: 0;
+  }
+
+  .toc-container {
+    position: fixed;
+    z-index: 90;
+    top: 70px;
+    right: 14px;
+    left: 14px;
+    display: none;
+    max-height: 66vh;
+    overflow-y: auto;
+  }
+
+  .toc-container.show {
+    display: block;
+  }
+
+  .toc-toggle {
+    position: fixed;
+    z-index: 95;
+    right: 16px;
+    bottom: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    color: #fff;
+    background: var(--teal);
+    border: 0;
+    border-radius: 50%;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.18);
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-metric,
+  .hero-metric:first-child {
+    padding: 14px 0;
+    border-left: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hero-metric:last-child {
+    border-bottom: 0;
+  }
+
+  .project-item-featured,
+  .project-mini-card {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-wrapper,
+  .toc-container {
+    transition: none;
   }
 }

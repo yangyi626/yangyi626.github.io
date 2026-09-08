@@ -3,198 +3,53 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="NovelSim 项目详情：规则约束的多智能体叙事世界、长期记忆、权威状态与系统评测。" />
+    <meta name="description" content="NovelSim 项目详情：角色私有观察、多角色动作链、规则执行与局部重规划，以及原著长轨迹对齐评测。" />
     <title>NovelSim 项目详情 | 杨艺 Yang Yi</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="canonical" href="https://yangyi626.github.io/novelsim-detail.html" />
+    <meta property="og:title" content="NovelSim 项目详情 | 杨艺 Yang Yi" />
+    <meta property="og:description" content="NovelSim 项目详情：角色私有观察、多角色动作链、规则执行与局部重规划，以及原著长轨迹对齐评测。" />
   </head>
   <body>
     <div class="container">
       <a href="index.html" class="back-button">← 返回主页</a>
 
-      <div class="header">
+      <header class="header">
         <div class="eyebrow">Game AI Agent · Multi-agent · Rule-grounded Simulation</div>
         <h1>NovelSim：规则约束的多智能体叙事世界模拟系统</h1>
         <div class="project-meta"><strong>个人项目</strong> | 2026.07 – 2026.08</div>
         <div>
           <span class="badge badge-venue">Python / FastAPI</span>
-          <span class="badge badge-ccf">Vue 3 / Unity</span>
+          <span class="badge badge-ccf">JointPlan / 规则执行</span>
           <span class="badge badge-role">Qdrant / SQLite FTS5</span>
           <span class="badge badge-venue">Pydantic</span>
         </div>
         <div class="detail-summary" aria-label="项目摘要">
-          <div><span>定位</span><strong>服务器权威 AI 叙事游戏原型</strong></div>
+          <div><span>定位</span><strong>规则约束的叙事世界模拟</strong></div>
           <div><span>架构</span><strong>LLM 决策 + 确定性状态机</strong></div>
-          <div><span>测试</span><strong>333 项回归 + 9/9 场景</strong></div>
-          <div><span>一致性</span><strong>非法写入与知识泄漏为 0</strong></div>
+          <div><span>测试</span><strong>原著对齐 + 独立确定性基准</strong></div>
+          <div><span>一致性</span><strong>事件提交、回放与局部重规划</strong></div>
         </div>
-      </div>
+      </header>
 
       <nav class="toc-container" id="toc">
         <div class="toc-title">目录导航</div>
-        <ul class="toc-list">
-          <li><a href="#overview">项目概览</a></li>
-          <li><a href="#problem">问题与原则</a></li>
-          <li><a href="#architecture">系统架构</a></li>
-          <li><a href="#agents">多智能体流程</a></li>
-          <li><a href="#memory">长期记忆</a></li>
-          <li><a href="#runtime">运行与可视化</a></li>
-          <li><a href="#evaluation">系统评测</a></li>
-          <li><a href="#contribution">个人贡献</a></li>
-        </ul>
+        <ul class="toc-list"><li><a href="#overview">项目背景</a></li><li><a href="#challenges">现有挑战</a></li><li><a href="#method">四模块方法</a></li><li><a href="#world">世界与认知</a></li><li><a href="#planning">多角色规划</a></li><li><a href="#execution">执行与纠错</a></li><li><a href="#alignment">长轨迹评测</a></li><li><a href="#evaluation">实验结果</a></li><li><a href="#limitations">失败与局限</a></li></ul>
       </nav>
-      <button class="toc-toggle" id="tocToggle" aria-label="目录">☰</button>
+      <button class="toc-toggle" id="tocToggle" aria-controls="toc" aria-expanded="false" aria-label="打开目录">☰</button>
 
-      <div class="detail-content">
-
-      <section class="section-card" id="overview">
-        <h2>项目概览</h2>
-        <p>
-          NovelSim 是一个服务器权威的多智能体叙事游戏原型。玩家和 NPC 的自然语言先被解析为候选行动，LLM 只负责高层意图、角色决策与叙事表达，不能直接修改世界；所有事实变化都必须通过工具权限、世界规则、角色认知和因果授权校验，再以原子 StatePatch 提交为可回放的 WorldEvent。
-        </p>
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-number">333</div><div class="stat-label">自动化回归测试通过</div></div>
-          <div class="stat-card"><div class="stat-number">9/9</div><div class="stat-label">确定性场景通过</div></div>
-          <div class="stat-card"><div class="stat-number">0</div><div class="stat-label">非法 Patch / 越权 / 泄漏</div></div>
-          <div class="stat-card"><div class="stat-number">100%</div><div class="stat-label">状态回放与因果一致率</div></div>
-        </div>
-      </section>
-
-      <section class="section-card" id="problem">
-        <h2>问题与设计原则</h2>
-        <p>
-          生成式游戏若让大模型直接修改世界状态，容易产生不存在的实体或技术、角色使用未掌握的信息、能力越界以及叙事与真实状态互相矛盾等问题。NovelSim 将“生成能力”和“事实权威”解耦：模型可以提出行动，但只有确定性引擎能够提交状态变化。
-        </p>
-        <table>
-          <tr><th>风险</th><th>系统约束</th></tr>
-          <tr><td>世界观幻觉</td><td>校验实体、时代技术、世界概念、Capability 与 Affordance。</td></tr>
-          <tr><td>角色知识泄漏</td><td>按 session 与 character 隔离记忆，并校验角色已知信息和证据链。</td></tr>
-          <tr><td>状态矛盾</td><td>所有变化通过结构化 StatePatch 原子提交，由事件版本链维护权威状态。</td></tr>
-          <tr><td>叙事脱离事实</td><td>叙事必须引用已提交事件，并通过实体、说话者、认知边界与事件依据检查。</td></tr>
-        </table>
-      </section>
-
-      <section class="section-card" id="architecture">
-        <h2>系统架构</h2>
-        <div class="pipeline-strip">
-          <span class="pipeline-step">玩家 / NPC 意图</span>
-          <span class="pipeline-step">候选 Action</span>
-          <span class="pipeline-step">规则与认知校验</span>
-          <span class="pipeline-step">StatePatch</span>
-          <span class="pipeline-step">WorldEvent</span>
-          <span class="pipeline-step">叙事与前端表现</span>
-        </div>
-        <div class="implementation-list">
-          <div class="implementation-item">
-            <strong>提议</strong>
-            LLM 基于角色状态、局部观察、记忆与玩家输入，生成符合 Pydantic Schema 的候选行为和工具参数。
-          </div>
-          <div class="implementation-item">
-            <strong>校验</strong>
-            ToolRegistry 和规则引擎检查工具权限、实体存在性、世界设定、角色能力、空间位置、已知信息与 Action-Patch 因果关系。
-          </div>
-          <div class="implementation-item">
-            <strong>执行</strong>
-            通过校验的行为被转化为原子 StatePatch，并提交为带版本号、因果证据和状态哈希的权威 WorldEvent。
-          </div>
-          <div class="implementation-item">
-            <strong>叙事</strong>
-            Narrator 只解释已发生的事件；Web 和 Unity 客户端消费事件流，表现移动、物品、对话、关系和联盟变化。
-          </div>
-        </div>
-      </section>
-
-      <section class="section-card" id="agents">
-        <h2>多智能体流程</h2>
-        <p>
-          每个角色 Agent 运行“感知—记忆检索—决策—工具执行—观察—反思”闭环。角色只看到自身可感知的世界状态与角色隔离记忆，信息通过对话和事件逐跳传播，并保留来源证据，避免全知视角造成知识泄漏。
-        </p>
-        <table>
-          <tr><th>模块</th><th>职责</th></tr>
-          <tr><td>Perception</td><td>构造角色局部观察，过滤不可见实体和未知事实。</td></tr>
-          <tr><td>Planner</td><td>根据目标、关系、记忆和当前状态生成结构化候选行动。</td></tr>
-          <tr><td>Agent Tools</td><td>提供移动、交互、物品、对话、信息传播与联盟等受控能力。</td></tr>
-          <tr><td>Reflection</td><td>从新事件提炼长期记忆，更新关系与后续决策依据。</td></tr>
-          <tr><td>Scheduler</td><td>调度 NPC 行动和回合推进，保证状态版本与事件顺序一致。</td></tr>
-        </table>
-      </section>
-
-      <section class="section-card" id="memory">
-        <h2>长期记忆</h2>
-        <p>
-          记忆系统以 session_id + character_id 严格隔离角色数据，结合 SQLite FTS5 词法检索和 Qdrant 向量检索，并将语义相关度、词法相关度、重要度与新近性组合排序。召回内容携带 source_event_id，用于证据引用、冲突检测和角色认知审计。
-        </p>
-        <table>
-          <tr><th>方案</th><th>Hit@4</th><th>MRR</th><th>nDCG@4</th></tr>
-          <tr><td>SQLite FTS5 基线</td><td>0.840</td><td>0.805</td><td>0.814</td></tr>
-          <tr><td>最终混合检索</td><td>1.000</td><td>0.957</td><td>0.967</td></tr>
-        </table>
-        <p>
-          评测使用 25 条易混淆剧情记忆和 50 个中文查询；简历采用可直接复现的 FTS5 基线 Hit@4 / MRR = 0.84 / 0.805，项目中另完成了 Qdrant 混合检索优化。
-        </p>
-      </section>
-
-      <section class="section-card" id="runtime">
-        <h2>运行与可视化</h2>
-        <ul>
-          <li>基于事件日志、版本链和状态哈希实现存档恢复、断点续传与剧情回放。</li>
-          <li>使用 FastAPI 与 Vue 3 构建 Web 控制台，展示角色状态、世界规则、关系图、行为轨迹、工具调用与规则拒绝原因。</li>
-          <li>接入 Unity 6.3 LTS，支持 NavMesh 移动、场景交互、物品 / 对话 / 联盟 HUD 和可续传事件游标。</li>
-          <li>提供编译器与创作者流程，可将书籍或场景素材转化为世界包、角色、规则和可运行场景。</li>
-        </ul>
-      </section>
-
-      <section class="section-card" id="evaluation">
-        <h2>系统评测</h2>
-        <div class="highlight-box">
-          <p><strong>确定性基线：</strong>333 项 Python 回归测试通过，9/9 个固定场景通过；合法工具、预期拒绝、状态回放、信息传播和证据链均为 100%。</p>
-          <p><strong>安全一致性：</strong>非法状态写入、未知实体接受、因果越权提交与角色认知泄漏均为 0；门禁 G0 → G3 的违规放过数由 6 降至 0。</p>
-        </div>
-        <table>
-          <tr><th>评测</th><th>结果</th></tr>
-          <tr><td>确定性场景</td><td>9/9 通过，Free / Script 权威终态和工具链一致率 100%。</td></tr>
-          <tr><td>真实模型回归</td><td>20/20 完整运行，18/20 目标成功；14 个提交事件的回放、因果证据、叙事覆盖和结构化事件依据均为 100%。</td></tr>
-          <tr><td>真实模型调用</td><td>45 次调用、49,255 Token，P50 / P95 为 10.554s / 16.469s。</td></tr>
-          <tr><td>强基线盲测</td><td>与同模型 direct-prompt 强基线为 3–3；不将主观叙事质量表述为领先结论。</td></tr>
-        </table>
-      </section>
-
-      <section class="section-card" id="contribution">
-        <h2>个人贡献</h2>
-        <ul>
-          <li>独立设计并实现 LLM 高层决策、Agent 状态机、ToolRegistry、StatePatch 与 WorldEvent 组成的混合架构。</li>
-          <li>实现世界规则、角色能力、时空、认知与 Action-Patch 因果校验，建立服务器权威状态边界。</li>
-          <li>构建多 Agent 感知、记忆、决策、反思和信息传播流程，并接入 SQLite FTS5 与 Qdrant 长期记忆。</li>
-          <li>完成 FastAPI / Vue 3 控制台、Unity 运行时、存档回放以及确定性、真实 LLM 和记忆检索评测。</li>
-        </ul>
-      </section>
-
-      <div class="detail-footer-actions">
+      <main class="detail-content">
+<section class="section-card" id="overview"><h2>背景：让角色行动真正改变一个可验证的世界</h2><p>NovelSim 面向小说世界中的多角色叙事模拟：从某一章结束时的世界快照出发，让角色根据各自掌握的信息采取行动，持续推进后续剧情。与直接续写文本不同，人物位置、物品归属和角色认知都由结构化状态维护，模型说“拿到了物品”并不代表拿取成功。</p><p>我主要围绕角色私有观察、多角色动作链、规则执行与局部重规划构建后端运行机制，并用隐藏原著事件锚点检验长轨迹结果。项目不涉及模型后训练，核心是将 LLM 决策接入可检查、可恢复的执行系统。</p><div class="stats-grid"><div class="stat-card"><div class="stat-number">87.07%</div><div class="stat-label">无扰动轨迹 · 加权事件召回</div></div><div class="stat-card"><div class="stat-number">3 次</div><div class="stat-label">扰动轨迹 · 真实重规划</div></div><div class="stat-card"><div class="stat-number">0</div><div class="stat-label">两条轨迹 · 非法状态提交</div></div><div class="stat-card"><div class="stat-number">6/6</div><div class="stat-label">完整门禁 · 违规探针拦截</div></div></div></section><section class="section-card" id="challenges"><h2>现有挑战：文本合理，不等于行动成立</h2><table><tr><th>挑战</th><th>具体问题</th><th>处理方法</th></tr><tr><td>世界状态失真</td><td>凭空出现物品、越过能力前置条件、叙事与实际持有者冲突。</td><td>权威快照、受限工具、补丁因果校验。</td></tr><tr><td>角色成为全知者</td><td>世界存在的秘密，被没有证据的角色直接使用。</td><td>事实与信念分离、私有观察、来源事件追踪。</td></tr><tr><td>计划执行后失效</td><td>目标离开、物品易主，或者角色互相等待。</td><td>依赖变化检测、等待图、受影响动作链重规划。</td></tr><tr><td>长轨迹难评估</td><td>语言相似不代表事件、对象与顺序正确。</td><td>隐藏锚点匹配、事件回放与独立叙事评审。</td></tr></table></section><section class="section-card" id="method"><h2>我的方法：四个模块组成一条执行闭环</h2><div class="pipeline-strip"><span class="pipeline-step">世界状态与角色观察</span><span class="pipeline-step">多角色计划</span><span class="pipeline-step">规则执行与纠错</span><span class="pipeline-step">原著对齐与评测</span></div><p>前两个模块决定“角色知道什么、准备做什么”，第三个模块决定“哪些变化可以成立”，第四个模块检查“整段推演是否可信”。执行结果更新世界，成为下一轮观察的输入。</p><figure class="project-figure"><a href="assets/novelsim-overview.png" target="_blank" rel="noopener"><img src="assets/novelsim-overview.png" width="811" height="710" alt="NovelSim 行为规划、权威状态校验与事件回放概览" loading="lazy" decoding="async"></a><figcaption>已有原型架构概览；当前多角色规划、重规划机制及各项实验范围以下文为准。点击查看原图。</figcaption></figure></section><section class="section-card" id="world"><h2>模块一：世界建模与角色认知</h2><ol class="method-steps"><li><h3>1. 建立权威世界快照</h3><p>用明确的状态字段表示世界，不让叙事文本成为事实数据库。</p><details class="implementation-deep"><summary>具体实现：建立权威世界快照</summary><ol><li>使用 Pydantic 描述角色、地点、物品、关系、目标、事实和信念。位置取角色的 location_id，物品归属取 owner_id；小说特有属性放在扩展字段中。</li><li>从第 1 章结束的检查点初始化世界，只保留当时成立的状态。特殊能力由世界包声明使用者、目标、前置标记和确定效果，LLM 只能选择调用，不能自行改写能力效果。</li><li>状态修改使用受限 Operation 协议，拒绝额外字段和未知操作；每次提交递增世界版本，形成可以重放的事件序列。</li></ol></details></li><li><h3>2. 生成角色私有观察</h3><p>世界知道的事实与角色相信的事实分开保存。</p><details class="implementation-deep"><summary>具体实现：生成角色私有观察</summary><ol><li>facts 保存客观事实，beliefs 按角色保存信念、置信度和来源证据。根据角色位置、可见实体、已有信念、目标及可用工具，投影为只读 GameObservation。</li><li>规划器内部可读取世界以构造投影，但发送给每个角色模型的是该角色观察，而不是完整可变 WorldState。对话与信息传播也经过规则检查，不能直接把全局秘密加入另一个角色的认知。</li><li>对话输出再检查实体、物品持有关系和角色知识；有效的传播结果记录来源角色、来源事件与证据链，供后续认知审计。</li></ol></details></li><li><h3>3. 只把已发生事件写入长期记忆</h3><p>SQLite 保存权威记忆，向量库只作为可重建的检索索引。</p><details class="implementation-deep"><summary>具体实现：只把已发生事件写入长期记忆</summary><ol><li>从正式 WorldEvent 投影角色情节记忆；用会话、角色、来源事件、记忆类型组成幂等约束。被拒绝的动作不能被记录为已经发生的事实。</li><li>按 session_id 与 character_id 同时过滤 FTS5 和 Qdrant 召回，合并去重后按 0.80×语义相关度 + 0.10×词法相关度 + 0.05×重要度 + 0.05×新近性排序；新近性按 exp(-天数/30) 衰减。</li><li>向量召回的 ID 回查 SQLite 并再次核对角色作用域；向量服务异常则降级到 FTS5，降级路径使用自己的排序权重。</li><li>反思候选需引用至少 2 条事件证据，经过实体、访问权限、冲突及语义蕴含审查后才写入，每次最多 3 条。检索和反思属于已实现的通用能力，不将独立记忆基准的收益直接归因到原著推演结果。</li></ol></details></li></ol></section><section class="section-card" id="planning"><h2>模块二：多角色规划与显式协作</h2><ol class="method-steps"><li><h3>4. 选择当前需要行动的角色</h3><p>调度器决定谁出场，模型决定这些角色如何行动。</p><details class="implementation-deep"><summary>具体实现：选择当前需要行动的角色</summary><ol><li>根据当前位置、活跃目标、剧情标记和可用能力选出当前推动剧情的 1–3 个角色，避免每轮让全部 NPC 调用模型。</li><li>逐角色构造私有输入，提供当前目标、允许的工具及相关已提交事件；未来原著锚点不作为规划输入。</li><li>调度与决策分离：角色选择包含世界包规则，因此当前实验不是没有任何先验的自由小说复现。</li></ol></details></li><li><h3>5. 生成并检查短动作链</h3><p>每个角色生成有限步工具调用，再合并为 JointPlan。</p><details class="implementation-deep"><summary>具体实现：生成并检查短动作链</summary><ol><li>真实模型为单个角色输出意图、停止条件和最多 3 步动作。默认温度 0.2，生成失败或格式校验失败时最多尝试 2 次，将结构化错误反馈给同一模型修订。</li><li>依次检查 Pydantic 输出结构、工具参数 Schema 和动作合理性，例如未知工具、移动到当前位置、自我对话、物品持有矛盾及重复无进展对话。</li><li>通过确定性组装器补充角色与步骤 ID，形成各角色独立动作链。所有动作链为空时显式失败，不用脚本伪造模型成功。</li></ol></details></li><li><h3>6. 用执行指针表达协作进度</h3><p>计划是要做的事，Runtime 记录已经执行到哪一步。</p><details class="implementation-deep"><summary>具体实现：用执行指针表达协作进度</summary><ol><li>每个角色维护独立步骤指针和完成状态。一个执行 Tick 推进就绪角色的动作，行动逐个通过权威提交路径，不把多角色调度等同于并发修改世界。</li><li>通用 JointPlan 支持 ActionStep、等待其他角色指定步骤的 WaitAgent，以及等待确定性状态条件的 WaitState。</li><li>等待条件由位置、物品归属、事实或标记等谓词判断。等待图中出现环时触发死锁处理。</li><li><strong>实现边界：</strong>当前 v8 原著模型输出主要是 ActionStep；显式等待与死锁机制由专门协作计划和 Runtime 测试覆盖，不宣称该次真实推演由模型自动生成了等待步骤。</li></ol></details></li></ol></section><section class="section-card" id="execution"><h2>模块三：规则执行与动态纠错</h2><ol class="method-steps"><li><h3>7. 把工具调用转换成受控候选补丁</h3><p>模型提出行动，工具提出变化，校验器决定变化是否允许。</p><details class="implementation-deep"><summary>具体实现：把工具调用转换成受控候选补丁</summary><ol><li>ToolRegistry 检查工具是否存在、角色是否有权限以及参数是否符合 Schema，再检查实体、空间位置、能力与交互条件。</li><li>工具只产生候选 StatePatch。继续核对 ToolCall 与 Patch 的因果关系，例如移动工具不能夹带物品转移，角色也不能借合法工具修改无关对象。</li><li>在状态副本上应用操作并检查约束，失败返回结构化错误，不把半完成变化写进权威世界。</li></ol></details></li><li><h3>8. 提交事件并验证恢复结果</h3><p>只有成功提交的事件才能改变世界、进入回放或成为叙事依据。</p><details class="implementation-deep"><summary>具体实现：提交事件并验证恢复结果</summary><ol><li>提交前检查 expected_version 与当前版本一致；冲突时拒绝提交。成功后创建包含补丁、参与角色、前后版本及因果信息的 WorldEvent，并返回新状态。</li><li>叙事解释已提交事件；对话的认知后果也以事件方式提交，不能只改文本不改状态。</li><li>从初始快照逐个重放事件，检查版本连续性，再比较权威事实的稳定哈希。哈希排除 version，版本链单独检查。</li><li>恢复时对账已提交事件与 Runtime 指针，处理“事件已成功、执行指针尚未持久化”的窗口，避免重复执行。内存事件提交与持久化路径分别承担职责，不把普通函数调用描述成跨组件数据库事务。</li></ol></details></li><li><h3>9. 只重规划失效的剩余动作链</h3><p>保留已完成事实，不因一次失败重做整个剧情。</p><details class="implementation-deep"><summary>具体实现：只重规划失效的剩余动作链</summary><ol><li>从剩余动作提取依赖的角色、物品、事实和关系，只比较相关状态变化；工具失败、依赖失效和等待死锁统一转换为结构化触发器。</li><li>ReplanRequest 携带原计划版本、完成步骤、受影响角色、剩余意图、失败码及最新状态差异，再为受影响角色构造新观察。</li><li>模型先修复前置条件，再继续原意图。新动作链重新过校验后替换受影响的剩余部分；保留已提交事件和其他角色计划，记录 parent_plan_id 与 revision。</li><li>重规划达到次数上限后显式停止或置为失效状态，保留当前世界，不无限重试，也不宣布虚假完成。</li></ol></details></li></ol><div class="data-walk"><h3>一个执行例子：目标已经离开原地点</h3><pre><code>原计划：与目标对话 → 获取消息
+环境变化：目标已移动到另一地点
+执行检查：不同地点，拒绝对话；世界状态不变
+失败反馈：失败码 + 最新位置 + 尚未完成的对话意图
+局部重规划：先移动 → 再对话
+再次校验并提交：位置事件 → 对话事件 → 合法认知更新</code></pre><p>这是机制示例，不作为额外实验样本或成功次数统计。</p></div></section><section class="section-card" id="alignment"><h2>模块四：原著对齐与长轨迹评测</h2><ol class="method-steps"><li><h3>10. 把推演输入与评测答案分开</h3><p>从已知检查点出发，结束后才读取未来原著事件锚点。</p><details class="implementation-deep"><summary>具体实现：把推演输入与评测答案分开</summary><ol><li>固定第 1 章结束时的世界快照，无玩家干预推进第 2–5 章片段。终点用权威状态条件判断，不由模型自行宣告完成。</li><li>原著锚点描述事件涉及的工具、行动者、目标、关键词、顺序和权重；运行结束后才将锚点交给对齐器。</li><li>区分 clean 无扰动与 perturbed 扰动运行，并记录实际模型调用、脚本回退、执行失败、重规划和非法提交。隐藏锚点不等于消除了模型预训练记忆或世界包先验。</li></ol></details></li><li><h3>11. 分别计算事件召回与顺序</h3><p>先判断做了哪些事，再判断这些事发生的先后。</p><details class="implementation-deep"><summary>具体实现：分别计算事件召回与顺序</summary><ol><li>每个锚点从尚未使用的模拟事件中寻找最佳匹配；工具、行动者、目标必须满足硬条件，避免仅靠相似文本判为命中。</li><li>加权召回等于命中锚点权重之和除以总权重，9/10 命中不必等于 90%。匹配阶段不强制顺序，之后统计相邻已匹配锚点的事件索引是否递增。</li><li>角色和目标一致性已由匹配门禁保证，因此不再把已匹配事件上的 100% 当作额外独立效果；重点报告召回、顺序与漏掉的事件。</li></ol></details></li><li><h3>12. 将程序正确性与叙事质量分开验证</h3><p>规则测试回答能否安全执行，模型评审回答剧情是否连贯。</p><details class="implementation-deep"><summary>具体实现：将程序正确性与叙事质量分开验证</summary><ol><li>确定性测试覆盖规则拒绝、信息传播、状态回放、显式等待和死锁恢复；不需要模型参与的测试与真实模型轨迹分别报告。</li><li>LLM Judge 按每 12 个事件分块，评估因果、人设、目标推进、世界状态一致性和重复控制，再聚合。通过条件为总分至少 0.72、每维至少 0.60，且无阻断问题。</li><li>聚合输出的高严重度问题必须有分块证据支撑，否则降级，减少评审器凭空制造阻断。</li><li>另外使用同模型 direct-prompt 强基线做写作质量盲测。规则更可靠不自动意味着文笔更好，也不把不同会话的 Judge 分数与 clean 运行拼成一组数据。</li></ol></details></li></ol></section><section class="section-card" id="evaluation"><h2>实验结果：按运行与测试范围分别报告</h2><p>以下来自项目已有报告，本次页面整理未重新调用模型或重跑训练。主线使用真实 LLM 推演《第一狂妃：废柴三小姐》的单一片段。</p><table><tr><th>指标</th><th>无扰动 clean</th><th>扰动 perturbed</th></tr><tr><td>片段完成 / 脚本回退</td><td>完成 / 0</td><td>完成 / 0</td></tr><tr><td>原著事件命中</td><td>9/10</td><td>10/10</td></tr><tr><td>加权事件召回</td><td><strong>87.07%</strong></td><td>100%</td></tr><tr><td>相邻锚点顺序一致性</td><td>100%</td><td>88.89%</td></tr><tr><td>重规划次数</td><td>0</td><td><strong>3</strong></td></tr><tr><td>非法提交 / 权威回放</td><td>0 / 一致</td><td>0 / 一致</td></tr><tr><td>模型调用 / 总 Token</td><td>15 / 70,653</td><td>25 / 122,606</td></tr></table><p>扰动运行的事件召回更高、顺序更低，只说明这条轨迹在恢复过程中出现了不同路径，不能据此推断扰动能提升模型能力。</p><table><tr><th>独立验证</th><th>结果</th><th>解释边界</th></tr><tr><td>确定性门禁消融</td><td>G0–G3 分别拦截 0、2、5、6 个违规探针，共 6 个。</td><td>验证规则层的作用；不是大样本真实模型违规率实验。</td></tr><tr><td>确定性长程基准</td><td>6/6 完成，报告死锁恢复率 1.0、无谓重规划率 0。</td><td>固定扰动套件，隔离模型随机性。</td></tr><tr><td>中文记忆检索</td><td>25 条记忆 / 50 个查询；FTS5 Hit@4 = 0.84，MRR = 0.805。</td><td>小规模检索基准，不代表长剧情最终收益。</td></tr><tr><td>独立持久化会话 Judge</td><td>综合 0.888，人设 0.93，目标推进 0.75，阻断问题 0。</td><td>来自另一次 28 事件会话，不是上表 clean 轨迹。</td></tr><tr><td>同模型写作质量盲测</td><td>与 direct-prompt 强基线为 3:3。</td><td>6 题样本，不宣称主观写作质量领先。</td></tr></table></section><section class="section-card" id="limitations"><h2>失败案例、局限与下一步</h2><ul><li><strong>关键小事件仍会漏：</strong>无扰动轨迹未命中取外袍事件，说明大方向推进不代表每个低层动作都还原；需要分析动作选择、前置条件与锚点定义各自的影响。</li><li><strong>目标进度更新偏弱：</strong>独立 Judge 中目标推进为 0.75，低于人设与状态一致性；部分目标指针没有及时反映已发生的事件，部分对话语义重复。</li><li><strong>世界包有人工先验：</strong>初始状态、能力效果、调度条件与终点包含领域建模。当前主要验证一个小说片段，尚不能推广为任意长篇小说的自动模拟。</li><li><strong>安全结论有范围：</strong>“非法提交 0”只针对已报告运行；确定性门禁与回放不能证明模型认知或所有规则在开放场景下绝对正确。</li><li><strong>评测还需扩展：</strong>增加多世界包、多随机种子和真实模型门禁消融；将记忆检索、反思、等待机制分别接入受控对照，验证各模块对长轨迹的实际贡献。</li></ul></section>
+<div class="detail-footer-actions">
         <a href="index.html" class="link-button">← 返回主页</a>
       </div>
-      </div>
+      </main>
     </div>
-
-    <script>
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          if (window.innerWidth <= 1200) document.getElementById('toc').classList.remove('show');
-        });
-      });
-      window.addEventListener('scroll', function() {
-        const sections = document.querySelectorAll('.section-card[id]');
-        const tocLinks = document.querySelectorAll('.toc-list a');
-        let currentSection = '';
-        sections.forEach(section => {
-          if (window.pageYOffset >= section.offsetTop - 100) currentSection = section.getAttribute('id');
-        });
-        tocLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + currentSection));
-      });
-      const tocToggle = document.getElementById('tocToggle');
-      const toc = document.getElementById('toc');
-      tocToggle.addEventListener('click', () => toc.classList.toggle('show'));
-    </script>
+      <script src="site.js" defer></script>
   </body>
 </html>
