@@ -19,10 +19,10 @@
       <header class="header">
         <h1>SPARK：多智能体立场与话题协同演化</h1>
         <div class="project-meta">
-          <strong>共同第一作者</strong> | 2025.02 – 2025.06
+          <strong>共同第一作者 · 参与 SARA、TES 与实验分析</strong> | 2025.02 – 2025.06
         </div>
         <div>
-          <span class="badge badge-venue">EMNLP 2025</span>
+          <span class="badge badge-venue">EMNLP 2025 Main</span>
           <span class="badge badge-ccf">CCF B</span>
           <span class="badge badge-role">共同一作</span>
         </div>
@@ -45,7 +45,7 @@
       <!-- 目录导航 -->
       <nav class="toc-container" id="toc">
         <div class="toc-title">📑 目录导航</div>
-        <ul class="toc-list"><li><a href="#background">研究背景</a></li><li><a href="#challenges">现有挑战</a></li><li><a href="#method">总体方法</a></li><li><a href="#sara">一：个体与记忆</a></li><li><a href="#tes">二：交互与话题</a></li><li><a href="#evaluation">实验与指标</a></li><li><a href="#case">个体案例</a></li><li><a href="#limitations">局限与复现</a></li></ul>
+        <ul class="toc-list"><li><a href="#background">研究背景</a></li><li><a href="#challenges">问题与方法设计</a></li><li><a href="#method">总体架构</a></li><li><a href="#sara">SARA：个体与记忆</a></li><li><a href="#tes">TES：交互与话题</a></li><li><a href="#case">贯穿示例</a></li><li><a href="#evaluation">实验配置与指标</a></li><li><a href="#results">结果与消融</a></li><li><a href="#contribution">我的参与</a></li><li><a href="#limitations">局限与后续方向</a></li></ul>
       </nav>
 
       <!-- 移动端目录切换按钮 -->
@@ -54,45 +54,115 @@
       </button>
 
       <main class="detail-content">
-      <section class="section-card" id="background">
-        <h2>研究背景</h2>
-<p>一场持续讨论中，人们不仅会改变对原议题的态度，也会提出新的讨论方向。SPARK 研究的是：<strong>立场变化与话题扩展怎样在多轮交互中共同发生？</strong></p><p>我以共同第一作者参与这项研究。系统用具有不同人设的 LLM Agent 模拟讨论，保留个人发言、记忆与立场轨迹，再分析群体变化。研究对象是合成人物的仿真行为，不是真实用户预测或任务型助手。</p><p>论文发表于 EMNLP 2025 Main；方法与实验以 <a href="https://aclanthology.org/2025.emnlp-main.1176.pdf" target="_blank" rel="noopener">论文正文与附录</a> 为依据，实现说明另与 <a href="https://github.com/yangyi626/SPARK_" target="_blank" rel="noopener">公开代码</a> 对照。</p>
-      </section>
-      <section class="section-card" id="challenges">
-        <h2>现有挑战</h2>
-<ul><li><strong>话题和立场容易被分开研究：</strong>只看词分布难以解释“谁听到了什么、为什么改变表达”；只看立场标签，又会忽略讨论对象已经变化。</li><li><strong>长期交互需要持续状态：</strong>只保留最近发言容易遗忘历史，直接累积全部对话又会使上下文不断增长。</li><li><strong>生成对话不等于完成分析：</strong>需要把发言、话题和立场按人物与时间对齐，才能做群体统计、消融与个体回溯。</li></ul>
-      </section>
-      <section class="section-card" id="method">
-        <h2>总体方法：两个核心模块</h2>
-<figure class="project-figure"><a href="assets/spark-architecture.png" target="_blank" rel="noopener"><img src="assets/spark-architecture.png" width="1621" height="760" alt="SPARK 架构：SARA 的人设、双层记忆与立场更新，以及 TES 的群体交互和话题演化" loading="lazy" decoding="async"></a><figcaption>SPARK 架构：左侧为 SARA 的人设、双层记忆与立场更新，右侧为 TES 的群体交互与话题演化。点击图片查看原图。</figcaption></figure><table><thead><tr><th>模块</th><th>解决的问题</th><th>输出</th></tr></thead><tbody><tr><td>SARA：立场感知角色 Agent</td><td>个体如何结合人设与记忆形成新观点</td><td>更新后的记忆、发言与立场</td></tr><tr><td>TES：话题演化模拟器</td><td>个体怎样接触彼此，话题怎样进入后续讨论</td><td>交互关系、话题演化与群体轨迹</td></tr></tbody></table><p><strong>每天的主循环：</strong>选择接触对象 → 收集观点 → 更新记忆 → 生成发言与立场 → 记录新话题 → 进入下一天。</p>
-      </section>
-      <section class="section-card" id="sara">
-        <h2>模块一：个体状态与记忆更新</h2>
-<ol class="method-steps"><li><h3>1. 初始化人设与独立状态</h3><p>每个 Agent 拥有自己的身份、初始观点与历史，不共用一份对话记忆。</p><details class="implementation-deep"><summary>具体实现：初始化人设与独立状态</summary><ol><li>公开实现为每个个体保存 unique_id、name、age、traits、qualification、topic 和 opinion，并维护 opinions、stances、reasonings 等时间序列。</li><li>人口由支持、反对、中立三类初始人数相加得到；公开样例默认各 36 人，共 108 人，初始发言从对应类别的句子集合中选择。</li><li>初始类别映射为 −1 / 0 / 1。人设作为提示条件影响生成，不是单独训练的人格模型，也不能保证角色行为始终一致。</li></ol></details></li><li><h3>2. 收集当天接触到的观点</h3><p>对选中的其他 Agent，读取其最近一条观点并记录来源。</p><details class="implementation-deep"><summary>具体实现：收集当天接触到的观点</summary><ol><li>逐个读取接触对象的 unique_id 与 opinions[-1]；观点列表写入 short_opinion_memory，接触 ID 写入 contact_ids。</li><li>完整方法将当天观点摘要化，再把旧长期记忆与新摘要交给另一次模型调用，得到新的长期记忆文本。</li><li>两次摘要调用承担不同职责：短期摘要整合当天信息，长期更新保留跨日连续性。这不是向量检索，也没有独立的 Encoder–Decoder 压缩训练。</li><li>当前公开默认入口把短期摘要设为 'none'，因此这一入口不能直接代表完整双层记忆实验。</li></ol></details></li><li><h3>3. 生成新观点并解析立场</h3><p>将人物属性、原观点、当前议题和更新后的长期记忆组合为提示。</p><details class="implementation-deep"><summary>具体实现：生成新观点并解析立场</summary><ol><li>调用接口请求 JSON 对象，读取 tweet、stance、reasoning；stance 转为整数，发言与解释追加到个体历史。</li><li>生成后的 opinion 成为后续交互可读的最新观点；长期记忆同步更新并追加到 long_memory_full。</li><li>当前解析异常会回退为 tweet='none'、reasoning='none'、stance=0。这个 0 可能是技术失败，分析时应与真实中立区分。</li><li>模型生成的 reasoning 是随输出保存的解释文本，不等同于可验证的内部推理过程。</li></ol></details></li></ol><div class="data-walk"><h4>一次更新如何理解</h4><p>教学示例，不是论文中的原始发言。</p><pre><code>原观点：担心自动驾驶的安全性
-当天接触：事故风险、出行便利两类观点
-短期摘要：记录双方观点与分歧
-长期更新：结合过去的安全顾虑与当天新信息
-新发言：保留顾虑，但认可部分便利性
-立场标签：由模型输出并解析，不能由摘要规则直接决定</code></pre></div>
-      </section>
-      <section class="section-card" id="tes">
-        <h2>模块二：交互调度与话题演化</h2>
-<ol class="method-steps"><li><h3>1. 选择当天的接触对象</h3><p>通过群体调度器决定个体可以看到哪些人的观点。</p><details class="implementation-deep"><summary>具体实现：选择当天的接触对象</summary><ol><li>公开实现先排除自己，将其他个体随机打乱，取 contact_rate 个对象；默认样例为每天 3 个接触对象、运行 14 天。</li><li>使用 Mesa RandomActivation 执行个体更新，这是随机顺序调度，不是“108 个模型请求并发执行”。</li><li>接触关系不一定互相对称；公开实现读取的是执行当时的最新观点，更新顺序可能让后执行者读到当天的新观点，不能表述为严格同步快照。</li></ol></details></li><li><h3>2. 从发言中观察话题扩展</h3><p>让生成内容显式包含事件标签，以便把讨论变化转为可分析对象。</p><details class="implementation-deep"><summary>具体实现：从发言中观察话题扩展</summary><ol><li>论文要求发言使用事件话题标签；TES 在出现未见过的子话题时扩展话题结构，并追踪后续出现情况。</li><li>话题来自交互后的发言，而不是预先列出所有分支供 Agent 选择；立场和话题因此在同一轮输出中关联。</li><li>当前公开包的核心运行文件能够核对发言与轨迹记录，但不足以核实完整话题树构建、同义标签合并和全部指标计算；这里按论文方法介绍，不补写未见到的实现。</li></ol></details></li><li><h3>3. 保存逐日状态与可追踪记录</h3><p>既保留人物级输出，也保存群体运行状态，方便回溯。</p><details class="implementation-deep"><summary>具体实现：保存逐日状态与可追踪记录</summary><ol><li>公开样例记录人物 ID、人设、立场、tweet、reasoning 与时间戳，群体层使用 DataCollector 收集统计并导出 CSV。</li><li>每轮保存模型 Checkpoint，支持从历史状态继续；公开实现使用 pickle，仅适合读取可信的自有文件。</li><li>运行日志、人物轨迹与统计必须区分：例如 JSON 解析失败造成的中立标签不应直接作为真实态度变化统计。</li></ol></details></li></ol>
-      </section>
-      <section class="section-card" id="evaluation">
-        <h2>实验设计与结果</h2>
-<p>论文使用 Python、Mesa 与 DeepSeek-V3-0324，在政治、科技、社会、医疗、科学五个领域开展 108 个合成 Agent 的仿真。以下数值对应 <a href="https://aclanthology.org/2025.emnlp-main.1176.pdf" target="_blank" rel="noopener">论文正文与附录</a> 的第 4 节、表 1 与附录表 2。</p><h3>先明确指标含义</h3><table><thead><tr><th>指标</th><th>计算含义</th><th>解读边界</th></tr></thead><tbody><tr><td>OB：立场偏向</td><td>最终时刻立场标签的均值</td><td>接近 0 可能是人人中立，也可能是支持与反对相互抵消</td></tr><tr><td>OD：立场多样性</td><td>最终立场标签的标准差</td><td>衡量分散程度，不是任务准确率，也不是越高越“好”</td></tr><tr><td>TC：话题一致性</td><td>论文按单个时间片的话题分布熵定义</td><td>按该定义，值越低表示话题越集中</td></tr><tr><td>TD：话题多样性</td><td>相邻时间片话题分布的 KL 散度</td><td>衡量分布变化，不直接等于新增话题数量或创新速度</td></tr></tbody></table><h3>关键结果</h3><table><thead><tr><th>分析</th><th>论文结果</th><th>说明</th></tr></thead><tbody><tr><td>立场变化与新话题出现</td><td>Pearson r = 0.88</td><td>仿真时间序列中的正相关，不能单凭相关系数证明双向因果</td></tr><tr><td>完整记忆架构</td><td>OD = 0.504</td><td>记忆消融实验基线</td></tr><tr><td>移除短期记忆</td><td>OD = 0.300</td><td>较完整架构下降约 40.5%</td></tr><tr><td>移除长期记忆</td><td>OD = 0.309</td><td>较完整架构下降约 38.7%</td></tr><tr><td>人格分组的话题变化</td><td>Credulous / Skeptical 平均 TD：0.81 / 0.66</td><td>属于人格组对比，不能改写成科技领域相对其他领域的提升</td></tr></tbody></table><p>消融结果支持记忆组件会影响群体立场分布；它不是模型后训练带来的准确率提升，也不能据此推导存储或 Token 成本下降。</p>
-      </section>
-      <section class="section-card" id="case">
-        <h2>个体案例：怎样解释一次立场变化</h2>
-<p>论文以自动驾驶议题中的 Joe 为例，观察到其态度随安全、便利、伦理和监管等子话题变化而反复调整。案例的价值在于：可以回到同一个人的发言与接触信息，解释群体统计背后的具体过程，而不是只展示一条总量曲线。</p><p>复盘时按“接触了什么观点 → 记忆如何更新 → 新发言表达什么 → 标签是否一致 → 后续出现什么话题”检查。不能仅因某个话题先出现，就认定它单独导致了态度改变。</p>
-      </section>
-      <section class="section-card" id="limitations">
-        <h2>局限与复现边界</h2>
-<ul><li><strong>仿真不等于真实社会：</strong>人物由模型生成，共用底层模型偏好；网络结构和信息流简化，不能直接推出真实群体的行为规律。</li><li><strong>记忆会损失信息：</strong>摘要可能遗漏少数观点或放大已有偏向，需要对照原始接触记录，而不是把摘要视作完整事实。</li><li><strong>指标需要完整计算口径：</strong>话题标签归一、KL 零概率处理、时间片划分和失败样本处理都会影响结论。</li><li><strong>公开样例与完整实验需要对齐：</strong>当前默认关闭短期摘要，部分路径固定，随机种子设置也需检查；不能直接运行默认入口就声称复现论文全部结果。</li></ul><p><strong>后续改进：</strong>先固定配置、种子和模型版本，区分解析失败与中立状态，再补充多次运行、真实数据校准和更丰富的交互网络。</p>
-      </section>
-      <div class="detail-footer-actions"><a href="index.html" class="link-button">← 返回主页</a></div>
-      </main>
+<section class="section-card" id="background"><h2>研究背景</h2>
+<p>持续讨论中，人的态度和讨论对象会一起变化。例如自动驾驶讨论从安全延伸到隐私、就业和监管时，参与者会结合新信息重新表达观点。SPARK 研究个体持续交换观点时，<strong>立场变化与话题扩展如何共同发生</strong>。</p>
+<p>项目用具有独立人设、观点和记忆的 LLM Agent 构建仿真环境，逐日保存接触信息、发言和立场，再分析群体分布与话题变化。我以共同第一作者参与 SARA 人设与双层记忆、TES 交互调度与轨迹记录，以及实验和记忆消融分析。</p>
+<p>成果发表于 <strong>EMNLP 2025 Main</strong>。以下介绍包含个体状态更新、群体调度、数据记录和实验分析四条实现链路。</p>
+</section>
+
+<section class="section-card" id="challenges"><h2>问题与方法设计</h2>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">问题</th><th scope="col">方法</th></tr></thead><tbody><tr><td>立场与话题分开研究，难以还原个体变化</td><td>同一条发言同时记录文本、立场和事件标签，关联人物与时间</td></tr>
+<tr><td>角色条件相同，生成行为容易同质化</td><td>为每个个体初始化身份、Big Five 特质与独立历史</td></tr>
+<tr><td>长期交互需要持续状态，完整历史不断增长</td><td>先摘要当天接触观点，再整合进长期记忆</td></tr>
+<tr><td>只有群体总量难以解释变化过程</td><td>保留接触来源、观点、记忆与立场序列，结合消融和个体轨迹分析</td></tr></tbody></table></div>
+</section>
+
+<section class="section-card" id="method"><h2>总体架构：SARA 与 TES</h2>
+<figure class="project-figure"><a href="assets/spark-architecture.png" target="_blank" rel="noopener"><img src="assets/spark-architecture.png" width="1621" height="760" alt="SPARK 原论文架构：SARA 人设与双层记忆、TES 群体交互与话题演化" loading="lazy" decoding="async"></a><figcaption>原论文架构图：左侧 SARA 更新个体状态，右侧 TES 组织群体交互并记录话题演化。点击查看大图。</figcaption></figure>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">模块</th><th scope="col">步骤</th><th scope="col">输出</th></tr></thead><tbody><tr><td>SARA：立场感知角色 Agent</td><td>人设初始化 → 收集观点 → 短期摘要 → 长期整合 → 生成发言 → 提交状态</td><td>记忆、tweet、stance、reasoning</td></tr>
+<tr><td>TES：话题演化模拟器</td><td>创建群体 → 抽取接触对象 → 随机顺序调度 → 记录话题 → 汇总轨迹 → 推进时间</td><td>接触关系、群体统计、话题记录与仿真检查点</td></tr></tbody></table></div>
+<div class="highlight-box"><strong>每日主循环：</strong>选择接触对象 → 收集最新观点 → 摘要与记忆更新 → 生成新发言和立场 → 记录话题与人物状态 → 下一天</div>
+<p>每个个体独立保存身份和历史，群体层负责接触对象、执行顺序与时间推进。108 个 Agent 共享模型服务，各自使用独立的提示上下文和状态。</p>
+</section>
+
+<section class="section-card" id="sara"><h2>模块一：SARA 个体状态与双层记忆</h2>
+<h3>步骤 1：初始化身份、观点与历史容器</h3>
+<p>为每个 <code>Citizen</code> 分配 <code>unique_id</code>，保存姓名、年龄、学历、人格特质、议题和初始观点。姓名通过 <code>names-dataset</code> 采样，年龄使用 <code>random.randrange(18,65)</code>，学历从预设类别中抽取；Big Five 每个维度从对应特质词集合采样，组合成人设描述。</p>
+<p>初始群体包含支持、反对、中立各 36 人，从各类别的观点句子集合随机选择初始表达，标签分别映射为 1、−1、0。每个个体维护 <code>opinions</code>、<code>stances</code>、<code>reasonings</code>、<code>contact_ids</code> 和记忆历史，初始长期记忆为空文本。</p>
+<h3>步骤 2：读取接触对象的最新观点</h3>
+<p>遍历当天分配的 <code>agent_interaction</code>，读取对方的 <code>unique_id</code> 和 <code>opinions[-1]</code>。当天观点列表追加到 <code>short_opinion_memory</code>，来源 ID 追加到 <code>contact_ids</code>，保留本次更新的信息来源。</p>
+<h3>步骤 3：生成当天短期摘要</h3>
+<p>将当天接触的观点按行拼接，与当前议题一起送入摘要提示。模型归纳主要观点及支持、反对、中立倾向，输出几句话的短期摘要；该调用温度设为 <code>0.5</code>。摘要用于整理当天材料，随后进入长期记忆更新。</p>
+<h3>步骤 4：将新摘要整合进长期记忆</h3>
+<p>另一次调用同时接收旧长期记忆和当天摘要，要求整合新信息并保持历史连续性，温度设为 <code>1</code>。返回的新记忆暂存为 <code>long_mem</code>，供本轮观点生成使用，随后写回 <code>long_opinion_memory</code> 并追加到 <code>long_memory_full</code>。</p>
+<div class="highlight-box">短期摘要 = LLM（当前议题，当天接触观点）<br>新长期记忆 = LLM（旧长期记忆，短期摘要）</div>
+<h3>步骤 5：组合提示并生成结构化发言</h3>
+<p>把姓名、特质、学历、旧观点、当前议题和新长期记忆填入观点更新模板。模板引导角色结合既有信念理解新信息，允许受到相反观点影响，并要求发言包含事件话题标签。</p>
+<p>请求设置 <code>response_format={"type":"json_object"}</code>，解析返回的 <code>tweet</code>、<code>stance</code> 和 <code>reasoning</code>，将立场转为整数。</p>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">字段</th><th scope="col">记录内容</th><th scope="col">用途</th></tr></thead><tbody><tr><td>tweet</td><td>观点文本与事件标签</td><td>作为其他个体后续读取的最新表达</td></tr>
+<tr><td>stance</td><td>−1 / 0 / 1 立场标签</td><td>统计人物变化与群体分布</td></tr>
+<tr><td>reasoning</td><td>随发言生成的解释文本</td><td>辅助回溯本轮表达</td></tr></tbody></table></div>
+<h3>步骤 6：提交状态与保存输出</h3>
+<p>将新发言、立场、解释和长期记忆追加到个体历史，保存人物 ID、人设字段及墙钟时间戳；每次读取已有 JSON 数组并追加记录。更新结束后清空 <code>agent_interaction</code>，下一轮重新分配接触对象。</p>
+<p>接口包装层最多尝试 30 次，失败后等待 0.5 秒。JSON 解析或字段读取异常时，现有处理返回 <code>tweet='none'</code>、<code>reasoning='none'</code>、<code>stance=0</code>；该处理对统计的影响列于文末局限部分。</p>
+</section>
+
+<section class="section-card" id="tes"><h2>模块二：TES 交互调度与话题演化</h2>
+<h3>步骤 1：创建群体与统一实验配置</h3>
+<p>用 Mesa 的 <code>Model</code> 表示群体，将个体加入 <code>RandomActivation</code> 调度器。五个领域统一使用 108 个 Agent、每天每人接触 3 个对象、运行 14 天；初始支持、反对、中立各 36 人。</p>
+<h3>步骤 2：抽取当天接触对象</h3>
+<p>对每个 Agent 排除自身，将其他对象随机打乱，取前 <code>contact_rate=3</code> 个加入其 <code>agent_interaction</code>。每天重新抽样，形成有方向的信息接触关系：A 接触 B 与 B 接触 A 分别由各自抽样决定。</p>
+<h3>步骤 3：按随机顺序更新个体</h3>
+<p>群体先为所有个体选好接触对象，再调用 <code>schedule.step()</code> 随机顺序激活。每个 Agent 在自己的 <code>step()</code> 中完成信息读取、两级记忆更新和观点生成。</p>
+<p>读取采用执行时的 <code>opinions[-1]</code>。若 A 先更新、B 随后读取 A，B 会接触到 A 当天的新发言；这种顺序更新使信息能够在同一天继续传递。</p>
+<h3>步骤 4：记录事件标签与话题扩展</h3>
+<p>生成协议要求发言包含事件相关 hashtag。根据发言中的标签识别新话题，记录首次出现时间及相关发言；后续再次出现时记录其传播。原始议题作为起点，讨论中产生的子话题进入演化记录。</p>
+<h3>步骤 5：保存人物轨迹与群体统计</h3>
+<p>人物对象保留接触来源、接触观点、历次发言、立场与长期记忆，JSON 文件保存人物输出。群体通过 <code>DataCollector</code> 采集支持、反对、中立人数，转为 DataFrame 后导出 CSV。</p>
+<p>收集器在每天更新前采样，最终个体状态保存本轮更新后的结果；JSON 的时间戳记录实际调用时间。分析时分别使用仿真轮次与墙钟时间定位记录。</p>
+<h3>步骤 6：推进时间与保存检查点</h3>
+<p>本轮激活完成后更新群体计数并推进仿真日期，将整个群体状态通过 pickle 保存到带轮次编号的检查点。入口支持指定已有检查点与偏移继续运行，结束后另存完成状态。</p>
+</section>
+
+<section class="section-card" id="case"><h2>贯穿示例：个体一天的更新</h2>
+<p>以下用自动驾驶讨论说明数据如何流转。</p>
+<ol><li><strong>旧状态：</strong>个体此前主要担忧事故责任，长期记忆保存相关顾虑。</li><li><strong>当天输入：</strong>接触三个对象，读取交通效率、隐私风险、无障碍出行三类观点，并记录来源。</li><li><strong>短期摘要：</strong>归纳当天的便利性支持和隐私、安全争议。</li><li><strong>长期整合：</strong>把新信息并入此前的事故责任记忆。</li><li><strong>观点生成：</strong>结合人设与旧观点，生成新的发言、立场及解释。</li><li><strong>群体传播：</strong>新发言成为后续可读取的观点，相关事件标签进入话题记录。</li></ol>
+<p>人物历史把“接触信息—记忆更新—发言表达”串联起来，为群体指标提供可回溯的个体材料。</p>
+</section>
+
+<section class="section-card" id="evaluation"><h2>实验配置与指标</h2>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">配置项</th><th scope="col">设置</th></tr></thead><tbody><tr><td>模型与框架</td><td>DeepSeek-V3-0324；Python + Mesa</td></tr>
+<tr><td>群体规模</td><td>108 个 Agent，初始支持 / 反对 / 中立各 36 人</td></tr>
+<tr><td>每日接触数</td><td>每人 3 个对象</td></tr>
+<tr><td>仿真长度</td><td>14 天，五个领域使用相同配置</td></tr>
+<tr><td>五个领域</td><td>政治、科技、社会、医疗、科学</td></tr>
+<tr><td>讨论议题</td><td>枪支管制、自动驾驶上路、裸辞、基因编辑、“全球变暖是一场骗局”这一待讨论命题</td></tr></tbody></table></div>
+<h3>四项统计指标</h3>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">指标</th><th scope="col">定义</th><th scope="col">含义</th></tr></thead><tbody><tr><td>OB：立场偏向</td><td>最终立场标签均值</td><td>正值偏支持，负值偏反对；结合类别分布理解均值</td></tr>
+<tr><td>OD：立场多样性</td><td>最终立场标签的总体标准差</td><td>衡量个体立场的分散程度</td></tr>
+<tr><td>TC：话题一致性</td><td>−Σ Pₜ(k) log Pₜ(k)</td><td>按话题分布熵计算，低值表示更集中</td></tr>
+<tr><td>TD：话题变化</td><td>KL(Pₜ ∥ Pₜ₋₁)</td><td>衡量相邻时间片的话题分布变化</td></tr></tbody></table></div>
+</section>
+
+<section class="section-card" id="results"><h2>实验结果与消融分析</h2>
+<h3>立场与话题的共同变化</h3>
+<p>立场变化与新话题出现的时间序列呈较强正相关，Pearson <strong>r = 0.88</strong>。Credulous 与 Skeptical 人格分组的平均 TD 分别为 0.81 和 0.66，表现出不同的话题分布变化程度。</p>
+<h3>双层记忆消融</h3>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">配置</th><th scope="col">OD</th><th scope="col">相对完整架构变化</th></tr></thead><tbody><tr><td>完整双层记忆</td><td>0.504</td><td>对照值</td></tr>
+<tr><td>移除短期记忆</td><td>0.300</td><td>减少 0.204，约 40.5%</td></tr>
+<tr><td>移除长期记忆</td><td>0.309</td><td>减少 0.195，约 38.7%</td></tr></tbody></table></div>
+<p>移除任一记忆层后，群体立场多样性均下降。短期摘要组织当天观点，长期整合保存跨日信息，两项操作共同影响最终立场分布。</p>
+<h3>五个领域的结果</h3>
+<p>下表保留论文 Table 1 的 Original 配置结果。</p>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">领域</th><th scope="col">OB</th><th scope="col">OD</th><th scope="col">TC</th><th scope="col">TD</th></tr></thead><tbody><tr><td>政治</td><td>1.00</td><td>0.00</td><td>0.23</td><td>0.14</td></tr>
+<tr><td>科技</td><td>−0.20</td><td>0.97</td><td>0.23</td><td>0.22</td></tr>
+<tr><td>社会</td><td>0.35</td><td>0.80</td><td>0.23</td><td>0.34</td></tr>
+<tr><td>医疗</td><td>0.48</td><td>0.67</td><td>0.23</td><td>0.32</td></tr>
+<tr><td>科学</td><td>0.89</td><td>0.46</td><td>0.23</td><td>0.43</td></tr></tbody></table></div>
+<p>政治领域最终集中支持，科技领域保持较大的立场差异。科学领域平均立场偏支持，同时话题分布持续变化，体现了态度趋同与话题扩展可以共同出现。</p>
+</section>
+
+<section class="section-card" id="contribution"><h2>我的参与与项目成果</h2>
+<ul><li><strong>SARA：</strong>参与角色初始化、独立状态管理、短期摘要、长期记忆整合及结构化发言链路。</li><li><strong>TES：</strong>参与接触对象抽样、随机顺序调度、人物轨迹记录与群体状态保存。</li><li><strong>实验分析：</strong>参与五领域实验、记忆消融和个体轨迹分析，比较立场分布与话题变化。</li></ul>
+<p>项目形成了从个体输入、记忆更新到群体指标的可追踪仿真流程，研究成果发表于 EMNLP 2025 Main。</p>
+</section>
+
+<section class="section-card" id="limitations"><h2>局限与后续方向</h2>
+<p>仿真角色共享底层模型偏好，人设与接触机制是对社会交互的简化。相关系数反映仿真时间序列的关联，真实社会适用性与因果机制仍需要外部数据和干预实验检验。</p>
+<p>摘要过程可能遗漏少数观点，现有解析失败回退为 <code>stance=0</code> 会混入中立统计。后续可增加独立错误状态和合法标签校验，对照原始接触记录检查摘要保真度，并通过多次运行与真实数据校准评估稳定性。</p>
+</section>
+<div class="detail-footer-actions"><a href="index.html" class="link-button">← 返回主页</a></div>
+</main>
     </div>
       <script src="site.js" defer></script>
   </body>

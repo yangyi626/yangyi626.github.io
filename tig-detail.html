@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Dota 2 宏观决策预测项目详情：Qwen2.5-14B-Instruct 多阶段后训练、纠错优化与严格留出集评测。" />
+    <meta name="description" content="Dota 2 宏观决策预测项目详情：Qwen2.5-14B 多阶段后训练、纠错优化与严格留出集评测。" />
     <title>Dota 2 宏观决策预测项目详情 | 杨艺 Yang Yi</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="canonical" href="https://yangyi626.github.io/tig-detail.html" />
@@ -15,51 +15,122 @@
       <a href="index.html" class="back-button">← 返回主页</a>
 
       <header class="header">
-        <div class="eyebrow">大模型后训练 · 决策预测 · 严格 Holdout 验证</div>
-        <h1>Dota 2 宏观决策预测：Qwen2.5-14B-Instruct 多阶段后训练与纠错优化</h1>
+        <div class="eyebrow">大模型后训练 · 决策预测 · 独立留出验证</div>
+        <h1>Dota 2 宏观决策预测：Qwen2.5-14B 多阶段后训练与纠错优化</h1>
         <div class="project-meta"><strong>个人项目</strong> | 2026.05 – 2026.06</div>
         <div>
-          <span class="badge badge-venue">Qwen2.5-14B-Instruct</span>
-          <span class="badge badge-ccf">轻量 GRPO</span>
+          <span class="badge badge-venue">Qwen2.5-14B</span>
+          <span class="badge badge-ccf">GRPO</span>
           <span class="badge badge-role">OPD-lite</span>
           <span class="badge badge-venue">OpenDota</span>
         </div>
         <div class="detail-summary" aria-label="项目摘要">
           <div><span>角色</span><strong>独立研究与开发</strong></div>
-          <div><span>模型</span><strong>Qwen2.5-14B-Instruct</strong></div>
-          <div><span>方法</span><strong>SFT + 轻量 GRPO + 纠错续训</strong></div>
-          <div><span>结果</span><strong>Strict holdout +4.80 pp</strong></div>
+          <div><span>模型</span><strong>Qwen2.5-14B</strong></div>
+          <div><span>方法</span><strong>SFT + GRPO + 纠错续训</strong></div>
+          <div><span>结果</span><strong>独立留出主动作准确率 64.30%</strong></div>
         </div>
       </header>
 
       <nav class="toc-container" id="toc">
         <div class="toc-title">目录导航</div>
-        <ul class="toc-list"><li><a href="#overview">项目背景</a></li><li><a href="#challenges">现有挑战</a></li><li><a href="#method">总体方法</a></li><li><a href="#data">一：数据与标签</a></li><li><a href="#sft">二：LoRA SFT</a></li><li><a href="#grpo">三：轻量 GRPO</a></li><li><a href="#correction">四：纠错续训</a></li><li><a href="#evaluation">五：统一评测</a></li><li><a href="#analysis">失败与局限</a></li></ul>
+        <ul class="toc-list"><li><a href="#overview">项目背景</a></li><li><a href="#challenges">现有挑战</a></li><li><a href="#method">总体方法</a></li><li><a href="#data">一：数据与标签</a></li><li><a href="#sft">二：LoRA SFT</a></li><li><a href="#grpo">三：GRPO</a></li><li><a href="#correction">四：纠错续训</a></li><li><a href="#evaluation">五：统一评测</a></li><li><a href="#analysis">失败与局限</a></li></ul>
       </nav>
       <button class="toc-toggle" id="tocToggle" aria-controls="toc" aria-expanded="false" aria-label="打开目录">☰</button>
 
-      <main class="detail-content">
-
-<section class="section-card" id="overview"><h2>项目背景</h2><p>Dota 2 的团队决策同时受到经济、英雄状态、建筑与近期战斗影响。这个项目将 Replay 整理成结构化文本，让模型根据当前及近期状态，预测队伍接下来最可能执行的 <strong>1–2 个宏观动作</strong>。</p><p>我独立完成数据构建、LoRA 后训练、纠错实验与新比赛留出评测。它是离线预测系统，不控制游戏客户端，不涉及移动或施法。监督目标来自真实事件的规则映射，<strong>不是专家标注的最优决策</strong>。</p></section>
-<section class="section-card" id="challenges"><h2>现有挑战</h2><ul><li><strong>事件不是现成标签：</strong>需要把击杀、建筑、Roshan 等事件转换成动作，并对齐到之前的决策状态。</li><li><strong>动作稀疏且重叠：</strong>团战、推进与资源争夺可能接连发生，需要统一主次动作与冲突处理。</li><li><strong>时序泄漏风险：</strong>同局相邻状态高度相似，必须按比赛划分；未来事件可生成标签，但不能进入输入。</li><li><strong>训练收益与类别回退并存：</strong>总分提升可能掩盖抓单、防塔等类别的性能下降。</li></ul></section>
-<section class="section-card" id="method"><h2>总体方法：五个模块</h2><figure class="project-figure"><a href="assets/dota-overview.png" target="_blank" rel="noopener"><img src="assets/dota-overview.png" width="799" height="710" alt="Dota 2：Replay 状态、事件回填、SFT、轻量 GRPO 与 OPD-lite 纠错续训" loading="lazy" decoding="async"></a><figcaption>数据与训练主链。GRPO 为项目轻量实现，OPD-lite 为纠错续训；图中简写的奖励未展开格式无效时的 −0.3 项，完整定义见下文。</figcaption></figure><table><thead><tr><th>模块</th><th>作用</th><th>产物</th></tr></thead><tbody><tr><td>数据与标签</td><td>Replay 状态构建、未来事件回填与冲突消解</td><td>状态—动作样本</td></tr><tr><td>LoRA SFT</td><td>学习动作映射与输出格式</td><td>SFT Adapter</td></tr><tr><td>轻量 GRPO</td><td>组内采样，优化动作与集合奖励</td><td>策略优化 Adapter</td></tr><tr><td>OPD-lite</td><td>基于预测回放的纠错续训</td><td>最终 Adapter</td></tr><tr><td>统一评测</td><td>主测试集、新比赛与类别回退分析</td><td>效果与泛化报告</td></tr></tbody></table></section>
-<section class="section-card" id="data"><h2>模块一：数据构建与未来事件回填</h2><ol class="method-steps"><li><h3>1. 比赛抓取、过滤与划分</h3><p>以比赛为单位建立数据边界，再生成决策点。</p><details class="implementation-deep"><summary>具体实现：比赛抓取、过滤与划分</summary><ol><li>缓存 OpenDota 比赛 JSON，检查玩家数、时长和关键时序事件；缺少必要信息的比赛过滤。</li><li>先按 match_id 划分训练、验证、测试，避免同一局 20:00 和 21:00 分别进入训练与测试。</li><li>核对到的采样实现从 300 秒开始，每 60 秒生成双方视角状态，结合近期事件和经济、经验变化。Replay 中双方统计不等于玩家战争迷雾下的可见信息。</li></ol></details></li><li><h3>2. 事件检测与向前回填</h3><p>从实际事件构造动作候选，并标回事件之前的状态。</p><details class="implementation-deep"><summary>具体实现：事件检测与向前回填</summary><ol><li>建筑事件按归属、线路和类型生成推进或防守；Roshan、团战、孤立击杀、视野和符点事件分别映射到对应动作。</li><li>事件时间为 tₑ，窗口为 L，则回填到 tₑ−L ≤ t ≤ tₑ。核对到的配置：Roshan / 兵营 / 遗迹 120 秒，线路塔 90 秒，团战 75 秒，抓单 / 视野 35 秒，符点 30 秒。</li><li>候选保存事件来源、时间、优先级与置信度；时间距离越远，置信度按窗口衰减。端点包含事件发生时刻，因此后续需要按预测提前量切片。</li><li>己方建筑被摧毁所对应的 Defend 是代理标签，不证明队伍实施了有效防守；无事件覆盖时的 Farm 也可能包含其他未检测行为。</li></ol></details></li><li><h3>3. 候选排序与输入隔离</h3><p>保留一个主动作和最多一个辅助动作，阻止标签线索进入模型。</p><details class="implementation-deep"><summary>具体实现：候选排序与输入隔离</summary><ol><li>候选加入时间点桶，按动作优先级、置信度、事件距离排序；选最高优先级核心动作作为主标签，再保留一个不重复辅助动作。</li><li>统一 16 类动作：推进和防守各 5 类，另含 Team Fight、Pickoff、Roshan、Vision、Rune、Farm。</li><li>Prompt 只包含截至 t 的状态事实和固定动作清单；future_summary、label_evidence、候选标签和决策提示不传入模型。</li><li>扫描禁用字段并检查 match_id、sample_id、prompt_hash 跨集合重叠。审计通过是必要条件，不等于所有隐性泄漏都已排除。</li></ol></details></li></ol><div class="data-walk"><h4>回填如何与输入隔离</h4><p>教学示例，不是实际比赛记录。</p><pre><code>20:00 发生 Roshan 击杀，回填窗口 120 秒
-19:00 样本输入：只含截至 19:00 的比赛状态
-19:00 样本标签：Roshan，由之后事件生成
-训练：模型读状态，损失或奖励读隐藏标签
-推理：不提供未来事件、标签或纠错提示</code></pre></div></section>
-<section class="section-card" id="sft"><h2>模块二：LoRA SFT</h2><ol class="method-steps"><li><h3>1. 统一提示与目标</h3><p>使用 Qwen2.5-14B-Instruct 学习状态到动作的映射。</p><details class="implementation-deep"><summary>具体实现：统一提示与目标</summary><ol><li>user 内容由 game_state、固定动作候选和格式要求构成；assistant 目标包含简短分析和 answer 标签，首个动作是主动作。</li><li>使用模型 chat template 拼接训练文本；训练和评测共用动作名称与解析规则。</li><li>零样本基线是 Instruct 未加载 Adapter，不是预训练 Base。规则生成的分析文本不等于专家推理。</li></ol></details></li><li><h3>2. 训练与保存 Adapter</h3><p>用参数高效训练建立后续策略优化的起点。</p><details class="implementation-deep"><summary>具体实现：训练与保存 Adapter</summary><ol><li>使用 TRL SFTTrainer 和 PEFT LoRA；记录配置 r=16、alpha=32、dropout=0.05，覆盖注意力与 MLP 投影。</li><li>支持 BF16、梯度检查点和梯度累积，最大序列长度 4096；需检查长输入截断是否截掉目标答案。</li><li>当前脚本未显式设置 completion-only 掩码，不能声称 SFT 只计算回答 Token 损失；保存 Adapter、Tokenizer 与训练参数。</li></ol></details></li></ol></section>
-<section class="section-card" id="grpo"><h2>模块三：轻量组相对策略优化</h2><ol class="method-steps"><li><h3>1. 对同一局面分组采样</h3><p>固定输入，从当前策略生成多条候选回答。</p><details class="implementation-deep"><summary>具体实现：对同一局面分组采样</summary><ol><li>实验每个 Prompt 采样 4 条，温度 0.9、top_p=0.95，最大新生成长度 160 Token。</li><li>从最后一组 answer 标签抽取动作，兼容分隔符、归一化名称并去重，同时记录未知动作。</li><li>隐藏 gt_actions 仅用于评分；合法格式要求存在标签、1–2 个已知动作且无未知项。</li></ol></details></li><li><h3>2. 计算组合奖励和组内优势</h3><p>兼顾主动作、动作集合与格式，而不是只做字符串匹配。</p><details class="implementation-deep"><summary>具体实现：计算组合奖励和组内优势</summary><ol><li>奖励为：主动作正确加 1.0；集合 F1 乘 0.6；格式合法加 0.2，否则减 0.3；超过两个已识别动作减 0.2，出现未知动作减 0.2。</li><li>组内计算均值与总体标准差；标准差小于 1e−6 时优势为零，否则标准化并截断到 [−3,3]。</li><li>优势截断不等于 PPO clipping；完全同分的组没有相对学习信号。</li></ol></details></li><li><h3>3. 更新回答概率</h3><p>提高高奖励回答的概率，压低低奖励回答的概率。</p><details class="implementation-deep"><summary>具体实现：更新回答概率</summary><ol><li>重新前向计算生成序列，只对 response Token 汇总平均 log probability；使用 L = −mean(A × logp_response)。</li><li>优势 detach 后反向传播，执行梯度累积、梯度范数裁剪、优化器更新和学习率调度。</li><li>没有旧策略重要性比率、PPO Clip 或参考模型 KL，因此称为轻量组相对优化，不使用 Agent-One 中的完整 GRPO 公式。</li></ol></details></li></ol><div class="data-walk"><h4>奖励计算示例</h4><p>教学示例：目标为 Team Fight、Roshan。</p><pre><code>预测：&lt;answer&gt;Team Fight&lt;/answer&gt;
-主动作正确，集合 precision=1，recall=1/2，F1=2/3
-格式合法，无其他惩罚
-奖励 = 1 + 0.6 × 2/3 + 0.2 = 1.6</code></pre></div></section>
-<section class="section-card" id="correction"><h2>模块四：OPD-lite 纠错续训</h2><ol class="method-steps"><li><h3>1. 回放训练预测并构造纠正目标</h3><p>比较模型回答与标准动作，定位主动作和集合错误。</p><details class="implementation-deep"><summary>具体实现：回放训练预测并构造纠正目标</summary><ol><li>使用 SFT + GRPO 600 步模型回放训练样本；不把留出集错误加入纠错训练。</li><li>opd_target_text 优先复用已有标准 assistant target，缺失时根据 gt_actions 构造简短模板，并非逐条调用外部 Teacher 生成。</li><li>比较困难样本与随机样本选择；最终采用 random-800，不应表述为只学习 800 条最难错误。</li></ol></details></li><li><h3>2. 低学习率续训已有 Adapter</h3><p>以原始状态为输入、纠正答案为监督目标继续训练。</p><details class="implementation-deep"><summary>具体实现：低学习率续训已有 Adapter</summary><ol><li>训练器只拼接 prompt 与 opd_target_text；hindsight 字段仅记录是否存在，没有作为额外用户输入。</li><li>冻结主线为随机 800 条、80 步，从 GRPO Adapter 继续监督训练。它不包含 Teacher Top-k KL 蒸馏目标。</li><li>另有 token-level OPD 探索，但没有超过起点，因此单列负结果，不把它算作最终效果来源。</li></ol></details></li></ol></section>
-<section class="section-card" id="evaluation"><h2>模块五：统一评测与结果</h2><p>主动作准确率检查第一个动作；主动作 Macro-F1 关注类别平衡；Exact Set 检查动作集合完全一致。以下保留历史实验记录，不是本次重新运行。</p><h3>主测试集：1,253 个有效决策点</h3><table><thead><tr><th>阶段</th><th>主动作准确率</th><th>主动作 Macro-F1</th><th>Exact Set</th></tr></thead><tbody><tr><td>Instruct 零样本</td><td>17.24%</td><td>18.49%</td><td>7.10%</td></tr><tr><td>SFT</td><td>58.58%</td><td>62.65%</td><td>39.74%</td></tr><tr><td>SFT + 轻量 GRPO</td><td>58.50%</td><td>63.10%</td><td>44.69%</td></tr><tr><td>再经 OPD-lite 续训</td><td>64.88%</td><td>67.74%</td><td>48.84%</td></tr></tbody></table><p>SFT 带来主要提升；GRPO 主动作准确率未提升，但改善了动作集合质量；纠错续训进一步提高两类指标。</p><h3>严格新比赛留出集：74 场、2,815 个有效决策点</h3><table><thead><tr><th>阶段</th><th>主动作准确率</th><th>主动作 Macro-F1</th><th>Exact Set</th></tr></thead><tbody><tr><td>Instruct 零样本</td><td>14.14%</td><td>14.69%</td><td>5.72%</td></tr><tr><td>SFT</td><td>59.29%</td><td>62.04%</td><td>44.62%</td></tr><tr><td>SFT + 轻量 GRPO</td><td>59.50%</td><td>62.78%</td><td>49.24%</td></tr><tr><td>再经 OPD-lite 续训</td><td>64.30%</td><td>66.12%</td><td>51.94%</td></tr></tbody></table><p>OPD-lite 相对 GRPO：主动作准确率 <strong>+4.80 个百分点</strong>，主动作 Macro-F1 +3.34 个百分点，Exact Set +2.70 个百分点。</p><details class="implementation-deep"><summary>数据版本与实验口径</summary><p>最终标签方法按项目作者确认采用未来事件回填。现存本地 V4.6 脚本和文档仍记载“当前/近期重标”，与最终说明存在差异。上述数字来自历史报告；最终回填标签的数据快照、生成脚本和评测输出之间的对应关系仍需补齐，不能视为本次已完成产物级复核。</p><p>记录中均衡训练集为 7,200 行，训练有效决策点 4,696、验证 593。均衡行数不等于独立样本数。新比赛留出与主数据 match_id、sample_id 无重叠；“positive”是记录中的有效样本口径，不代表比赛获胜。</p></details></section>
-<section class="section-card" id="analysis"><h2>失败案例与局限</h2><table><thead><tr><th>留出集类别</th><th>纠错续训后的净正确数变化</th><th>观察</th></tr></thead><tbody><tr><td>Team Fight</td><td>+89</td><td>错转对 96，对转错 7</td></tr><tr><td>Farm</td><td>+82</td><td>错转对 82，对转错 0</td></tr><tr><td>Pickoff</td><td>−24</td><td>部分类别决策向 Farm 等动作迁移</td></tr><tr><td>Defend Mid Tower</td><td>−12</td><td>防塔与团战混淆</td></tr></tbody></table><p><strong>负结果：</strong>从最佳 OPD-lite 起点补做 token-level OPD，留出集主动作准确率由 64.30% 降至 63.34%。只能说明本次配置没有收益，不能推出蒸馏普遍无效。</p><ul><li><strong>规则不等于最优策略：</strong>回填窗口和动作优先级引入标签噪声；命中 Replay 行为不代表提高游戏胜率。</li><li><strong>Replay 不等于实时玩家输入：</strong>双方统计没有严格遵循战争迷雾约束，部署仍需重新设计状态获取。</li><li><strong>决策点存在相关性：</strong>同局生成多个样本，后续置信区间应按比赛重采样，并加入多随机种子实验。</li><li><strong>改进优先级：</strong>补齐最终标签版本证据，再做预测提前量切片、专家标签检查与跨版本比赛验证。</li></ul></section>
-      <div class="detail-footer-actions">
-        <a href="index.html" class="link-button">← 返回主页</a>
-      </div>
-      </main>
+      <main class="detail-content"><section class="section-card" id="overview"><h2>项目背景</h2><p>Dota 2 的团队决策同时依赖英雄状态、经济经验、建筑、地图资源和近期战斗。本项目将 OpenDota Replay 整理为结构化状态，让 Qwen2.5-14B 根据当前及近期信息，离线预测队伍随后执行的 <strong>1～2 个宏观动作</strong>。</p><p>我独立完成数据构建、LoRA SFT、GRPO、OPD-lite 纠错续训和独立留出评测。监督目标由 Replay 中实际发生的事件回填生成，任务聚焦推进、防守、团战和资源运营等宏观行为。</p></section>
+<section class="section-card" id="challenges"><h2>问题与方法设计</h2><div style="overflow-x:auto"><table><thead><tr><th scope="col">问题</th><th scope="col">处理方法</th></tr></thead><tbody><tr><td>Replay 缺少宏观动作标签</td><td>检测真实事件 → Backward Filling → Priority Overwrite</td></tr>
+<tr><td>动作稀疏、重叠且类别不均衡</td><td>动作相关回填窗口、主次标签选择、类别均衡采样</td></tr>
+<tr><td>时序数据存在泄漏风险</td><td>先按比赛划分，隔离未来标签与当前状态，审计字段和跨集合重叠</td></tr>
+<tr><td>SFT 难以直接优化组合动作</td><td>同状态分组采样，用主动作、动作集 F1 与格式计算奖励</td></tr>
+<tr><td>训练后弱类别仍有错误</td><td>回放训练预测，构造纠错目标并低学习率续训</td></tr></tbody></table></div></section>
+<section class="section-card" id="method"><h2>总体方法：五个模块</h2><figure class="project-figure"><a href="assets/dota-workflow-v2.png" target="_blank" rel="noopener"><img src="assets/dota-workflow-v2.png" width="1672" height="941" alt="Dota 2 数据与后训练流程：历史状态与未来标签分离，Qwen2.5-14B 经 SFT、GRPO、OPD-lite 后进行独立留出评测" loading="lazy" decoding="async"></a><figcaption>状态输入与监督标签分开构建，训练依次更新 SFT、GRPO 与 OPD-lite Adapter，最终在主测试集和独立新比赛上评测。点击查看大图。</figcaption></figure><div class="data-walk"><h3>数据与训练主链</h3><pre><code>OpenDota Replay
+  → 当前及近期状态构建
+  → 未来事件检测 → Backward Filling → Priority Overwrite
+  → 比赛级划分与 Prompt 泄漏审计
+  → Qwen2.5-14B → LoRA SFT → GRPO 600 步
+  → 类别均衡 random-800 → OPD-lite 80 步
+  → 主测试集 + 74 场新比赛独立留出测试集</code></pre></div>
+<div style="overflow-x:auto"><table><thead><tr><th scope="col">模块</th><th scope="col">输入</th><th scope="col">输出</th></tr></thead><tbody><tr><td>数据构建</td><td>比赛 JSON 与事件日志</td><td>状态 Prompt、主次动作与分析元数据</td></tr>
+<tr><td>SFT</td><td>Prompt + Assistant 目标</td><td>SFT LoRA Adapter</td></tr>
+<tr><td>GRPO</td><td>Prompt + 验证器侧 gt_actions</td><td>GRPO Adapter 与采样日志</td></tr>
+<tr><td>OPD-lite</td><td>训练预测 + 正确 continuation</td><td>最终 LoRA Adapter</td></tr>
+<tr><td>统一评测</td><td>各阶段生成结果</td><td>五项指标、分类报告与混淆分析</td></tr></tbody></table></div>
+<p>比赛级划分在决策样本生成前完成。未来事件仅进入标签构建，模型输入由时刻 t 及之前的状态组成。</p></section>
+<section class="section-card" id="data"><h2>模块一：状态与动作数据构建</h2><h3>步骤 1：抓取、过滤与比赛级划分</h3><p>通过 <code>/api/proMatches</code> 获取职业比赛 ID，再调用 <code>/api/matches/{match_id}</code> 抓取并缓存解析 JSON，失败请求重试。检查 10 名玩家、关键时序字段和比赛结果，筛选约 1,200～3,300 秒、至少 4 次团战和 10 个目标事件的比赛。</p>
+<p>主数据保留 168 场，按 <code>match_id</code> 划分后生成决策样本。</p>
+<div style="overflow-x:auto"><table><thead><tr><th scope="col">划分</th><th scope="col">比赛数</th><th scope="col">全部时间点</th><th scope="col">有效决策点</th></tr></thead><tbody><tr><td>训练</td><td>121</td><td>6,660</td><td>4,696</td></tr>
+<tr><td>验证</td><td>15</td><td>852</td><td>593</td></tr>
+<tr><td>测试</td><td>32</td><td>1,798</td><td>1,253</td></tr></tbody></table></div>
+<p>训练数据按动作类别均衡采样为 7,200 行，包含低频类别重复采样，唯一 sample_id 约 3,521 个。</p>
+<h3>步骤 2：采样时间点与构建状态</h3><p>从 300 秒开始，每 60 秒生成双方视角决策点，保留完整的 120 秒后续监督窗口。使用截至 t 的玩家经济、经验、装备、击杀与买活信息，聚合队伍状态，并统计最近 180 秒的事件和变化趋势。</p>
+<p>模型输入包含己方与敌方快照、经济经验差、建筑状态、近期团战与击杀、Roshan 和视野记录。底层数值组织为比赛阶段、资源差、建筑压力与近期事件等结构化 JSON。</p>
+<h3>步骤 3：检测未来事件</h3>
+<div style="overflow-x:auto"><table><thead><tr><th scope="col">事件</th><th scope="col">动作标签</th></tr></thead><tbody><tr><td>敌方或己方建筑被摧毁</td><td>按归属、线路、塔 / 兵营 / 遗迹映射 Push 或 Defend</td></tr>
+<tr><td>Roshan 击杀</td><td>Roshan</td></tr>
+<tr><td>达到死亡阈值的团战</td><td>Team Fight</td></tr>
+<tr><td>排除附近团战和目标事件后的孤立击杀</td><td>Pickoff</td></tr>
+<tr><td>插眼、反眼与拾符日志</td><td>Vision、Rune</td></tr>
+<tr><td>无有效事件覆盖</td><td>Farm</td></tr></tbody></table></div>
+<p>动作空间包含推进和防守各 5 类，以及 Team Fight、Pickoff、Roshan、Vision、Rune、Farm，共 16 类。最终主动作主要覆盖 12 个非终局类别。</p>
+<h3>步骤 4：Backward Filling 回填</h3><p>事件 a 发生于 tₑ，以动作相关窗口 Lₐ 将标签加入满足 <code>tₑ − Lₐ ≤ t ≤ tₑ</code> 的采样点。</p>
+<div style="overflow-x:auto"><table><thead><tr><th scope="col">动作</th><th scope="col">窗口</th></tr></thead><tbody><tr><td>Ancient、Barracks、Roshan</td><td>120 秒</td></tr>
+<tr><td>三路塔推进 / 防守</td><td>90 秒</td></tr>
+<tr><td>Team Fight</td><td>75 秒</td></tr>
+<tr><td>Pickoff、Vision</td><td>35 秒</td></tr>
+<tr><td>Rune</td><td>30 秒</td></tr>
+<tr><td>Farm</td><td>无候选时回退</td></tr></tbody></table></div>
+<p>候选记录事件时间、来源、窗口、优先级和置信度。置信度按 <code>max(0.1, base_confidence − 0.2 × distance / fill_window)</code> 随事件距离衰减。</p>
+<h3>步骤 5：Priority Overwrite 选择主次动作</h3><p>将同一时间点候选放入 <code>bucket[t]</code>，按优先级降序、置信度降序、事件距离升序排列。选择最高优先级核心动作作为主标签，最多保留一个不同辅助动作。</p>
+<div class="data-walk"><pre><code>Defend Ancient 100 > Push Ancient 98
+Defend Barracks 92 > Push Barracks 90
+Roshan 84 > Team Fight 80
+Defend Lane 72～74 > Push Lane 66～68
+Pickoff 58 > Vision 32 > Rune 26 > Farm 8</code></pre></div>
+<h3>步骤 6：隔离 Prompt、标签与分析字段</h3><p>User Prompt 保存状态、固定动作清单和输出要求；Assistant 目标保存 <code>&lt;think&gt;</code> 状态分析与 <code>&lt;answer&gt;</code> 主次动作。状态分析通过状态信息与规则标签模板构造。</p><p><code>gt_actions</code> 交给奖励函数和评测器，事件证据保留为分析元数据。删除 decision_hints、label_evidence、候选标签和未来摘要等输入线索，再检查跨集合 sample_id、match_id、Prompt hash 重叠；记录中的重叠数与禁用内容命中数均为 0。</p></section>
+<section class="section-card" id="sft"><h2>模块二：Assistant 监督 LoRA SFT</h2><h3>步骤 1：构造对话与监督掩码</h3><p>从 JSONL 读取原始 Prompt 和标准 Assistant continuation，通过 Tokenizer 的 Chat Template 拼接。Labels 中 User 和 padding 位置设为忽略值，Assistant 输出位置保留目标 Token ID，仅在回答位置计算交叉熵。</p>
+<h3>步骤 2：加载模型并注入 LoRA</h3><p>以 BF16 加载 <strong>Qwen2.5-14B 预训练版</strong>，启用梯度检查点。LoRA 覆盖 q/k/v/o 注意力投影及 gate/up/down MLP 投影，冻结基础参数并更新 Adapter。</p>
+<div style="overflow-x:auto"><table><thead><tr><th scope="col">配置</th><th scope="col">数值</th></tr></thead><tbody><tr><td>LoRA</td><td>rank=16、alpha=32、dropout=0.05</td></tr>
+<tr><td>设备</td><td>单机 8 × A800 80GB</td></tr>
+<tr><td>学习率 / 轮数</td><td>2e-4 / 3 epoch</td></tr>
+<tr><td>每卡 batch / 梯度累积</td><td>1 / 4，有效 batch=32</td></tr>
+<tr><td>长度</td><td>Prompt 8,192 + 回答 2,048，总上限 10,240 Token</td></tr>
+<tr><td>warmup ratio</td><td>0.03</td></tr></tbody></table></div>
+<h3>步骤 3：训练与保存</h3><p>使用 PyTorch、Transformers、PEFT、TRL SFTTrainer 和 torchrun 训练，保存 Adapter、Tokenizer 及训练检查点。SFT 主测试集主动作准确率为 58.58%，较未加载 Adapter 的预训练模型提高 41.34 个百分点。</p></section>
+<section class="section-card" id="grpo"><h2>模块三：GRPO 策略优化</h2><h3>步骤 1：从 SFT 初始化并分组采样</h3><p>当前策略加载 SFT Adapter，冻结 SFT 模型作为参考分布。每个 Prompt 采样 G=4 条回答，温度 0.9、top_p=0.95，最大新生成 2,048 Token，并记录采样旧策略的响应 Token logprob。</p>
+<h3>步骤 2：解析动作并计算奖励</h3><p>优先解析最后一个 answer 标签，规范化动作名、去重，并标记未知动作、缺失格式和动作过多等异常。隐藏 gt_actions 仅供评分。</p>
+<div class="data-walk"><pre><code>R = 1.0 × 主动作正确
+  + 0.6 × 动作集 F1
+  + 0.2 × 格式合法 − 0.3 × 格式非法
+  − 0.2 × 动作过多 − 0.2 × 存在未知动作</code></pre></div>
+<h3>步骤 3：标准化组内优势</h3><p>计算四条奖励的均值和总体标准差。标准差小于 1e-6 时优势置零；其余情况将“奖励减均值、除标准差”的结果裁剪到 [−3,3]。</p>
+<h3>步骤 4：计算概率比裁剪与参考 KL</h3><p>Trainer 对采样序列重新前向，在响应位置计算当前策略与采样旧策略的概率比 r。使用 <code>min(rA, clip(r, 0.8, 1.2)A)</code> 构造裁剪目标，再加入冻结 SFT 参考分布的 KL 正则。</p>
+<div class="highlight-box">L_GRPO = L_clip + 0.01 × L_RefKL；概率比裁剪系数 ε = 0.2</div>
+<p>响应 Mask 选择损失位置，反向传播更新 LoRA。AdamW 学习率 5e-6，batch size=1，梯度累积 4，梯度范数上限 1.0，共训练 600 步。</p>
+<h3>步骤 5：保存轨迹并分析收益</h3><p>采样日志记录 sample_id、比赛与时间、目标动作、组内奖励、均值、标准差和最佳回答。主测试集动作集完全匹配率由 SFT 的 39.74% 提升至 44.69%，主动作准确率为 58.50%。</p></section>
+<section class="section-card" id="correction"><h2>模块四：OPD-lite 纠错续训</h2><h3>步骤 1：回放训练预测并标记错误</h3><p>用 SFT+GRPO 600 步模型回放 7,200 行训练数据，比较主动作、动作集合、格式以及 Team Fight 假阳性和假阴性，共识别 3,114 行困难错误。</p>
+<h3>步骤 2：构造正确 continuation</h3><p>保留原始 Prompt，优先复用样本已有的标准 Assistant 目标；缺失时根据 gt_actions 构造纠正模板，写入 <code>opd_target_text</code>。预测、错误类型和 hindsight 信息用于离线分析与选样，训练读取原始 Prompt 和正确 continuation。</p>
+<h3>步骤 3：类别均衡采样与低学习率续训</h3><p>比较困难错误采样与类别均衡随机采样。最终从已分析训练行中按主动作类别均衡选取 800 行，同时包含正确和错误样本，以 GRPO Adapter 初始化，使用监督交叉熵续训。</p>
+<div style="overflow-x:auto"><table><thead><tr><th scope="col">配置</th><th scope="col">最终方案</th></tr></thead><tbody><tr><td>样本</td><td>class-balanced random-800</td></tr>
+<tr><td>学习率 / 更新步数</td><td>2e-6 / 80 步</td></tr>
+<tr><td>训练方式</td><td>BF16 LoRA、8 卡 torchrun</td></tr>
+<tr><td>交付产物</td><td>SFT → GRPO → OPD-lite 最终 Adapter</td></tr></tbody></table></div>
+<h3>步骤 4：保留 token-level OPD 对照</h3><p>另一条实验让冻结教师读取 Prompt、学生回答和正确动作构造的 hindsight hint，在相同响应 Token 上计算师生 logprob，用 token 优势与 sign-aware PPO surrogate 更新学生。该分支从 GRPO 起点得到主测试集 56.58%；在最佳 OPD-lite 后继续训练，独立留出集准确率为 63.34%。最终交付采用 random-800/80 的 OPD-lite。</p></section>
+<section class="section-card" id="evaluation"><h2>模块五：统一评测与独立留出验证</h2><h3>步骤 1：固定解码和解析</h3><p>所有阶段采用 greedy decoding，Prompt 上限 8,192 Token、生成上限 2,048 Token。测试数据可分片并行生成，最后合并结果。解析器优先读取最后一个 answer 标签，缺失时从完整响应中尝试解析标准动作。</p><p>动作正确性与格式合法性分别统计，能够解析出正确动作时计为动作正确。主动作取第一个动作，动作集合先规范化并去重。</p>
+<h3>步骤 2：计算五项指标</h3><p>报告主动作准确率、主动作 Macro-F1、动作集完全匹配率、动作 Micro-F1 和动作 Macro-F1。Macro-F1 对真值中有样本支持的类别计算后取平均。</p>
+<h3>主测试集：32 场、1,253 个有效决策点</h3>
+<div style="overflow-x:auto"><table><thead><tr><th scope="col">阶段</th><th scope="col">主动作准确率</th><th scope="col">主动作 Macro-F1</th><th scope="col">集合完全匹配</th><th scope="col">动作 Micro-F1</th><th scope="col">动作 Macro-F1</th></tr></thead><tbody><tr><td>Qwen2.5-14B</td><td>17.24%</td><td>18.49%</td><td>7.10%</td><td>37.15%</td><td>26.18%</td></tr>
+<tr><td>SFT</td><td>58.58%</td><td>62.65%</td><td>39.74%</td><td>67.43%</td><td>61.16%</td></tr>
+<tr><td>SFT + GRPO</td><td>58.50%</td><td>63.10%</td><td>44.69%</td><td>70.26%</td><td>62.71%</td></tr>
+<tr><td>+ OPD-lite</td><td>64.88%</td><td>67.74%</td><td>48.84%</td><td>72.82%</td><td>67.26%</td></tr></tbody></table></div>
+<h3>步骤 3：独立新比赛验证</h3><p>另抓取 80 场新比赛，74 场通过质量过滤，形成 4,592 个时间点、2,815 个有效决策点。与主数据的 match_id 和 sample_id 重叠均为 0。该集合用于方案确定后的独立留出测试。</p>
+<div style="overflow-x:auto"><table><thead><tr><th scope="col">阶段</th><th scope="col">主动作准确率</th><th scope="col">主动作 Macro-F1</th><th scope="col">集合完全匹配</th><th scope="col">动作 Micro-F1</th><th scope="col">动作 Macro-F1</th></tr></thead><tbody><tr><td>Qwen2.5-14B</td><td>14.14%</td><td>14.69%</td><td>5.72%</td><td>34.58%</td><td>22.01%</td></tr>
+<tr><td>SFT</td><td>59.29%</td><td>62.04%</td><td>44.62%</td><td>70.35%</td><td>60.03%</td></tr>
+<tr><td>SFT + GRPO</td><td>59.50%</td><td>62.78%</td><td>49.24%</td><td>72.92%</td><td>61.00%</td></tr>
+<tr><td>+ OPD-lite</td><td>64.30%</td><td>66.12%</td><td>51.94%</td><td>74.59%</td><td>64.33%</td></tr></tbody></table></div>
+<p>OPD-lite 相对 GRPO 在主测试集提高主动作准确率 6.38 个百分点，在独立留出集提高 4.80 个百分点；留出集主动作 Macro-F1 和集合完全匹配率分别提高 3.34、2.70 个百分点。</p></section>
+<section class="section-card" id="analysis"><h2>分类回归与局限</h2><p>独立留出集上，OPD-lite 后 Team Fight 召回率从 23.67% 升至 35.78%，Farm 从 35.89% 升至 52.42%；Pickoff 从 66.44% 降至 50.00%，部分防守动作也出现回退。结果分析同时检查总体指标与各动作表现。</p>
+<ul><li><strong>标签噪声：</strong>回填窗口和优先级影响监督目标，己方建筑被摧毁映射的 Defend 表示防守目标窗口，Farm 是无候选回退。</li><li><strong>输入条件：</strong>Replay 双方统计与玩家实际战争迷雾下的信息范围存在差异，实时应用需要重新约束状态来源。</li><li><strong>时间相关性：</strong>同局多个决策点相关，后续可按比赛重采样估计置信区间，增加多随机种子实验。</li><li><strong>后续验证：</strong>按预测提前量、类别和比赛版本分组，结合专家复核分析规则标签与宏观决策的匹配程度。</li></ul></section><div class="detail-footer-actions"><a href="index.html" class="link-button">← 返回主页</a></div></main>
     </div>
       <script src="site.js" defer></script>
   </body>

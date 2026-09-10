@@ -1,497 +1,136 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="C-MTCSD 项目详情：中文多轮对话立场检测数据集、标注流程与基准评测。" />
-    <title>C-MTCSD 项目详情 | 杨艺 Yang Yi</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="canonical" href="https://yangyi626.github.io/cmtcsd-detail.html" />
-    <meta property="og:title" content="C-MTCSD 项目详情 | 杨艺 Yang Yi" />
-    <meta property="og:description" content="C-MTCSD 项目详情：中文多轮对话立场检测数据集、标注流程与基准评测。" />
-  </head>
-  <body>
-    <div class="container">
-      <a href="index.html" class="back-button">
-        ← 返回主页
-      </a>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="C-MTCSD：中文多轮对话立场数据集，涵盖回复路径整理、标注质检、COLA 基线实现及目标与深度分层评测。">
+<title>C-MTCSD 项目详情 | 杨艺 Yang Yi</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="canonical" href="https://yangyi626.github.io/cmtcsd-detail.html">
+<meta property="og:title" content="C-MTCSD 项目详情 | 杨艺 Yang Yi">
+<meta property="og:description" content="24,264 条中文立场标注实例、5 个目标、最深 6 层回复路径；数据构建与基准评测。">
+</head>
+<body><div class="container">
+<a href="index.html" class="back-button">← 返回主页</a>
+<header class="header">
+<h1>C-MTCSD：中文多轮对话立场检测数据集构建与基准评测</h1>
+<div class="project-meta"><strong>共同第一作者 · 参与数据构建、标注质检、基线适配与实验分析</strong> | 2024.09 – 2025.01</div>
+<div><span class="badge badge-venue">WWW 2025 Companion</span><span class="badge badge-ccf">CCF A</span><span class="badge badge-role">共同一作</span></div>
+<div style="margin-top: 16px;"><a href="https://dl.acm.org/doi/10.1145/3701716.3715307" class="link-button" target="_blank" rel="noopener noreferrer">论文链接</a>
+<a href="https://github.com/yangyi626/C-MTCSD" class="link-button" target="_blank" rel="noopener noreferrer">数据开源</a></div>
+</header>
+<nav class="toc-container" id="toc" aria-label="项目目录"><div class="toc-title">目录导航</div><ul class="toc-list">
+<li><a href="#overview">项目概览</a></li>
+<li><a href="#situation">背景与问题</a></li>
+<li><a href="#design">方法设计</a></li>
+<li><a href="#collection">采集与路径整理</a></li>
+<li><a href="#annotation">标注与质量控制</a></li>
+<li><a href="#evaluation">数据划分与基线评测</a></li>
+<li><a href="#result">指标与实验结果</a></li>
+<li><a href="#contribution">成果与个人参与</a></li>
+<li><a href="#future">局限与后续方向</a></li>
+</ul></nav>
+<button class="toc-toggle" id="tocToggle" aria-controls="toc" aria-expanded="false" aria-label="打开目录">☰</button>
+<main class="detail-content">
+<section class="section-card" id="overview"><h2>项目概览</h2>
+<p>C-MTCSD 是发表于 WWW 2025 Companion 的中文多轮对话立场检测数据集与评测工作。项目保留从原帖到当前评论的回复路径，让模型结合讨论目标与前文，判断当前发言的立场。</p>
+<p>我以共同第一作者参与数据采集与路径整理、标注规则与质量检查、基线适配和实验分析。项目形成了覆盖五个目标、24,264 条标注实例的数据资源，并开展目标内、跨目标和零样本评测。</p>
+<div class="stats-grid"><div class="stat-card"><div class="stat-number">24,264</div><div class="stat-label">标注实例</div></div><div class="stat-card"><div class="stat-number">5</div><div class="stat-label">讨论目标</div></div><div class="stat-card"><div class="stat-number">6</div><div class="stat-label">最大路径深度（含原帖）</div></div><div class="stat-card"><div class="stat-number">0.934</div><div class="stat-label">平均 Kappa</div></div><div class="stat-card"><div class="stat-number">0.972</div><div class="stat-label">平均标注一致率</div></div><div class="stat-card"><div class="stat-number">64.07%</div><div class="stat-label">GPT-4 零样本 F_avg</div></div></div>
+<figure class="project-figure"><a href="assets/cmtcsd-workflow-v2.png" target="_blank" rel="noopener"><img src="assets/cmtcsd-workflow-v2.png" width="1672" height="941" alt="C-MTCSD 四阶段流程：微博采集筛选、回复路径与样本构造、多人标注质检、基线评测与分层分析；当前句为预测对象" loading="lazy" decoding="async"></a><figcaption>从微博讨论到立场评测：保留祖先回复路径，标注当前句对指定目标的立场，再按目标与深度分析模型表现。点击查看大图。</figcaption></figure>
+</section>
 
-      <header class="header">
-        <h1>C-MTCSD：中文多轮对话立场检测数据集构建与基准评测</h1>
-        <div class="project-meta">
-          <strong>共同第一作者 · 数据构建、模型评测与实验分析</strong> | 2024.09 – 2025.01
-        </div>
-        <div>
-          <span class="badge badge-venue">WWW 2025</span>
-          <span class="badge badge-ccf">CCF A</span>
-          <span class="badge badge-role">共同一作</span>
-        </div>
-        <div style="margin-top: 16px;">
-          <a href="https://dl.acm.org/doi/10.1145/3701716.3715307" class="link-button" target="_blank" rel="noopener noreferrer">
-            📄 论文链接
-          </a>
-          <a href="https://github.com/yangyi626/C-MTCSD" class="link-button" target="_blank" rel="noopener noreferrer">
-            💾 数据开源
-          </a>
-        </div>
-      </header>
+<section class="section-card" id="situation"><h2>背景与问题</h2>
+<p>立场检测判断的是发言者对某个指定目标的支持或反对态度。社交讨论中的“我同意”“这种做法不行”等回复经常省略目标，需要结合父评论和原帖理解。情绪积极的表达，也可能包含对目标的反对。</p>
+<div class="highlight-box"><strong>例子：</strong>目标是“预制菜”，父评论为“我反对在学校大量使用预制菜”，当前回复为“这点我同意”。模型需要沿回复关系理解“同意”的对象，再判断当前回复对预制菜的立场。</div>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">问题</th><th scope="col">处理方法</th></tr></thead><tbody><tr><td>目标隐含、指代省略</td><td>显式提供目标，并保留原帖到当前评论的祖先路径</td></tr>
+<tr><td>赞同父评论与支持目标容易混淆</td><td>标注与预测均以最后一句对指定目标的态度为准</td></tr>
+<tr><td>反讽、转述与未表态存在歧义</td><td>两轮试标、多人独立标注和争议复标</td></tr>
+<tr><td>同目标评测难以反映迁移与深层理解</td><td>分别进行目标内、跨目标、零样本及深度分组分析</td></tr></tbody></table></div>
+<p>既有中文对话资源有限，CANT-CSD 主要覆盖粤语。C-MTCSD 补充普通中文社交讨论，规模约为论文比较对象 CANT-CSD 的 4.2 倍。</p>
+</section>
 
-      <!-- 目录导航 -->
-      <nav class="toc-container" id="toc">
-        <div class="toc-title">📑 目录导航</div>
-        <ul class="toc-list">
-          <li><a href="#overview">项目概览</a></li>
-          <li><a href="#situation">问题与背景</a></li>
-          <li><a href="#task">我的工作</a></li>
-          <li><a href="#action">数据与评测方法</a></li>
-          <li><a href="#result">结果与发现</a></li>
-          <li><a href="#capability">贡献与方法</a></li>
-          <li><a href="#application">可用场景</a></li>
-          <li><a href="#future">局限与下一步</a></li>
-        </ul>
-      </nav>
+<section class="section-card" id="design"><h2>方法设计</h2>
+<p>整体链路分为四个模块：采集与路径整理、标注与质量控制、模型输入与基线评测、指标与分层分析。</p>
+<div class="highlight-box">采集筛选 → 祖先路径整理 → 试标与复标 → 固定数据划分 → 多类模型评测 → 按目标与深度分析</div>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">模块</th><th scope="col">输入</th><th scope="col">输出</th></tr></thead><tbody><tr><td>采集与整理</td><td>目标、原帖与回复</td><td>文本表及有序回复路径</td></tr>
+<tr><td>标注与质检</td><td>目标、前文与当前句</td><td>Against / Favor / None 标签</td></tr>
+<tr><td>模型评测</td><td>目标、路径文本与数据划分</td><td>模型预测及中间分析记录</td></tr>
+<tr><td>结果分析</td><td>预测结果与真实标签</td><td>F_avg、迁移表现及深度差异</td></tr></tbody></table></div>
+<p>每条样本的预测对象是路径最后一个节点。历史节点提供解释当前句所需的上下文，真实标签单独用于评估与结果保存。</p>
+</section>
 
-      <!-- 移动端目录切换按钮 -->
-      <button class="toc-toggle" id="tocToggle" aria-controls="toc" aria-expanded="false" aria-label="打开目录">
-        ☰
-      </button>
+<section class="section-card" id="collection"><h2>模块一：采集与路径整理</h2>
+<h3>步骤 1：选择目标并召回讨论</h3>
+<p>围绕 iPhone 15（i15）、萝卜快跑（AG）、预制菜（PM）、裸辞（NR）和不婚主义（ND）五个目标，通过关键词检索与微博 API 采集原帖和评论，优先选择讨论较充分的内容，再人工审核目标相关性。</p>
+<h3>步骤 2：按相关性、互动量和长度筛选</h3>
+<p>筛选条件包括目标相关、至少 1,000 次互动以及最少 10 words 的内容长度。筛选后的讨论进入路径整理和标注流程。</p>
+<h3>步骤 3：组织文本表与索引路径</h3>
+<p>每个目标维护文本表，记录 <code>id</code>、<code>type</code>、<code>text</code> 和 <code>stance</code>；划分文件使用 <code>index</code> 保存有序节点 ID，使用 <code>stance</code> 保存当前句标签。</p>
+<pre style="overflow-x: auto;"><code>{
+  "index": ["1", "1-1", "1-1-2"],
+  "stance": "favor"
+}</code></pre>
+<p>读取样本时，按索引顺序从文本表取出原帖、中间回复和当前评论。前两个节点构成历史，最后一个节点是预测对象；兄弟分支和后续回复保留在各自路径中。</p>
+<h3>步骤 4：构造模型输入</h3>
+<p>将目标单独传入，将路径文本按原有顺序拼接。以 COLA 为例，对话节点用 <code>[SEP]</code> 分隔；模型接收文本，标签进入独立的评估与保存字段。</p>
+<div class="highlight-box"><strong>输入：</strong>目标 + 原帖 [SEP] 父评论 [SEP] 当前句<br><strong>输出：</strong>当前句对目标的 Against / Favor / None 标签</div>
+<p>路径深度包含原帖：深度 1 为原帖，深度 6 为包含六个节点的回复路径。一个讨论线程可以产生多条共享部分前文的标注实例。</p>
+</section>
 
-      <main class="detail-content">
+<section class="section-card" id="annotation"><h2>模块二：标注与质量控制</h2>
+<h3>步骤 1：统一判断对象</h3>
+<p>标注员同时阅读目标、前置上下文和当前句，先理解回复对象、指代和转述，再判断当前句对目标是反对（Against）、支持（Favor）还是未呈现明确立场（None）。</p>
+<h3>步骤 2：两轮试标校准规则</h3>
+<p>10 名具有 NLP 背景的研究人员参与标注，先进行两轮试标，由另外 3 名专家审阅试标结果，统一歧义表达的理解与判断口径。</p>
+<h3>步骤 3：独立标注与争议复标</h3>
+<p>每条实例至少由两名标注员独立标注，并检查评论与目标的相关性。对一致性较低或存在明显错误的条目再次标注，形成最终标签。</p>
+<h3>步骤 4：统计标注一致性</h3>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">目标</th><th scope="col">一致率</th><th scope="col">Kappa</th></tr></thead><tbody><tr><td>i15</td><td>0.972</td><td>0.928</td></tr>
+<tr><td>AG</td><td>0.949</td><td>0.893</td></tr>
+<tr><td>PM</td><td>0.994</td><td>0.985</td></tr>
+<tr><td>NR</td><td>0.953</td><td>0.890</td></tr>
+<tr><td>ND</td><td>0.991</td><td>0.976</td></tr>
+<tr><td>平均</td><td>0.972</td><td>0.934</td></tr></tbody></table></div>
+<p>一致率衡量标注判断相同的比例；Kappa 进一步考虑随机情况下的预期一致程度。五个目标的平均 Kappa 为 0.934。</p>
+</section>
 
-      <!-- 项目概览 -->
-<div class="section-card" id="overview">
-        <h2><span class="emoji">📋</span>项目概览</h2>
-        <figure class="project-figure">
-          <a href="assets/cmtcsd-overview.png" target="_blank" rel="noopener"><img src="assets/cmtcsd-overview.png" width="714" height="716" alt="C-MTCSD 数据集与立场识别评测设置" loading="lazy" decoding="async"></a>
-          <figcaption>C-MTCSD：数据规模、对话输入与评测设置。 点击图片查看原图。</figcaption>
-        </figure>
-        <p>
-          C-MTCSD 包含从新浪微博采集并标注的 <strong>24,264 条中文多轮对话样本</strong>，覆盖 5 类议题，最长为 <strong>6 轮</strong>。与 CANT-CSD 的规模比较和数据构成见论文；项目同时提供多种模型与评测设置，便于后续对照。
-        </p>
-        
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-number">24,264</div>
-            <div class="stat-label">标注实例总数</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">4.2×</div>
-            <div class="stat-label">规模优势</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">6</div>
-            <div class="stat-label">最大对话深度</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">0.93</div>
-            <div class="stat-label">平均 Kappa</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">12</div>
-            <div class="stat-label">评测模型数量</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">64.07%</div>
-            <div class="stat-label">最优 F1（GPT-4）</div>
-          </div>
-        </div>
-      </div>
+<section class="section-card" id="evaluation"><h2>模块三：数据划分与基线评测</h2>
+<h3>步骤 1：使用固定训练、验证与测试划分</h3>
+<p>数据约按 70 / 15 / 15 划分，训练集 17,102 条、验证集 3,664 条、测试集 3,498 条。</p>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">目标</th><th scope="col">Train</th><th scope="col">Valid</th><th scope="col">Test</th><th scope="col">合计</th></tr></thead><tbody><tr><td>i15</td><td>2,826</td><td>624</td><td>576</td><td>4,026</td></tr>
+<tr><td>AG</td><td>4,850</td><td>1,037</td><td>981</td><td>6,868</td></tr>
+<tr><td>PM</td><td>3,631</td><td>776</td><td>789</td><td>5,196</td></tr>
+<tr><td>NR</td><td>2,223</td><td>473</td><td>436</td><td>3,132</td></tr>
+<tr><td>ND</td><td>3,572</td><td>754</td><td>716</td><td>5,042</td></tr>
+<tr><td>总计</td><td>17,102</td><td>3,664</td><td>3,498</td><td>24,264</td></tr></tbody></table></div>
+<h3>步骤 2：分别设置同目标与迁移评测</h3>
+<ul><li><strong>目标内：</strong>使用同一目标对应的训练与测试划分。</li><li><strong>跨目标：</strong>比较 i15→AG、AG→i15、ND→NR、NR→ND、AG→ND 五个有方向的迁移组合。</li><li><strong>零样本：</strong>评估模型在未见目标上的立场判断，结果按目标独立报告。</li></ul>
+<h3>步骤 3：适配不同类型基线</h3>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">类别</th><th scope="col">方法</th></tr></thead><tbody><tr><td>传统神经方法</td><td>TAN、CrossNet</td></tr>
+<tr><td>中文预训练模型</td><td>BERT、RoBERTa、XLNet</td></tr>
+<tr><td>对比与提示学习</td><td>JointCL、KEPrompt</td></tr>
+<tr><td>对话相关方法</td><td>Branch-BERT、GLAN</td></tr>
+<tr><td>大模型提示方法</td><td>TSCOT（LLaMA 3 70B、GPT-3.5、GPT-4）；COLA（GPT-3.5）</td></tr></tbody></table></div>
+<p>预训练模型分别使用 <code>bert-base-chinese</code>、<code>chinese-roberta-wwm-ext</code> 和 <code>chinese-xlnet-base</code>。论文报告四次不同随机初始化独立运行的平均表现。</p>
+<h3>步骤 4：执行 COLA 六步提示链</h3>
+<p>COLA 作为已有基线接入，使用同一个 <code>gpt-3.5-turbo</code> 顺序完成六次调用，温度设为 0。</p>
+<ol>
+<li><strong>语言分析：</strong>输入目标与对话，用语言学家角色提取词汇、语法和修辞线索。</li>
+<li><strong>领域分析：</strong>按目标选择交通、食品、科技、社会或职业领域角色，分析实体、事件与目标的关系。</li>
+<li><strong>社交语境分析：</strong>用社交媒体用户角色解释俚语、情绪、话题标签与隐含表达。</li>
+<li><strong>支持论证：</strong>结合原对话和三份分析，在支持假设下提出三条证据。</li>
+<li><strong>反对论证：</strong>使用相同材料，在反对假设下形成竞争论证。</li>
+<li><strong>最终裁决：</strong>输入原对话和正反论证，要求返回 A / B / C，分别对应反对、支持和中立表述；保存裁决文本供结果分析。</li>
+</ol>
+<p>每处理一条样本，将目标、输入、真实标签、三类分析、双方论证与裁决写入累计输出文件。真实标签保留在结果记录中，六步推理使用目标和对话文本。</p>
+</section>
 
-      <!-- 问题与背景 -->
-      <div class="section-card" id="situation">
-        <h2>问题与背景</h2>
-        
-        <h3>核心问题</h3>
-        <p>
-          立场检测已成为社交媒体分析的重要工具，但当前方法面临重大挑战，特别是在<strong>中文处理</strong>和<strong>多轮对话分析</strong>方面：
-        </p>
-        
-        <div class="challenge-box">
-          <strong>现有资源的限制：</strong>
-          <ul style="margin: 12px 0 0 0;">
-            <li><strong>语言资源不足</strong>：现有公开资源更多集中在英文，中文多轮对话数据相对有限</li>
-            <li><strong>对话上下文缺失</strong>：现有方法主要分析单句，忽略社交媒体中立场表达的对话性质</li>
-            <li><strong>隐式立场难题</strong>：上下文依赖的隐式立场表达难以被独立句子分析方法捕捉</li>
-            <li><strong>深度对话挑战</strong>：多轮对话中的指代消解、话题漂移、立场演化缺乏系统研究</li>
-          </ul>
-        </div>
-
-        <h3>现有数据集局限</h3>
-        <ul>
-          <li><strong>CANT-CSD</strong>：已有的中文对话立场检测数据集，但规模较小（约 5,775 条），且聚焦粤语而非标准中文</li>
-          <li><strong>深度对话不足</strong>：CANT-CSD 中仅 <span class="highlight">6.3%</span> 的数据深度超过 3 轮，难以支持深度对话研究</li>
-          <li><strong>英文数据集</strong>：虽然规模较大，但不适用于中文语言特性（如语序、省略、指代等）</li>
-        </ul>
-
-        <div class="highlight-box">
-          <strong>项目目标：</strong>补充中文多轮对话立场检测数据，并用统一协议比较传统模型、预训练模型和大语言模型在不同场景下的表现。
-        </div>
-      </div>
-
-      <!-- 我的工作 -->
-      <div class="section-card" id="task">
-        <h2>我的工作</h2>
-        
-        <h3>1. 数据采集与预处理</h3>
-        <ul>
-          <li><strong>平台选择</strong>：从新浪微博（中国最大的社交媒体平台之一）采集数据</li>
-          <li><strong>话题选择</strong>：覆盖科技与社会热点话题，确保数据多样性与代表性</li>
-          <li><strong>质量控制</strong>：设计三阶段预处理流水线，确保数据相关性、参与度与内容充实性</li>
-        </ul>
-
-        <h3>2. 标注体系设计</h3>
-        <ul>
-          <li><strong>立场标签</strong>：支持（Favor）、反对（Against）、无关（None）三分类</li>
-          <li><strong>对话上下文</strong>：标注员需评估前置上下文并验证目标相关性</li>
-          <li><strong>质量保证</strong>：双人标注 + 专家复审机制，确保标注一致性</li>
-        </ul>
-
-        <h3>3. 基准评测体系构建</h3>
-        <ul>
-          <li><strong>传统深度学习模型</strong>：TAN、CrossNet 等</li>
-          <li><strong>预训练语言模型</strong>：BERT、RoBERTa、XLNet 等</li>
-          <li><strong>对话专用模型</strong>：Branch-BERT、GLAN 等</li>
-          <li><strong>大语言模型</strong>：LLaMA 3 70b、GPT-3.5、GPT-4 等</li>
-          <li><strong>评测场景</strong>：目标内（In-Target）、跨目标（Cross-Target）、零样本（Zero-Shot）</li>
-        </ul>
-
-        <h3>4. 性能衰减规律分析</h3>
-        <ul>
-          <li>按对话深度（1-2 轮、3-4 轮、5-6 轮）分析模型性能</li>
-          <li>揭示隐式立场检测的挑战</li>
-          <li>为未来研究提供方向性指导</li>
-        </ul>
-      </div>
-
-      <!-- 数据与评测方法 -->
-      <div class="section-card" id="action">
-        <h2>数据与评测方法</h2>
-
-        <h3>1. 数据采集流程</h3>
-        
-        <h4>平台与工具</h4>
-        <ul>
-          <li><strong>数据源</strong>：新浪微博（Sina Weibo）</li>
-          <li><strong>采集方式</strong>：通过 Weibo API 文档接口进行数据获取</li>
-          <li><strong>采样策略</strong>：优先选择高参与度指标（讨论强度、评论量）的帖子</li>
-        </ul>
-
-        <h4>话题选择</h4>
-        <div class="topic-grid">
-          <div class="topic-card">
-            <h4>科技领域</h4>
-            <p><strong>iPhone 15（i15）</strong>：新品发布引发的 iOS vs Android 辩论</p>
-            <p><strong>萝卜快跑（AG）</strong>：自动驾驶路测引发的公众讨论</p>
-          </div>
-          
-          <div class="topic-card">
-            <h4>社会议题</h4>
-            <p><strong>不婚主义（ND）</strong>：反映不同社会观点的争议话题</p>
-            <p><strong>裸辞（NR）</strong>：职场文化相关的热点讨论</p>
-            <p><strong>预制菜（PM）</strong>：食品安全与生活方式的争议话题</p>
-          </div>
-        </div>
-
-        <h3>2. 数据预处理流水线</h3>
-        
-        <h4>三阶段质量控制</h4>
-        <ul>
-          <li>
-            <strong>阶段 1：目标相关性验证</strong>
-            <ul>
-              <li>通过关键词搜索采集帖子</li>
-              <li>人工验证与指定目标的话题连接</li>
-              <li>确保讨论聚焦且相关</li>
-            </ul>
-          </li>
-          <li>
-            <strong>阶段 2：公众参与度筛选</strong>
-            <ul>
-              <li>要求最低 1,000 次交互（评论/转发/点赞）</li>
-              <li>确保包含具有重要公共话语的内容</li>
-            </ul>
-          </li>
-          <li>
-            <strong>阶段 3：内容充实性过滤</strong>
-            <ul>
-              <li>要求最低 10 个词的长度</li>
-              <li>维持充分的上下文与分析价值</li>
-            </ul>
-          </li>
-        </ul>
-
-        <h4>数据分布统计</h4>
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>话题</th>
-                <th>帖子数</th>
-                <th>评论数</th>
-                <th>重新标注数</th>
-                <th>总计</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>iPhone 15（i15）</td>
-                <td>88</td>
-                <td>11,337</td>
-                <td>2,359</td>
-                <td>4,026</td>
-              </tr>
-              <tr>
-                <td>萝卜快跑（AG）</td>
-                <td>119</td>
-                <td>10,314</td>
-                <td>2,475</td>
-                <td>6,868</td>
-              </tr>
-              <tr>
-                <td>预制菜（PM）</td>
-                <td>151</td>
-                <td>9,979</td>
-                <td>711</td>
-                <td>5,196</td>
-              </tr>
-              <tr>
-                <td>裸辞（NR）</td>
-                <td>80</td>
-                <td>9,640</td>
-                <td>766</td>
-                <td>3,132</td>
-              </tr>
-              <tr>
-                <td>不婚主义（ND）</td>
-                <td>45</td>
-                <td>9,625</td>
-                <td>698</td>
-                <td>5,042</td>
-              </tr>
-              <tr>
-                <td><strong>总计</strong></td>
-                <td><strong>483</strong></td>
-                <td><strong>50,895</strong></td>
-                <td><strong>7,009</strong></td>
-                <td><strong>24,264</strong></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3>3. 标注体系与质量保证</h3>
-        
-        <h4>标注流程</h4>
-        <ul>
-          <li><strong>标注员培训</strong>：邀请 10 名具有 NLP 专业知识的研究人员</li>
-          <li><strong>试点标注</strong>：进行两轮试点标注，由 3 名专家审核</li>
-          <li><strong>正式标注</strong>：每个实例至少由 2 名标注员独立标注</li>
-          <li><strong>二次审核</strong>：标注员间一致性低或存在显著错误的实例进行二次标注</li>
-        </ul>
-
-        <h4>标注一致性评估</h4>
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>话题</th>
-                <th>一致性（Consistency）</th>
-                <th>Kappa 系数</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>iPhone 15（i15）</td>
-                <td>0.972</td>
-                <td>0.928</td>
-              </tr>
-              <tr>
-                <td>萝卜快跑（AG）</td>
-                <td>0.949</td>
-                <td>0.893</td>
-              </tr>
-              <tr>
-                <td>预制菜（PM）</td>
-                <td>0.994</td>
-                <td>0.985</td>
-              </tr>
-              <tr>
-                <td>裸辞（NR）</td>
-                <td>0.953</td>
-                <td>0.890</td>
-              </tr>
-              <tr>
-                <td>不婚主义（ND）</td>
-                <td>0.991</td>
-                <td>0.976</td>
-              </tr>
-              <tr>
-                <td><strong>平均</strong></td>
-                <td><strong>0.972</strong></td>
-                <td><strong>0.934</strong></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="highlight-box">
-          <strong>质量保证：</strong>所有话题的 Kappa 值均超过 0.89（平均 0.93），标注员间一致性平均达 0.97，确认数据集的高可靠性。
-        </div>
-
-        <h3>4. 数据集特征分析</h3>
-        
-        <h4>立场标签分布</h4>
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>话题</th>
-                <th>反对（Against）</th>
-                <th>支持（Favor）</th>
-                <th>无关（None）</th>
-                <th>总计</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>i15</td>
-                <td>2,211 (54.92%)</td>
-                <td>844 (20.96%)</td>
-                <td>971 (24.12%)</td>
-                <td>4,026</td>
-              </tr>
-              <tr>
-                <td>AG</td>
-                <td>2,476 (36.05%)</td>
-                <td>4,014 (58.44%)</td>
-                <td>378 (5.50%)</td>
-                <td>6,868</td>
-              </tr>
-              <tr>
-                <td>PM</td>
-                <td>1,891 (36.39%)</td>
-                <td>731 (14.07%)</td>
-                <td>2,574 (49.54%)</td>
-                <td>5,196</td>
-              </tr>
-              <tr>
-                <td>NR</td>
-                <td>699 (22.32%)</td>
-                <td>1,627 (51.95%)</td>
-                <td>806 (25.73%)</td>
-                <td>3,132</td>
-              </tr>
-              <tr>
-                <td>ND</td>
-                <td>862 (17.10%)</td>
-                <td>2,369 (46.99%)</td>
-                <td>1,811 (35.92%)</td>
-                <td>5,042</td>
-              </tr>
-              <tr>
-                <td><strong>总计</strong></td>
-                <td><strong>8,139 (33.54%)</strong></td>
-                <td><strong>9,585 (39.50%)</strong></td>
-                <td><strong>6,540 (26.95%)</strong></td>
-                <td><strong>24,264</strong></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h4>对话深度分布</h4>
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>深度</th>
-                <th>实例数量</th>
-                <th>占比</th>
-                <th>平均词数</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1（帖子）</td>
-                <td>452</td>
-                <td>1.86%</td>
-                <td>111.99</td>
-              </tr>
-              <tr>
-                <td>2（一级评论）</td>
-                <td>5,800</td>
-                <td>23.90%</td>
-                <td>26.95</td>
-              </tr>
-              <tr>
-                <td>3（二级评论）</td>
-                <td>11,291</td>
-                <td>46.53%</td>
-                <td>26.33</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>4,405</td>
-                <td>18.15%</td>
-                <td>28.64</td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>1,578</td>
-                <td>6.50%</td>
-                <td>35.52</td>
-              </tr>
-              <tr>
-                <td>6</td>
-                <td>738</td>
-                <td>3.04%</td>
-                <td>34.68</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="highlight-box">
-          <strong>深度优势：</strong>C-MTCSD 中 <span class="highlight">27.69%</span> 的数据深度超过 3 轮，而 CANT-CSD 仅有 <span class="highlight">6.3%</span>，提供了更丰富的深度对话语料。
-        </div>
-
-        <h3>5. 基准评测实现</h3>
-        
-        <h4>评测指标</h4>
-        <ul>
-          <li><strong>F_avg</strong>：计算"反对"和"支持"类别的平均 F1 分数</li>
-          <li>独立计算每个目标立场的 F_avg 指标</li>
-          <li>遵循先前研究（P-Stance、JointCL）的标准评估协议</li>
-        </ul>
-
-        <h4>基线模型</h4>
-        <ul>
-          <li><strong>传统深度学习</strong>：TAN、CrossNet</li>
-          <li><strong>预训练语言模型</strong>：BERT（bert-base-chinese）、RoBERTa（chinese-roberta-wwm-ext）、XLNet（chinese-xlnet-base）</li>
-          <li><strong>对比学习方法</strong>：JointCL（目标感知对比学习）</li>
-          <li><strong>提示学习方法</strong>：KEPrompt（提示调优）</li>
-          <li><strong>对话专用模型</strong>：Branch-BERT、GLAN（对话关系知识图谱）</li>
-          <li><strong>大语言模型</strong>：LLaMA 3 70b、GPT-3.5、GPT-4（TSCOT 方法）、COLA（链式思考提示）</li>
-        </ul>
-
-        <h4>评测场景</h4>
-        <ul>
-          <li><strong>目标内检测（In-Target）</strong>：训练和测试使用相同目标域</li>
-          <li><strong>跨目标检测（Cross-Target）</strong>：利用一个目标的标注数据推断另一个目标的立场</li>
-          <li><strong>零样本检测（Zero-Shot）</strong>：在特定目标上训练，直接预测未见目标的立场</li>
-        </ul>
-      </div>
-
-      <!-- 结果与发现 -->
-      <div class="section-card" id="result">
-        <h2>结果与发现</h2>
-
-        <h3>目标内立场检测（In-Target）</h3>
-        
-        <p><strong>目标内设置：</strong>GLAN 的平均 F_avg 为 <span class="highlight">66.10%</span>，在这组目标和评测协议下取得最高结果。</p>
-        
-        <div style="overflow-x: auto;">
-          <table>
+<section class="section-card" id="result"><h2>模块四：指标与实验结果</h2>
+<h3>步骤 1：按目标计算 F_avg</h3>
+<div class="highlight-box">F_avg =（F1<sub>Against</sub> + F1<sub>Favor</sub>）/ 2</div>
+<p>任务按三个标签预测，主指标对反对和支持两个类别的 F1 取平均。先分别计算每个目标的 F_avg，再对目标得分取平均。下列表格以百分数展示。</p>
+<h3>步骤 2：比较目标内结果</h3>
+<p>GLAN 的五目标平均 F_avg 为 66.10%，XLNet 为 65.33%。</p><div style="overflow-x: auto;"><table>
             <thead>
               <tr>
                 <th>模型</th>
@@ -559,22 +198,9 @@
                 <td><strong>66.10</strong></td>
               </tr>
             </tbody>
-          </table>
-        </div>
-
-        <p><strong>关键发现：</strong></p>
-        <ul>
-          <li>RoBERTa 和 KEPrompt 在特定目标（AG、NR）上表现出色</li>
-          <li>传统方法（TAN、CrossNet）得分相对较低</li>
-          <li>不同目标间性能差异显著，PM 呈现明显挑战</li>
-        </ul>
-
-        <h3>跨目标立场检测（Cross-Target）</h3>
-        
-        <p><strong>跨目标设置：</strong>GLAN 在列出的跨目标场景中平均表现最好；结果反映的是这些目标组合下的迁移能力。</p>
-        
-        <div style="overflow-x: auto;">
-          <table>
+          </table></div>
+<h3>步骤 3：比较跨目标与零样本结果</h3>
+<p>跨目标实验分别记录五组迁移方向，观察模型对目标变化的适应情况。</p><div style="overflow-x: auto;"><table>
             <thead>
               <tr>
                 <th>模型</th>
@@ -627,22 +253,8 @@
                 <td><strong>39.95</strong></td>
               </tr>
             </tbody>
-          </table>
-        </div>
-
-        <p><strong>关键发现：</strong></p>
-        <ul>
-          <li>GLAN 在 i15→AG 达到 46.63%，在 ND→NR 达到 47.20%</li>
-          <li>AG→i15 展现相对稳定的迁移性能（45.38%）</li>
-          <li>NR→ND 性能较低（41.74%），揭示上下文相似性较低的目标间迁移挑战</li>
-        </ul>
-
-        <h3>零样本立场检测（Zero-Shot）</h3>
-        
-        <p><strong>零样本设置：</strong>GPT-4 平均 F1 为 <span class="highlight">64.07%</span>，高于表中其他模型；该比较只针对当前零样本协议。</p>
-        
-        <div style="overflow-x: auto;">
-          <table>
+          </table></div>
+<p>零样本实验中，GPT-4（TSCOT）的五目标平均 F_avg 为 64.07%，LLaMA 3 70B（TSCOT）为 50.25%，COLA（GPT-3.5）为 42.47%。</p><div style="overflow-x: auto;"><table>
             <thead>
               <tr>
                 <th>模型</th>
@@ -737,202 +349,29 @@
                 <td><strong>64.07</strong></td>
               </tr>
             </tbody>
-          </table>
-        </div>
+          </table></div>
+<h3>步骤 4：按回复路径深度分组</h3>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">深度</th><th scope="col">样本数</th><th scope="col">占比</th></tr></thead><tbody><tr><td>1（原帖）</td><td>452</td><td>1.86%</td></tr>
+<tr><td>2</td><td>5,800</td><td>23.90%</td></tr>
+<tr><td>3</td><td>11,291</td><td>46.53%</td></tr>
+<tr><td>4</td><td>4,405</td><td>18.15%</td></tr>
+<tr><td>5</td><td>1,578</td><td>6.50%</td></tr>
+<tr><td>6</td><td>738</td><td>3.04%</td></tr></tbody></table></div>
+<p>深度超过 3 的实例共 6,721 条，占 27.69%。按深度 1–2、3–4、5–6 分组后，iPhone 15 目标的结果如下。</p>
+<div style="overflow-x: auto;"><table><thead><tr><th scope="col">方法</th><th scope="col">深度 1–2</th><th scope="col">深度 3–4</th><th scope="col">深度 5–6</th><th scope="col">首末差值</th></tr></thead><tbody><tr><td>GLAN</td><td>66.91</td><td>62.30</td><td>41.74</td><td>−25.17 个百分点</td></tr>
+<tr><td>XLNet</td><td>68.09</td><td>59.25</td><td>43.13</td><td>−24.96 个百分点</td></tr>
+<tr><td>GPT-4</td><td>68.99</td><td>57.64</td><td>41.11</td><td>−27.88 个百分点</td></tr></tbody></table></div>
+<p>这些分组揭示了深层回复依赖的处理难度。不同目标与模型的变化存在差异，例如 Branch-BERT 在 PM 的深度 5–6 组达到 88.46，高于其浅层组。分析时结合目标、类别比例和分组样本量一起解读。</p>
+</section>
 
-        <p><strong>关键发现：</strong></p>
-        <ul>
-          <li>i15 和 NR 展现相对较高结果，GPT-4 分别达到 61.47% 和 81.46%</li>
-          <li>ND 目标性能显著下降，上下文理解与立场迁移仍具挑战</li>
-          <li>传统模型（TAN、CrossNet）在零样本设置中表现最差，反映泛化能力有限</li>
-        </ul>
+<section class="section-card" id="contribution"><h2>项目成果与我的参与</h2>
+<ul><li><strong>数据构建：</strong>参与采集筛选与祖先路径整理，形成五个目标、24,264 条标注实例的中文多轮立场数据。</li><li><strong>标注质检：</strong>参与规则校准、标注与质量检查，平均一致率 0.972，平均 Kappa 0.934。</li><li><strong>模型评测：</strong>参与基线适配与目标内、跨目标、零样本实验，使用统一的 F_avg 指标汇总结果。</li><li><strong>实验分析：</strong>参与按目标与深度分组，分析指代、回复关系和隐式表达带来的判断困难。</li></ul>
+<p>成果发表于 WWW 2025 Companion，并公开数据资源，为中文上下文立场检测、目标迁移与深层对话建模提供评测依据。</p>
+</section>
 
-        <div class="challenge-box">
-          <strong>结果边界：</strong>GPT-4 在零样本设置下为 64.07% F1；该数字说明任务仍有难度，但不代表所有模型或场景都达到同一水平。
-        </div>
-
-        <h3>对话深度影响分析</h3>
-        
-        <p><strong>核心发现：</strong>模型性能随对话深度增加呈现<strong>一致性衰减</strong>。</p>
-
-        <h4>典型案例：i15 目标</h4>
-        <ul>
-          <li><strong>GLAN</strong>：从深度 1-2 的 66.91% 降至深度 5-6 的 41.74%（<span class="highlight">下降 37.2%</span>）</li>
-          <li><strong>XLNet</strong>：从深度 1-2 的 68.09% 降至深度 5-6 的 43.13%（<span class="highlight">下降 36.7%</span>）</li>
-          <li><strong>GPT-4</strong>：从深度 1-2 的 68.99% 降至深度 5-6 的 41.11%（<span class="highlight">下降 40.4%</span>）</li>
-        </ul>
-
-        <h4>跨目标模式</h4>
-        <ul>
-          <li>该衰减模式在所有目标（AG、ND、NR、PM）中持续存在</li>
-          <li>突显了扩展对话中立场检测的重大挑战</li>
-          <li>模型必须理解复杂的上下文依赖关系和多轮对话中演化的观点</li>
-        </ul>
-
-        <div class="highlight-box">
-          <strong>平均衰减规律：</strong>对话深度每增加 1 轮，模型性能平均下降 <span class="highlight">6.2%</span>，最高衰减达 <span class="highlight">37.2%</span>（GLAN 在 i15 目标）。
-        </div>
-
-        <h3>隐式立场检测挑战</h3>
-        
-        <p><strong>传统模型困境：</strong>在隐式立场检测中，传统模型 F1 分数低于 <span class="highlight">50%</span>。</p>
-        
-        <ul>
-          <li><strong>上下文依赖</strong>：隐式立场需要深入理解前置对话上下文</li>
-          <li><strong>指代消解</strong>：需要准确识别代词与目标的指代关系</li>
-          <li><strong>语义推理</strong>：需要从间接表达中推断立场倾向</li>
-        </ul>
-
-        <div class="challenge-box">
-          <strong>未来方向：</strong>需要创新方法处理对话上下文和隐式立场表达，这是中文立场检测研究的关键突破点。
-        </div>
-
-        <h3>核心成果总结</h3>
-        
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-number">24,264</div>
-            <div class="stat-label">标注实例（4.2× CANT-CSD）</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">0.972</div>
-            <div class="stat-label">标注一致性</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">27.69%</div>
-            <div class="stat-label">深度 >3 轮（vs 6.3% CANT-CSD）</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">66.10%</div>
-            <div class="stat-label">目标内最优 F1（GLAN）</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">64.07%</div>
-            <div class="stat-label">零样本最优 F1（GPT-4）</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">-37.2%</div>
-            <div class="stat-label">最大深度衰减</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 贡献与方法 -->
-      <div class="section-card" id="capability">
-        <h2>贡献与方法</h2>
-        
-        <table>
-          <thead>
-            <tr>
-              <th>能力领域</th>
-              <th>具体体现</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>数据工程能力</strong></td>
-              <td>三阶段预处理流水线 + 双人标注 + 专家复审机制</td>
-            </tr>
-            <tr>
-              <td><strong>质量控制体系</strong></td>
-              <td>Kappa 系数 0.934 + 标注一致性 0.972</td>
-            </tr>
-            <tr>
-              <td><strong>NLP 语义理解</strong></td>
-              <td>多轮对话建模 + 上下文依赖 + 隐式立场检测</td>
-            </tr>
-            <tr>
-              <td><strong>立场检测专业性</strong></td>
-              <td>三分类标注 + 对话上下文感知 + 目标相关性验证</td>
-            </tr>
-            <tr>
-              <td><strong>基准评测体系</strong></td>
-              <td>12 个模型全量评测 + 3 种评测场景 + 深度分析</td>
-            </tr>
-            <tr>
-              <td><strong>深度学习实践</strong></td>
-              <td>传统模型/预训练模型/对话专用模型/LLM 全覆盖</td>
-            </tr>
-            <tr>
-              <td><strong>数据分析能力</strong></td>
-              <td>性能衰减规律 + 跨目标迁移 + 隐式立场挑战分析</td>
-            </tr>
-            <tr>
-              <td><strong>开源贡献</strong></td>
-              <td>数据集公开 + 评测脚本 + 统计分析可复现</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 可用场景 -->
-      <div class="section-card" id="application">
-        <h2>可用场景</h2>
-        
-        <h3>1. 学术研究价值</h3>
-        <ul>
-          <li><strong>数据资源</strong>：提供中文多轮对话样本、标注和评测脚本</li>
-          <li><strong>基准评测</strong>：为中文多轮立场检测提供统一的比较入口</li>
-          <li><strong>方法论贡献</strong>：三阶段预处理 + 双人标注 + 专家复审的质量保证体系</li>
-          <li><strong>后续研究</strong>：可用于模型对比、跨目标迁移和对话深度分析</li>
-        </ul>
-
-        <h3>2. 社交媒体分析</h3>
-        <ul>
-          <li><strong>舆情监测</strong>：自动识别用户对热点话题的立场倾向</li>
-          <li><strong>观点挖掘</strong>：从大规模对话中提取公众态度模式</li>
-          <li><strong>极化分析</strong>：量化不同话题的观点分布与极化程度</li>
-          <li><strong>趋势预测</strong>：基于立场演化预测舆论走向</li>
-        </ul>
-
-        <h3>3. 商业应用场景</h3>
-        <ul>
-          <li><strong>市场研究</strong>：分析消费者对产品/品牌的立场态度</li>
-          <li><strong>品牌监测</strong>：实时追踪公众对品牌事件的反应</li>
-          <li><strong>竞品分析</strong>：对比不同产品在社交媒体上的立场分布</li>
-          <li><strong>危机管理</strong>：快速识别负面立场并评估影响范围</li>
-        </ul>
-
-        <h3>4. 政策制定支持</h3>
-        <ul>
-          <li><strong>民意调查</strong>：低成本、大规模的公众态度收集</li>
-          <li><strong>政策评估</strong>：分析公众对政策的支持/反对程度</li>
-          <li><strong>社会治理</strong>：识别社会议题的争议焦点与立场分化</li>
-          <li><strong>沟通优化</strong>：基于立场分析优化政府沟通策略</li>
-        </ul>
-      </div>
-
-      <!-- 局限与下一步 -->
-      <div class="section-card" id="future">
-        <h2>局限与下一步</h2>
-        
-        <h3>当前局限性</h3>
-        <ul>
-          <li><strong>平台单一性</strong>：数据仅来自新浪微博，可能不完全代表其他社交平台</li>
-          <li><strong>话题覆盖</strong>：仅涵盖 5 个话题，未来可扩展到更多领域</li>
-          <li><strong>时效性</strong>：数据采集于特定时间段，立场可能随时间演化</li>
-          <li><strong>模型性能</strong>：即使最优模型在零样本设置下仅达 64.07% F1，仍有较大提升空间</li>
-        </ul>
-
-        <h3>未来研究方向</h3>
-        <ul>
-          <li><strong>深度对话建模</strong>：开发专门针对多轮对话的立场检测架构</li>
-          <li><strong>隐式立场推理</strong>：增强模型对上下文依赖与指代消解的能力</li>
-          <li><strong>跨平台泛化</strong>：扩展到微信、抖音、小红书等其他中文社交平台</li>
-          <li><strong>多模态融合</strong>：整合文本、图像、表情符号等多模态信息</li>
-          <li><strong>立场演化追踪</strong>：建模用户立场在对话过程中的动态变化</li>
-          <li><strong>低资源场景</strong>：探索少样本、零样本学习方法</li>
-        </ul>
-      </div>
-
-      <!-- 返回按钮 -->
-      <div style="text-align: center; margin-top: 48px;">
-        <a href="index.html" class="link-button">
-          ← 返回主页
-        </a>
-      </div>
-      </main>
-    </div>
-      <script src="site.js" defer></script>
-  </body>
-</html>
+<section class="section-card" id="future"><h2>局限与后续方向</h2>
+<p>数据来自微博的五个目标，讨论语境与类别分布具有平台和议题特征。深层样本较少，深度 5 和 6 分别占 6.50% 和 3.04%，分组得分需要结合样本量理解。</p>
+<p>后续可扩展目标与平台覆盖，加强回复关系、指代和反讽建模，并完善大模型裁决的输出解析与错误记录。</p>
+</section>
+<div style="text-align: center; margin-top: 48px;"><a href="index.html" class="link-button">← 返回主页</a></div>
+</main></div><script src="site.js" defer></script></body></html>
