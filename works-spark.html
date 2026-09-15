@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="SPARK：基于 LLM 多智能体，研究立场与话题的协同演化。EMNLP 2025 Main，共同第一作者。原论文架构与研究图示展示。" />
+  <meta name="theme-color" content="#100d20" />
+  <meta property="og:title" content="SPARK | 杨艺 / SELECTED WORKS" />
+  <meta property="og:description" content="让观点交锋，看见话题生长。LLM 多智能体立场与话题协同演化研究。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/works/spark/01-sara-tes-architecture.png" />
+  <title>SPARK · 作品纯享版 | 杨艺 Yang Yi</title>
+  <link rel="stylesheet" href="works.css?v=spark-layout-2" />
+  <script src="works.js" defer></script>
+</head>
+<body class="spark-theme" data-project-name="SPARK">
+  <div class="ambient" aria-hidden="true"><i></i><i></i></div>
+  <div class="reading-progress" aria-hidden="true"></div>
+  <a class="skip-link" href="#spark">跳到作品内容</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="杨艺，返回个人主页">杨艺 <span aria-hidden="true">/</span> <span class="brand-en">SELECTED WORKS</span></a>
+      <nav class="project-nav" aria-label="作品导航">
+        <a href="index.html">个人主页</a>
+        <a href="works.html">亿灵</a>
+        <a href="works-dataagent.html">KDDcup DataAgent</a>
+        <a href="works-social.html">社交媒体运营 Agent</a>
+        <a class="active" href="works-spark.html" aria-current="page">SPARK <span class="nav-dot" aria-hidden="true"></span></a>
+        <a href="works-cmtcsd.html">C-MTCSD</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="spark" class="works-stream">
+    <section class="project-heading" aria-labelledby="project-title">
+      <p class="eyebrow">SPARK / STANCE & TOPIC CO-EVOLUTION</p>
+      <div class="hero-grid">
+        <div>
+          <h1 id="project-title"><span lang="en">SPARK</span></h1>
+          <p class="value-proposition">让观点交锋，看见话题生长。</p>
+        </div>
+        <div class="hero-intro">
+          <p>以具有人设与双层记忆的 LLM 多智能体构建仿真环境，研究持续交互中，个体立场与讨论话题如何共同演化。</p>
+          <ul class="chips" aria-label="论文与作者身份"><li>EMNLP 2025 Main</li><li>共同第一作者</li><li>多智能体仿真</li></ul>
+          <div class="spark-research-links" aria-label="研究资料">
+            <a href="https://aclanthology.org/2025.emnlp-main.1176/" target="_blank" rel="noopener noreferrer">阅读论文 ↗</a>
+            <a href="https://github.com/yangyi626/SPARK_" target="_blank" rel="noopener noreferrer">项目代码 · GitHub ↗</a>
+            <a href="spark-detail.html">研究详情 ↗</a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-meta"><span>RESEARCH / COLLECTIVE INTELLIGENCE</span><a href="#chapter-01">05 张研究图示 · 开始探索 <span aria-hidden="true">↓</span></a></div>
+    </section>
+
+    <section id="chapter-01" class="chapter chapter-first" aria-labelledby="title-01">
+      <div class="chapter-copy">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">01</span> FROM AGENTS TO INTERACTIONS</p><h2 id="title-01">个体如何思考，群体如何演化</h2></div>
+        <div><span class="section-label">原论文架构图 / SARA × TES</span><p class="chapter-description">从左向右读：SARA 为个体建立人设，以短期摘要与长期记忆更新观点；TES 组织群体接触与逐日交互，记录立场变化和话题扩展。两者连接起个体状态与群体演化。</p></div>
+      </div>
+      <figure style="--figure-native-width: 1588px">
+        <a class="image-link" href="assets/works/spark/01-sara-tes-architecture.png" data-caption="个体如何思考，群体如何演化" aria-label="放大第 1 张：SPARK 原论文完整架构图">
+          <img src="assets/works/spark/01-sara-tes-architecture.png" width="1588" height="758" fetchpriority="high" alt="SPARK 原论文架构图，展示 SARA 人设与双层记忆，以及 TES 群体交互与话题演化。" />
+        </a>
+        <figcaption><span>SARA × TES / 原论文架构 · 完整比例</span><span>01 / 05 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+
+    <section id="chapter-02" class="chapter spark-workflow" aria-labelledby="title-02">
+      <div class="chapter-copy reveal">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">02</span> THE DAILY SIMULATION LOOP</p><h2 id="title-02">把一次交流，接入逐日仿真</h2></div>
+        <div><span class="section-label">论文算法 / SPARK Simulation Workflow</span><p class="chapter-description">算法以智能体池、初始话题、仿真天数和每日接触人数为输入。每天依次抽取交流对象、汇总短期记忆、整合长期记忆、生成带立场标签的发言，再由 TES 更新话题树并跟踪传播与立场轨迹。</p></div>
+      </div>
+      <figure class="reveal" style="--figure-native-width: 697px">
+        <a class="image-link" href="assets/works/spark/02-simulation-workflow.png" data-caption="把一次交流，接入逐日仿真" aria-label="放大第 2 张：SPARK 仿真算法伪代码">
+          <img src="assets/works/spark/02-simulation-workflow.png" width="697" height="775" loading="lazy" decoding="async" alt="Algorithm 1：SPARK Simulation Workflow，列出初始化、每日交流、记忆更新、发言生成和话题树更新步骤。" />
+        </a>
+        <figcaption><span>Algorithm 1 / 仿真流程伪代码</span><span>02 / 05 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+
+    <section id="chapter-03" class="chapter spark-memory" aria-labelledby="title-03">
+      <div class="chapter-copy reveal">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">03</span> MEMORY ACROSS ROUNDS</p><h2 id="title-03">今日观点，如何进入长期记忆</h2></div>
+        <div><span class="section-label">论文提示词 / 双层记忆</span><p class="chapter-description">上方提示词要求围绕当前话题，概括接收到的观点及其立场；下方提示词将当日短期摘要整合进既有长期记忆，保持连续性并补充新信息。这里展示的是记忆更新指令，而非实际生成的记忆内容。</p></div>
+      </div>
+      <figure class="reveal" style="--figure-native-width: 672px">
+        <a class="image-link" href="assets/works/spark/03-dual-memory-prompts.png" data-caption="今日观点，如何进入长期记忆" aria-label="放大第 3 张：短期摘要与长期记忆更新提示词">
+          <img src="assets/works/spark/03-dual-memory-prompts.png" width="672" height="461" loading="lazy" decoding="async" alt="两段英文提示词：概括当前话题下听到的观点及立场，将今日摘要整合进先前长期记忆。" />
+        </a>
+        <figcaption><span>Dual Memory / 短期摘要与长期整合提示词</span><span>03 / 05 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+
+    <section id="chapter-04" class="chapter spark-trajectory" aria-labelledby="title-04">
+      <div class="chapter-copy reveal">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">04</span> OPINIONS MEET NEW TOPICS</p><h2 id="title-04">沿着十四天，追踪观点与话题</h2></div>
+        <div><span class="section-label">仿真轨迹 / 个体立场与衍生话题</span><p class="chapter-description">图中按第 1—14 天排列智能体立场、发言片段与衍生话题，标出立场变化及与变化相关的话题。从 InclusiveTech、GreenTech 到 SafetyFirst、TechEthics，读者可对照发言与话题轨迹；这是仿真示例，不等同于对真实社会的预测。</p></div>
+      </div>
+      <figure class="reveal" style="--figure-native-width: 1726px">
+        <a class="image-link" href="assets/works/spark/04-stance-topic-trajectory.png" data-caption="沿着十四天，追踪观点与话题" aria-label="放大第 4 张：十四天立场与话题演化轨迹">
+          <img src="assets/works/spark/04-stance-topic-trajectory.png" width="1726" height="693" loading="lazy" decoding="async" alt="第 1—14 天智能体立场、发言和话题演化图，包含 Favor、Neutral、Against 三种立场及 InclusiveTech、SafetyFirst 等话题。" />
+        </a>
+        <figcaption><span>Days 1–14 / 立场、发言与话题轨迹</span><span>04 / 05 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+
+    <section id="chapter-05" class="chapter spark-ablation" aria-labelledby="title-05">
+      <div class="chapter-copy reveal">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">05</span> COMPARING MEMORY SETTINGS</p><h2 id="title-05">移除一层记忆，再看群体变化</h2></div>
+        <div><span class="section-label">消融实验 / 完整架构与记忆移除对照</span><p class="chapter-description">三个面板分别展示 FullArchitecture、WithoutLongMemory 与 WithoutShortMemory。横轴为天数，左右纵轴分别记录立场数量和衍生话题数量，可对照不同记忆设置下的变化过程；本页不从截图额外推断统计显著性或真实社会效果。</p></div>
+      </div>
+      <figure class="reveal" style="--figure-native-width: 1602px">
+        <a class="image-link" href="assets/works/spark/05-memory-ablation.png" data-caption="移除一层记忆，再看群体变化" aria-label="放大第 5 张：完整架构与移除长短期记忆的消融对照图">
+          <img src="assets/works/spark/05-memory-ablation.png" width="1602" height="524" loading="lazy" decoding="async" alt="三个消融实验面板：完整架构、移除长期记忆、移除短期记忆，对照逐日立场数量和衍生话题数量。" />
+        </a>
+        <figcaption><span>Memory Ablation / 三种记忆设置对照</span><span>05 / 05 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+    <footer class="stream-footer">
+      <div><p class="eyebrow">SPARK / UNDERSTANDING COLLECTIVE CHANGE</p><p>从一次交锋，到持续演化。</p><small>共同第一作者 · 参与 SARA、TES 与实验分析 · EMNLP 2025 Main</small></div>
+      <div class="footer-links"><a href="spark-detail.html">阅读研究详情 ↗</a><a href="index.html">返回个人主页 ↗</a><a href="#spark">回到顶部 ↑</a></div>
+    </footer>
+  </main>
+
+  <dialog class="image-viewer" aria-labelledby="viewer-title" aria-describedby="viewer-help viewer-description">
+    <div class="viewer-shell">
+      <div class="viewer-toolbar">
+        <h2 id="viewer-title">SPARK / 研究图示预览</h2>
+        <button class="viewer-close" type="button" autofocus aria-label="关闭图片预览">关闭 <span aria-hidden="true">×</span></button>
+      </div>
+      <div class="viewer-stage"><img class="viewer-image" alt="" /></div>
+      <div class="viewer-bottom">
+        <button class="viewer-prev" type="button" aria-label="上一张图片">← 上一张</button>
+        <p class="viewer-caption" aria-live="polite" aria-atomic="true"></p>
+        <button class="viewer-next" type="button" aria-label="下一张图片">下一张 →</button>
+      </div>
+      <p id="viewer-description"></p>
+      <p id="viewer-help">左右方向键切换 · Esc 关闭</p>
+    </div>
+  </dialog>
+</body>
+</html>

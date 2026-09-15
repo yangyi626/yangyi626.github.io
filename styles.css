@@ -624,6 +624,11 @@ strong {
   gap: 6px;
 }
 
+.project-footer > .project-resource-links {
+  gap: 10px 16px;
+  align-items: center;
+}
+
 .research-project-footer {
   justify-content: flex-end;
   margin-top: auto;

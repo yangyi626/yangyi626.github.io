@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="C-MTCSD：中文多轮对话立场检测数据集与基准。沿着对话，读懂真实立场。WWW 2025 Companion，共同第一作者。" />
+  <meta name="theme-color" content="#071713" />
+  <meta property="og:title" content="C-MTCSD | 杨艺 / SELECTED WORKS" />
+  <meta property="og:description" content="保留回复路径，理解当前发言对指定目标的立场。中文多轮对话数据构建与基准评测。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/works/cmtcsd/03-label-distribution.png" />
+  <title>C-MTCSD · 作品纯享版 | 杨艺 Yang Yi</title>
+  <link rel="stylesheet" href="works.css?v=cmtcsd-1" />
+  <script src="works.js" defer></script>
+</head>
+<body class="cmtcsd-theme" data-project-name="C-MTCSD">
+  <div class="ambient" aria-hidden="true"><i></i><i></i></div>
+  <div class="reading-progress" aria-hidden="true"></div>
+  <a class="skip-link" href="#cmtcsd">跳到作品内容</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="杨艺，返回个人主页">杨艺 <span aria-hidden="true">/</span> <span class="brand-en">SELECTED WORKS</span></a>
+      <nav class="project-nav" aria-label="作品导航">
+        <a href="index.html">个人主页</a>
+        <a href="works.html">亿灵</a>
+        <a href="works-dataagent.html">KDDcup DataAgent</a>
+        <a href="works-social.html">社交媒体运营 Agent</a>
+        <a href="works-spark.html">SPARK</a>
+        <a class="active" href="works-cmtcsd.html" aria-current="page">C-MTCSD <span class="nav-dot" aria-hidden="true"></span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cmtcsd" class="works-stream">
+    <section class="project-heading" aria-labelledby="project-title">
+      <p class="eyebrow">C-MTCSD / STANCE IN CONTEXT</p>
+      <div class="hero-grid">
+        <div>
+          <h1 id="project-title"><span lang="en">C-MTCSD</span></h1>
+          <p class="value-proposition">沿着对话，读懂真实立场。</p>
+        </div>
+        <div class="hero-intro">
+          <p>中文多轮对话立场检测数据集与基准。保留从原帖到当前评论的回复路径，让模型结合讨论目标与前文，判断当前发言的支持、反对或未明确表态。</p>
+          <ul class="chips" aria-label="论文与作者身份"><li>WWW 2025 Companion</li><li>共同第一作者</li><li>数据集与基准</li></ul>
+          <div class="cmtcsd-research-links" aria-label="研究资料">
+            <a href="https://dl.acm.org/doi/10.1145/3701716.3715307" target="_blank" rel="noopener noreferrer">阅读论文 ↗</a>
+            <a href="https://github.com/yangyi626/C-MTCSD" target="_blank" rel="noopener noreferrer">项目代码 · GitHub ↗</a>
+            <a href="cmtcsd-detail.html">研究详情 ↗</a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-meta"><span>DATASET / CONTEXT / BENCHMARK</span><a href="#chapter-01">08 张论文图表 · 开始探索 <span aria-hidden="true">↓</span></a></div>
+    </section>
+
+    <section id="chapter-01" class="chapter chapter-first cmtcsd-collection" aria-labelledby="title-01">
+      <div class="chapter-copy">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">01</span> FROM DISCUSSION TO DATA</p><h2 id="title-01">从真实讨论，整理对话的来路</h2></div>
+        <div><span class="section-label">论文数据统计 / 采集与复标</span><p class="chapter-description">围绕 iPhone 15、萝卜快跑、预制菜、裸辞和不婚主义，从微博采集原帖与评论，再整理原帖到当前句的祖先回复路径。表中分别记录各目标的原帖、评论及复标数量，呈现数据构建阶段的材料规模。</p></div>
+      </div>
+      <figure style="--figure-native-width: 1097px; --figure-max-width: 1000px">
+        <a class="image-link" href="assets/works/cmtcsd/01-collection-counts.png" data-caption="从真实讨论，整理对话的来路" aria-label="放大第 1 张：各目标采集与复标数量表">
+          <img src="assets/works/cmtcsd/01-collection-counts.png" width="1097" height="398" fetchpriority="high" alt="论文表 1：i15、AG、PM、NR、ND 五个目标的 Post、Comment 与 Re-annotated 数量。" />
+        </a>
+        <figcaption><span>Table 1 / 采集与复标数量</span><span>01 / 08 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+
+    <section id="chapter-02" class="chapter cmtcsd-agreement" aria-labelledby="title-02">
+      <div class="chapter-copy reveal">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">02</span> ALIGNING THE ANNOTATION</p><h2 id="title-02">先对齐判断对象，<br />再检查标注一致性</h2></div>
+        <div><span class="section-label">论文质量统计 / 标注一致性</span><p class="chapter-description">赞同父评论，不一定意味着支持讨论目标。标注以当前句对指定目标的态度为准，通过试标校准、多人独立标注与争议复标统一口径；表中用一致率和 Kappa，分别检查判断重合程度与扣除随机一致后的可靠性。</p></div>
+      </div>
+      <figure class="reveal" style="--figure-native-width: 1113px; --figure-max-width: 760px">
+        <a class="image-link" href="assets/works/cmtcsd/02-annotation-agreement.png" data-caption="先对齐判断对象，再检查标注一致性" aria-label="放大第 2 张：标注一致率与 Kappa 表">
+          <img src="assets/works/cmtcsd/02-annotation-agreement.png" width="1113" height="318" loading="lazy" decoding="async" alt="论文表 2：五个目标及平均值的标注一致率与 Kappa。" />
+        </a>
+        <figcaption><span>Table 2 / 标注一致率与 Kappa</span><span>02 / 08 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+
+    <section id="chapter-03" class="chapter" aria-labelledby="title-03">
+      <div class="chapter-copy reveal">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">03</span> ONE TASK, DIFFERENT TARGETS</p><h2 id="title-03">同一套标签，不同的立场分布</h2></div>
+        <div><span class="section-label">论文数据统计 / 标签分布</span><p class="chapter-description">数据集包含 24,264 条标注实例，使用 Against、Favor、None 三类标签。各目标的支持、反对与未明确表态比例并不相同：理解这些分布，是比较模型表现、分析目标差异的起点。</p></div>
+      </div>
+      <figure class="reveal" style="--figure-native-width: 1213px; --figure-max-width: 1120px">
+        <a class="image-link" href="assets/works/cmtcsd/03-label-distribution.png" data-caption="同一套标签，不同的立场分布" aria-label="放大第 3 张：数据集标签分布表">
+          <img src="assets/works/cmtcsd/03-label-distribution.png" width="1213" height="549" loading="lazy" decoding="async" alt="论文表 3：五个讨论目标中 Against、Favor、None 的实例数量、比例与总计。" />
+        </a>
+        <figcaption><span>Table 3 / 标签数量与比例</span><span>03 / 08 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+
+    <section id="chapter-04" class="chapter" aria-labelledby="title-04">
+      <div class="chapter-copy reveal">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">04</span> HOW FAR CONTEXT REACHES</p><h2 id="title-04">一句回复背后，有多长的上下文</h2></div>
+        <div><span class="section-label">论文数据统计 / 路径深度与文本长度</span><p class="chapter-description">路径深度包含原帖，最深到六层；最后一个节点是预测对象，前面的节点提供理解线索。表中同时列出各深度的实例数量、占比和平均词数，帮助区分对话层级与文本长度，也为后续分层评测提供依据。</p></div>
+      </div>
+      <figure class="reveal" style="--figure-native-width: 1261px; --figure-max-width: 960px">
+        <a class="image-link" href="assets/works/cmtcsd/04-conversation-depth.png" data-caption="一句回复背后，有多长的上下文" aria-label="放大第 4 张：回复路径深度与平均词数统计表">
+          <img src="assets/works/cmtcsd/04-conversation-depth.png" width="1261" height="616" loading="lazy" decoding="async" alt="论文表 4：深度 1 至 6 的实例数量、比例和平均词数，深度 1 对应原帖。" />
+        </a>
+        <figcaption><span>Table 4 / 路径深度与平均词数</span><span>04 / 08 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+
+    <section id="chapter-05" class="chapter cmtcsd-results" aria-labelledby="title-05">
+      <div class="chapter-copy reveal">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">05</span> BENCHMARKING WITHIN TARGETS</p><h2 id="title-05">在熟悉的目标内，建立比较基线</h2></div>
+        <div><span class="section-label">论文实验结果 / 目标内评测</span><p class="chapter-description">在同一目标的训练与测试划分上，对照传统神经方法、中文预训练模型与对话相关方法。主指标 F_avg 对反对、支持两类的 F1 取平均；表中按目标分别报告结果，再汇总目标平均值，避免只看一个总分。</p></div>
+      </div>
+      <figure class="reveal" style="--figure-native-width: 1229px; --figure-max-width: 1160px">
+        <a class="image-link" href="assets/works/cmtcsd/05-in-target-results.png" data-caption="在熟悉的目标内，建立比较基线" aria-label="放大第 5 张：目标内实验结果表">
+          <img src="assets/works/cmtcsd/05-in-target-results.png" width="1229" height="733" loading="lazy" decoding="async" alt="论文表 5：TAN、CrossNet、BERT、RoBERTa、JointCL、XLNet、KEPrompt、Branch-BERT 与 GLAN 的目标内结果。" />
+        </a>
+        <figcaption><span>Table 5 / 目标内基准 · F_avg（%）</span><span>05 / 08 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+
+    <section id="chapter-06" class="chapter" aria-labelledby="title-06">
+      <div class="chapter-copy reveal">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">06</span> TRANSFERRING ACROSS TARGETS</p><h2 id="title-06">换一个目标，理解还能迁移吗</h2></div>
+        <div><span class="section-label">论文实验结果 / 跨目标评测</span><p class="chapter-description">从一个目标迁移到另一个目标，模型需要面对新的讨论内容与表达习惯。表中箭头表示训练目标到测试目标的方向；分别比较各条迁移路径，观察方法对目标变化的适应，而不将迁移看作对称过程。</p></div>
+      </div>
+      <figure class="reveal" style="--figure-native-width: 1252px; --figure-max-width: 1120px">
+        <a class="image-link" href="assets/works/cmtcsd/06-cross-target-results.png" data-caption="换一个目标，理解还能迁移吗" aria-label="放大第 6 张：跨目标立场检测结果表">
+          <img src="assets/works/cmtcsd/06-cross-target-results.png" width="1252" height="687" loading="lazy" decoding="async" alt="论文表 6：i15 到 AG、AG 到 i15、ND 到 NR、NR 到 ND、AG 到 ND 的模型迁移结果。" />
+        </a>
+        <figcaption><span>Table 6 / 跨目标基准 · 有向迁移</span><span>06 / 08 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+
+    <section id="chapter-07" class="chapter" aria-labelledby="title-07">
+      <div class="chapter-copy reveal">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">07</span> REASONING ABOUT UNSEEN TARGETS</p><h2 id="title-07">未见目标下，对照不同理解方式</h2></div>
+        <div><span class="section-label">论文实验结果 / 零样本评测</span><p class="chapter-description">零样本设置进一步检验模型在未见目标上的立场判断。表中纳入传统与预训练基线，以及 LLaMA、GPT 系列和 COLA 等大模型提示方法。COLA 是本研究适配的已有基线，数据集本身并非 Agent 产品。</p></div>
+      </div>
+      <figure class="reveal" style="--figure-native-width: 824px; --figure-max-width: 824px">
+        <a class="image-link" href="assets/works/cmtcsd/07-zero-shot-results.png" data-caption="未见目标下，对照不同理解方式" aria-label="放大第 7 张：零样本实验结果表">
+          <img src="assets/works/cmtcsd/07-zero-shot-results.png" width="824" height="627" loading="lazy" decoding="async" alt="论文表 7：零样本设置下各方法在五个目标上的结果及平均值，包含 COLA、GPT-3.5 与 GPT-4。" />
+        </a>
+        <figcaption><span>Table 7 / 零样本基准 · F_avg（%）</span><span>07 / 08 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+
+    <section id="chapter-08" class="chapter cmtcsd-depth-results" aria-labelledby="title-08">
+      <div class="chapter-copy reveal">
+        <div class="chapter-heading"><p class="eyebrow"><span class="figure-number">08</span> LOOKING BEYOND THE AVERAGE</p><h2 id="title-08">深入回复链，看见平均分之外的难点</h2></div>
+        <div><span class="section-label">论文实验结果 / 按目标与深度分组</span><p class="chapter-description">将路径按深度 1–2、3–4、5–6 分组，在保留对话历史的设置下比较模型表现。深层回复中的指代与隐式表达更值得关注，但不同目标、方法的变化并不一致；结合前面的类别分布和深层样本量，才能更准确地理解分组结果。</p></div>
+      </div>
+      <figure class="reveal" style="--figure-native-width: 1722px; --figure-max-width: 1320px">
+        <a class="image-link" href="assets/works/cmtcsd/08-depth-group-results.png" data-caption="深入回复链，看见平均分之外的难点" aria-label="放大第 8 张：各目标按回复深度分组的实验宽表">
+          <img src="assets/works/cmtcsd/08-depth-group-results.png" width="1722" height="643" loading="lazy" decoding="async" alt="论文表 8：保留对话历史时，五个目标按深度 1–2、3–4、5–6 分组，横向对照各模型结果。" />
+        </a>
+        <figcaption><span>Table 8 / 深度分组 · 完整宽表</span><span>08 / 08 · 点击查看完整大图 ↗</span></figcaption>
+      </figure>
+    </section>
+
+    <footer class="stream-footer">
+      <div><p class="eyebrow">C-MTCSD / UNDERSTANDING IN CONTEXT</p><p>不只读一句话，更读懂它的来路。</p><small>共同第一作者 · 参与数据构建、标注质检、基线适配与实验分析 · WWW 2025 Companion</small></div>
+      <div class="footer-links"><a href="cmtcsd-detail.html">阅读研究详情 ↗</a><a href="index.html">返回个人主页 ↗</a><a href="#cmtcsd">回到顶部 ↑</a></div>
+    </footer>
+  </main>
+
+  <dialog class="image-viewer" aria-labelledby="viewer-title" aria-describedby="viewer-help viewer-description">
+    <div class="viewer-shell">
+      <div class="viewer-toolbar">
+        <h2 id="viewer-title">C-MTCSD / 论文图表预览</h2>
+        <button class="viewer-close" type="button" autofocus aria-label="关闭图片预览">关闭 <span aria-hidden="true">×</span></button>
+      </div>
+      <div class="viewer-stage"><img class="viewer-image" alt="" /></div>
+      <div class="viewer-bottom">
+        <button class="viewer-prev" type="button" aria-label="上一张图片">← 上一张</button>
+        <p class="viewer-caption" aria-live="polite" aria-atomic="true"></p>
+        <button class="viewer-next" type="button" aria-label="下一张图片">下一张 →</button>
+      </div>
+      <p id="viewer-description"></p>
+      <p id="viewer-help">左右方向键切换 · Esc 关闭</p>
+    </div>
+  </dialog>
+</body>
+</html>

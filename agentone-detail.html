@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Agent-One：端云协同 Agent 系统。普通图 Middleware 建设、Harness 自进化与 Qwen3.5-4B 后训练实践。" />
-    <title>Agent One 实习详情 | 杨艺 Yang Yi</title>
+    <meta name="description" content="亿灵：多设备协同 AI 智能中枢。端侧Agent Middleware 建设、Harness 自进化与 Qwen3.5-4B 后训练实践。" />
+    <title>亿灵 实习详情 | 杨艺 Yang Yi</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="canonical" href="https://yangyi626.github.io/agentone-detail.html" />
     <meta property="og:title" content="Agent One 实习详情 | 杨艺 Yang Yi" />
-    <meta property="og:description" content="Agent-One 实习详情：普通 Agent Middleware、Harness 与 Skill 自进化，以及 Qwen3.5-4B 后训练。" />
+    <meta property="og:description" content="亿灵 实习详情：普通 Agent Middleware、Harness 与 Skill 自进化，以及 Qwen3.5-4B 后训练。" />
   </head>
   <body>
     <div class="container">
@@ -16,7 +16,7 @@
 
       <header class="header">
         <div class="eyebrow">AIPC Agent · Skill Evolution · Model Post-training</div>
-        <h1>Agent-One：端云协同的可执行 Agent 系统</h1>
+        <h1>亿灵：多设备协同 AI 智能中枢</h1>
         <div class="project-meta">
           <strong>深圳市亿道数字技术研发有限公司 · 算法实习生</strong> | 2026.02 – 2026.06
         </div>
@@ -40,7 +40,7 @@
       </nav>
       <button class="toc-toggle" id="tocToggle" aria-controls="toc" aria-expanded="false" aria-label="打开目录">☰</button>
 
-      <main class="detail-content"><section class="section-card" id="overview"><h2>项目背景与我的工作</h2><p>Agent-One 是面向 AIPC 的端云协同可执行 Agent 系统，让用户通过自然语言完成资料检索、文件分析、报告生成和终端操作。产品以“端侧优先、云端增强”为方向；模型配置选择本地或云端推理服务，工具后端决定操作的实际执行位置。</p><p>我在项目启动阶段参与普通 Agent 图的建设，基于 DeepAgents Middleware 实现上下文、记忆、Skill、输入安全与子 Agent 协作；随后负责 Harness / Skill 自进化和 Qwen3.5-4B 后训练。</p><p>产品规划以 PC 为主要执行端，手机用于审批与通知，NAS 用于私有存储与归档。下文围绕我参与的普通图运行链路、负责的系统演化与模型训练展开。</p></section>
+      <main class="detail-content"><section class="section-card" id="overview"><h2>项目背景与我的工作</h2><p>亿灵 是面向 AIPC 的端云协同可执行 Agent 系统，让用户通过自然语言完成资料检索、文件分析、报告生成和终端操作。产品以“端侧优先、云端增强”为方向；模型配置选择本地或云端推理服务，工具后端决定操作的实际执行位置。</p><p>我在项目启动阶段参与普通 Agent 图的建设，基于 DeepAgents Middleware 实现上下文、记忆、Skill、输入安全与子 Agent 协作；随后负责 Harness / Skill 自进化和 Qwen3.5-4B 后训练。</p><p>产品规划以 PC 为主要执行端，手机用于审批与通知，NAS 用于私有存储与归档。下文围绕我参与的普通图运行链路、负责的系统演化与模型训练展开。</p></section>
 <section class="section-card" id="challenges"><h2>问题与方法设计</h2><div style="overflow-x:auto"><table><thead><tr><th scope="col">问题</th><th scope="col">方法</th></tr></thead><tbody><tr><td>长任务上下文增长、会话状态丢失</td><td>Checkpoint、工具结果外置、部分压缩与工作集恢复</td></tr><tr><td>历史经验与任务方法难复用</td><td>结构化记忆、用户画像、Skill 渐进式加载</td></tr><tr><td>模型操作涉及真实权限</td><td>输入守卫、工具路径策略与人工审批</td></tr><tr><td>失败难归因，修复引入回归</td><td>任务轨迹重建、EvidencePack、受控补丁与版本评测</td></tr><tr><td>4B 模型工具决策不足</td><td>可执行环境、组相对策略优化与反馈增强蒸馏</td></tr></tbody></table></div></section>
 <section class="section-card" id="method"><h2>三条工作链路</h2><p>系统侧固定任务模型比较 Harness 版本，模型侧固定 Harness 比较后训练模型，分别评价两类变化。</p><div style="overflow-x:auto"><table><thead><tr><th scope="col">工作</th><th scope="col">输入 → 输出</th><th scope="col">个人职责</th></tr></thead><tbody><tr><td>普通 Agent 构建</td><td>用户请求 → 模型与工具循环 → 产物与轨迹</td><td>参与 Middleware 与协作能力实现</td></tr><tr><td>Harness / Skill 自进化</td><td>轨迹 → 归因 → 候选 → 对照评测 → 版本发布</td><td>负责归因、候选控制、评测与版本流程</td></tr><tr><td>端侧候选模型后训练</td><td>成功轨迹 / 可执行任务 → SFT 对照 / GRPO+OPD → 统一评测</td><td>负责数据、环境、训练接入与模型比较</td></tr></tbody></table></div></section>
 <section class="section-card" id="architecture"><h2>一、普通 Agent 构建</h2><figure class="project-figure"><a href="assets/agentone-runtime-v2.png" target="_blank" rel="noopener"><img src="assets/agentone-runtime-v2.png" width="1536" height="1024" alt="普通 Agent：交互入口、DeepAgents 主循环及模型执行与状态存储依赖" loading="lazy" decoding="async"></a><figcaption>普通 Agent：交互入口、DeepAgents 主循环及模型执行与状态存储依赖。点击查看大图。</figcaption></figure><h3>1. 会话接入与图装配</h3><p>前端通过 LangGraph SDK 发起请求，user_id 标识归属，thread_id 关联会话，assistant_id 选择普通 agent。后端确定工作目录与运行配置，经 build_chat_agent、create_cli_agent 装配模型、工具、中间件与子 Agent，再编译可执行图。</p><h3>2. Checkpoint 恢复与模型—工具循环</h3><p>AsyncSqliteSaver 使用 sessions.db 保存图状态，配置包含 cr-sqlite 扩展处理。模型返回 AIMessage；含 tool_calls 时分派真实工具，反馈以 tool_call_id 关联为 ToolMessage，再进入下一次决策。最终通过读取、解析或任务测试核验产物后交付。</p><div style="overflow-x:auto"><table><thead><tr><th scope="col">中间件位置</th><th scope="col">具体作用</th></tr></thead><tbody><tr><td>回合开始前</td><td>输入检查、Skill 元数据准备、上下文诊断</td></tr><tr><td>模型调用外侧</td><td>模型选择、画像和记忆注入、Skill 目录组织</td></tr><tr><td>工具调用外侧</td><td>策略判定、审批和实际执行</td></tr><tr><td>最终回答后</td><td>tool_calls 为空时异步写入长期记忆</td></tr><tr><td>异步回合结束后</td><td>检查预算并部分压缩历史</td></tr></tbody></table></div><h3>3. 工具结果外置与历史压缩</h3><p>TokenStateMiddleware 记录用量，按当前模型窗口重算预算：警告与自动压缩 70%，严重提示 80%，阻塞预算 95%。超过 5,000 字符的工具结果保存全文，仅保留前 1,000 字符与路径引用；按 tool_call_id 复用存储位置。</p><p>AutoCompactionMiddleware 在异步 aafter_agent 中触发 partial 压缩，先应用已有摘要事件，再按 preserve_count=6 和工具消息配对要求切分历史，生成九段式摘要并归档。摘要事件保存 cutoff_index、summary_message、file_path。文件缓存通过摘要签名识别新压缩，按次补入近期文件片段；健康诊断写入图状态。</p><h3>4. 记忆开关、画像与相关召回</h3><p>Web 提供“进阶记忆”开关：开启高级记忆，关闭时同时关闭基础与高级记忆。AGENTS.md 由基础文件记忆配置分支提供；画像中间件独立读取 PERSONA.md、SYSTEM.md、USER.md，将非空内容注入本次系统消息。</p><p>结构化记忆按 user_id 管理存储服务，以最近用户文本查询。查询向量复用于主题和记录检索，Qdrant 候选按 0.7×向量分 + 0.3×词项重合排序；默认 10 个主题候选取 4 个，每主题最多 4 条 SEMANTIC 记录，再补最多 4 条 RAW 观察，去重并控制在约 1,200 Token。最终回答且 tool_calls 为空时，将用户与助手文本交给后台 ingest_turn，并安排画像刷新。</p><h3>5. Skill 渐进式加载</h3><p>依内置、用户级、项目级目录扫描 SKILL.md，解析 YAML 名称、描述与路径，同名按项目级优先。skills_metadata 缓存目录，并按启用状态过滤；初始仅注入元数据，模型命中后通过 read_file 读取正文，再按需加载脚本和参考资源，操作沿统一工具策略执行。</p><h3>6. 输入安全与工具审批</h3><p>输入守卫在回合开始前规范化、分词并匹配词表，命中后返回拒绝消息并跳转结束。PolicyHookMiddleware 按工具、参数、路径和工作目录判定允许、阻止或审查，需审批时 interrupt，用户决策后恢复。普通策略、Shell 白名单和 gateway-docker 安全链按后端条件装配。</p><p>启用本地 Shell 时使用 LocalShellBackend，关闭 Shell 时使用 FilesystemBackend，沙箱模式使用指定后端。CompositeBackend 按路径前缀分流普通工作文件、工具结果与历史归档。</p><h3>7. 子 Agent 独立执行与结果回传</h3><p>SubAgentMiddleware 将已注册子 Agent 暴露为 task 工具。主 Agent 提供 subagent_type 和 description，子任务以独立 HumanMessage 开始；构造子状态时过滤主 messages、todos、skills_metadata 等字段。子 Agent 使用自己的模型、工具和中间件，最终消息回传为 ToolMessage，允许合并的状态通过 Command 更新主状态。</p></section>

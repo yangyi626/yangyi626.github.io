@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="DataAgent：从一段真实任务轨迹出发，看字段理解、程序求解与结果校验。KDD Cup 2026 阶段一 54/703；冠军方案复现与赛后本地优化。" />
+  <meta name="theme-color" content="#080f20" />
+  <meta property="og:title" content="DataAgent | 杨艺 / SELECTED WORKS" />
+  <meta property="og:description" content="不止执行成功，更要让答案有据可查。真实任务静态回放、方案演进与本地结果对照。" />
+  <meta property="og:type" content="website" />
+  <title>DataAgent · 作品纯享版 | 杨艺 Yang Yi</title>
+  <link rel="stylesheet" href="works.css?v=dataagent-title-2" />
+  <script src="works.js" defer></script>
+  <script src="dataagent.js" defer></script>
+</head>
+<body class="dataagent-theme" data-project-name="DataAgent">
+  <div class="ambient" aria-hidden="true"><i></i><i></i></div>
+  <div class="reading-progress" aria-hidden="true"></div>
+  <a class="skip-link" href="#dataagent">跳到作品内容</a>
+  <header class="site-header"><div class="header-inner">
+    <a class="brand" href="index.html" aria-label="杨艺，返回个人主页">杨艺 <span aria-hidden="true">/</span> <span class="brand-en">SELECTED WORKS</span></a>
+    <nav class="project-nav" aria-label="作品导航">
+        <a href="index.html">个人主页</a>
+      <a href="works.html">亿灵</a>
+      <a class="active" href="works-dataagent.html" aria-current="page">KDDcup DataAgent <span class="nav-dot" aria-hidden="true"></span></a>
+      <a href="works-social.html">社交媒体运营 Agent</a><a href="works-spark.html">SPARK</a><a href="works-cmtcsd.html">C-MTCSD</a>
+    </nav>
+  </div></header>
+  <main id="dataagent" class="works-stream">
+    <section class="project-heading" aria-labelledby="project-title">
+      <p class="eyebrow">KDD CUP 2026 / DATA AGENTS FOR COMPLEX DATA ANALYSIS</p>
+      <div class="hero-grid"><div>
+        <h1 id="project-title"><span lang="en">DataAgent</span></h1>
+        <p class="value-proposition">不止执行成功，<br />更要让答案有据可查。</p>
+      </div><div class="hero-intro">
+        <p>面对自然语言问题，连接异构数据与业务知识，通过工具反馈完成查询、计算与表格交付。从参赛时的字段语义增强，到赛后的冠军方案复现、风险路由与结果校验，关注的始终是：少走无效步骤，也不跳过关键证据。</p>
+        <ul class="chips" aria-label="项目定位"><li>DataAgent-Bench</li><li>阶段一 54 / 703</li><li>个人参赛 · 赛后优化</li></ul>
+        <div class="da-links"><a href="https://github.com/yangyi626/kddcup2026_champion_optimization" target="_blank" rel="noopener noreferrer">项目代码 · GitHub ↗</a><a href="https://dataagent.top/" target="_blank" rel="noopener noreferrer">官方赛站 ↗</a><a href="kdd-detail.html">研究详情 ↗</a></div>
+      </div></div>
+      <nav class="hero-meta da-chapters" aria-label="DataAgent 章节"><a href="#case">01 真实任务回放 ↓</a><a href="#evolution">02 方案演进 ↓</a><a href="#comparison">03 结果对照 ↓</a></nav>
+    </section>
+
+    <section id="case" class="chapter chapter-first" aria-labelledby="case-title">
+      <div class="chapter-copy"><div><p class="eyebrow"><span class="figure-number">01</span> FOLLOW THE EVIDENCE</p><h2 id="case-title">一次提交成功，<br />留下一个未闭合的答案。</h2></div><p class="chapter-description">选择公开演示集 task_89 的真实历史运行，而不是一条完美的模拟路径。它读错过 JSON 结构，也被提交格式拦截；最终提交值与当前本地 Gold 不一致。保留这些差异，才能看见校验的边界。</p></div>
+      <div class="da-replay">
+        <div class="da-replay-top"><strong class="da-badge">真实案例回放 · 非在线运行</strong><span>PHASE 1 DEMO / task_89 / easy</span></div>
+        <div class="da-question"><p class="eyebrow">真实问题 · 中文释义</p><h3>2008 年中国大奖赛中，第二名车手的完赛时间是多少？</h3><p lang="en">What's the finish time for the driver who ranked second in 2008's Chinese Grand Prix?</p></div>
+        <p class="da-replay-note">以下五阶段是对 19 步历史工具轨迹的编辑分组，并非原系统的五个界面。代码与反馈按原文节录；不展示模型内部思考，不在网页执行 Python 或调用模型。</p>
+        <div class="da-tabs" aria-label="案例阶段" data-case-tabs>
+          <button type="button" id="tab-understand" data-panel="panel-understand">01 理解</button><button type="button" id="tab-fields" data-panel="panel-fields">02 查字段</button><button type="button" id="tab-solve" data-panel="panel-solve">03 求解</button><button type="button" id="tab-check" data-panel="panel-check">04 校验</button><button type="button" id="tab-answer" data-panel="panel-answer">05 答案</button>
+        </div>
+        <div class="da-panel" id="panel-understand" aria-labelledby="tab-understand">
+          <p class="section-label">TASK INPUT / 工具步骤 3</p><h3>把问题，落到两个数据源。</h3>
+          <div class="da-panel-grid"><div><p>任务限定年份、赛事和最终名次，目标只是一列 <code>time</code>。历史 <code>listdir</code> 返回成绩 CSV、赛事 JSON 与知识说明。</p><ul class="da-list"><li><code>csv/results.csv</code> — 成绩记录</li><li><code>json/races.json</code> — 赛事记录</li><li><code>knowledge.md</code> — 随题知识</li></ul></div><div class="da-note"><strong>需要区分的字段</strong><p>随题知识将 <code>raceId</code> 定义为跨表关联键，并区分最终完赛顺序 <code>positionOrder</code> 与最快圈速排名 <code>rank</code>。</p><small>知识说明摘意，作为读者补充；该轨迹未记录读取 knowledge.md 的动作，不声称 Agent 已使用它。</small></div></div>
+        </div>
+        <div class="da-panel" id="panel-fields" aria-labelledby="tab-fields">
+          <p class="section-label">OBSERVE & REPAIR / 工具步骤 4–10 · 节录</p><h3>数据长得像列表，不代表它就是列表。</h3>
+          <div class="da-panel-grid"><div><p><code>inspectfile</code> 超时后改读文件。第一次 Python 直接遍历 JSON 顶层，返回类型错误；随后检查实际结构，发现记录包在 <code>records</code> 中。</p><pre tabindex="0" aria-label="历史工具错误与结构检查反馈"><code>inspectfile: timed_out (60 seconds)
+python: string indices must be integers, not 'str'
+
+Type: &lt;class 'dict'&gt;
+Keys: ['table', 'records']</code></pre></div><div class="da-note"><strong>从字段到可执行约束</strong><dl class="da-fields"><dt>year / name</dt><dd>2008 / Chinese Grand Prix</dd><dt>raceId</dt><dd>关联赛事与成绩；历史输出为 34</dd><dt>positionOrder</dt><dd>历史代码筛选最终名次 2</dd><dt>time</dt><dd>保留数据中的显示值，不换算为总耗时</dd></dl></div></div>
+        </div>
+        <div class="da-panel" id="panel-solve" aria-labelledby="tab-solve">
+          <p class="section-label">PYTHON / 工具步骤 17 · 原代码节录</p><h3>按赛事定位，再取第二名的时间。</h3><p>此案例真实使用 Python，不补写一段未运行过的 SQL。下方节录保留读取、筛选和结构化输出；省略原代码的注释与空行。</p>
+          <pre tabindex="0" aria-label="真实 Python 求解代码节录"><code>import json
+import csv
+with open('json/races.json', 'r') as f:
+    races_data = json.load(f)
+races_records = races_data.get('records', [])
+race_id = None
+for race in races_records:
+    if race['year'] == 2008 and race['name'] == 'Chinese Grand Prix':
+        race_id = race['raceId']
+        break
+if race_id:
+    result_time = None
+    with open('csv/results.csv', 'r') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if int(row['raceId']) == race_id and int(row['positionOrder']) == 2:
+                result_time = row['time']
+                break
+    result = {"columns": ["time"], "rows": [[result_time]]}
+    print(json.dumps(result))</code></pre>
+          <p class="da-source">历史工具输出 · 原文</p><pre tabindex="0" aria-label="历史 Python 输出"><code>{"columns": ["time"], "rows": [["+14.925"]]}</code></pre>
+        </div>
+        <div class="da-panel" id="panel-check" aria-labelledby="tab-check">
+          <p class="section-label">SUBMISSION GATE / 工具步骤 14–19 · 节录</p><h3>检查了交付形状，还没有证明答案正确。</h3>
+          <div class="da-panel-grid"><div><p>只打印字符串或 Python 字典没有被识别为可提交的结构化结果。改为 JSON 后，工具识别出 1 行 1 列；第一次 <code>finishtask</code> 仍要求复核，第二次才接收提交。</p><pre tabindex="0" aria-label="真实校验与提交状态节录"><code>structured_output_detected: true
+structured_output_format: columns_rows
+column_count: 1
+row_count: 1
+
+status: submission_review_required
+status: submitted
+source_step: 17</code></pre></div><div class="da-note da-warning"><strong>不是语义正确性证明</strong><p>这些状态来自参赛代码版本的输出约束与复核门，不是赛后优化版的确定性校验，也不是官方评分通过。</p><p>轨迹记录了“要求复核”和“提交接收”；没有额外工具证据证明它修复了最终数值差异。</p></div></div>
+        </div>
+        <div class="da-panel" id="panel-answer" aria-labelledby="tab-answer">
+          <p class="section-label">RECORDED ANSWER / 本页静态文件对照</p><h3>原样保留答案，也原样保留差异。</h3>
+          <div class="da-answer-grid"><div><span>历史运行提交值</span><strong>+14.925</strong><small>trace.json → answer.rows</small></div><div><span>当前本地参考答案</span><strong>+16.445</strong><small>public/output/task_89/gold.csv</small></div></div>
+          <p class="da-note da-warning"><strong>两者不一致，不能称为答对。</strong>这里仅比较已有文件，并未重跑模型或官方评分。历史运行时的数据快照是否与当前材料完全相同，尚未核实；不将差异未经验证地归因于某个字段或某项优化，也不声称赛后已经修复这道题。</p>
+        </div>
+        <div class="da-replay-bottom"><span>来源：公开演示集 task_89 + 本地历史 trace · 仅节录，不分发完整数据包</span><a href="#comparison">查看另一组赛后对照 ↓</a></div>
+      </div>
+    </section>
+
+    <section id="evolution" class="chapter" aria-labelledby="evolution-title">
+      <div class="chapter-copy reveal"><div><p class="eyebrow"><span class="figure-number">02</span> EVOLUTION, NOT A SINGLE LEAP</p><h2 id="evolution-title">从补充字段含义，<br />到按风险组织求解。</h2></div><p class="chapter-description">这不是把一次失败包装为已修复的故事，而是把不同阶段的工作分开说明。上面的回放来自个人参赛代码的本地运行；下面的赛后模块属于另一条复现与优化路径。</p></div>
+      <ol class="da-evolution reveal">
+        <li><span class="section-label">01 / 官方基线 · 上游</span><h3>工具反馈驱动 ReAct</h3><p>理解问题、探索数据、执行计算、提交答案。先建立可运行的任务闭环。</p></li>
+        <li class="da-own"><span class="section-label">02 / 参赛阶段 · 个人增量</span><h3>让字段带着语义返回</h3><p>把含义、格式与枚举说明附到工具 Observation；按实际输出列筛选，管理长程历史。推断补全不等于数据事实。</p><strong>阶段一排名 54 / 703</strong></li>
+        <li><span class="section-label">03 / 赛后 · 复现上游冠军方案</span><h3>统一数据，保存求解程序</h3><p>复现 DuckDB 多源加载与持久化 solver，通过探索、读取、编辑、执行继续修正。冠军成绩与底座归上游团队，不是本人获冠军。</p></li>
+        <li class="da-own"><span class="section-label">04 / 赛后 · 个人优化</span><h3>把额外开销放在高风险处</h3><p>风险路由决定是否增加知识与约束；按需检索、结果校验与局部修复接回求解循环，而不直接替模型决定 SQL 或 Python。</p></li>
+      </ol>
+      <div class="da-design reveal"><div><p class="eyebrow">POST-COMPETITION / DESIGN SUMMARY</p><h3>不是所有题，都需要同样重的上下文。</h3><p>以下为依据实现文档整理的方案说明，不是在线运行状态，也不声称在上方 task_89 中执行过。</p></div><div class="da-routing"><p><strong>低风险</strong><span>不加额外 Memory / 无额外契约</span></p><p><strong>中风险</strong><span>最多 2 条知识 / 指标或最小约束</span></p><p><strong>高风险</strong><span>最多 4 条知识 / 完整约束</span></p><p><strong>输出后</strong><span>检查已知聚合、序数与类别重复模式；必要时反馈重算</span></p></div></div>
+      <p class="da-source">以 HTML 重排已有架构说明，不新绘假运行图。规则路由可能漏判，检索可能引入错误口径，有限校验不等于完整语义验证。</p>
+    </section>
+
+    <section id="comparison" class="chapter" aria-labelledby="comparison-title">
+      <div class="chapter-copy reveal"><div><p class="eyebrow"><span class="figure-number">03</span> QUALITY & COST, SIDE BY SIDE</p><h2 id="comparison-title">平均分持平，<br />减少已有对照中的推理开销。</h2></div><p class="chapter-description">竞赛成绩与赛后实验是两类证据。阶段一排名为 54/703；下方仅是赛后 50 题本地历史汇总，不是官方榜单提升，也不是上方回放所在运行批次的统计。</p></div>
+      <div class="da-eval-label"><strong>赛后 50 题 · 本地对照 / 含历史结果复用</strong><span>非冷启动、无干预的严格端到端 A/B</span></div>
+      <div class="da-table-scroll" role="region" aria-label="赛后本地指标对照，可横向滚动" tabindex="0"><table><caption>冠军方案复现基线与个人赛后优化版 · 已有汇总记录</caption><thead><tr><th scope="col">指标</th><th scope="col">复现基线</th><th scope="col">赛后优化</th><th scope="col">变化</th></tr></thead><tbody>
+        <tr><th scope="row">平均任务得分</th><td>0.8190</td><td>0.8190</td><td>持平</td></tr><tr><th scope="row">完全正确任务</th><td>40 / 50</td><td>40 / 50</td><td>持平</td></tr><tr><th scope="row">累计 Token</th><td>15,987,105</td><td>10,649,537</td><td>−33.4%</td></tr><tr><th scope="row">ReAct 轮数</th><td>688</td><td>619</td><td>−10.0%</td></tr><tr><th scope="row">完整历史流程耗时</th><td>约 94.7 min</td><td>约 59.3 min</td><td>约 −37.4%</td></tr>
+      </tbody></table></div>
+      <div class="da-caveats"><div><h3>收益有条件</h3><p>task_25、task_379 复用此前验证结果；task_418 在长尾运行后用确定性规则补齐。Token 与轮数按所有 attempt 累计；耗时使用包含历史流程的 59.3 分钟，不替换为主批次 52.7 分钟。</p></div><div><h3>持平也包含回退</h3><p>修复 task_19、379、418；回退 task_173、199、303。净变化 +3 −3 = 0，不代表每题都不退化。0.8190 是平均任务得分，不是 81.9% 的题全部答对。</p></div><div><h3>下一步补足证据</h3><p>统一数据与配置，空缓存完整重跑；使用新 Holdout、多次运行和分项消融检查质量与成本。官方评分按列内容签名匹配，不以列名字符串匹配为核心；提交形状约束不能替代答案评估。</p></div></div>
+      <p class="da-source">指标来源：项目优化设计与评估文档 §10；来源与静态回放限制见仓库 README。此页面没有发起新的模型测试。</p>
+    </section>
+    <footer class="stream-footer"><div><p class="eyebrow">DATAAGENT / MAKE THE ANSWER AUDITABLE</p><p>让每个答案，都能回到证据。</p><small>个人参赛：字段语义增强 · 赛后：冠军方案复现、风险路由、知识检索与结果校验</small></div><div class="footer-links"><a href="kdd-detail.html">阅读研究详情 ↗</a><a href="https://dataagent.top/" target="_blank" rel="noopener noreferrer">官方赛站 ↗</a><a href="#dataagent">回到顶部 ↑</a></div></footer>
+  </main>
+</body>
+</html>

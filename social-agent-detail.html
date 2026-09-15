@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="社交媒体运营 Agent：通过热门内容分析、多维标签、选题规划与 LLM 二创生成辅助小红书账号运营，区分项目流程、产品设计与功能边界。" />
+    <title>社交媒体运营 Agent 项目详情 | 杨艺 Yang Yi</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="canonical" href="https://yangyi626.github.io/social-agent-detail.html" />
+  </head>
+  <body>
+    <div class="container">
+      <a href="works-social.html" class="back-button">← 返回作品展示</a>
+      <header class="header">
+        <div class="eyebrow">SOCIAL MEDIA / CONTENT INTELLIGENCE</div>
+        <h1>社交媒体运营 Agent</h1>
+        <div class="project-meta">热门内容分析 · 选题规划 · 二创生成</div>
+        <p>面向小红书内容运营，以结构化标签连接内容洞察与 LLM 辅助创作，而不是直接仿写热门帖子。</p>
+        <a href="https://github.com/yangyi626/Social-Media-Operations-Agent" class="link-button" target="_blank" rel="noopener noreferrer">项目代码 · GitHub ↗</a>
+      </header>
+      <nav class="toc-container" id="toc" aria-label="项目目录">
+        <div class="toc-title">目录导航</div>
+        <ul class="toc-list">
+          <li><a href="#overview">项目定位</a></li>
+          <li><a href="#workflow">内容工作流</a></li>
+          <li><a href="#labels">多维标签与二创</a></li>
+          <li><a href="#boundaries">源码与功能边界</a></li>
+          <li><a href="#application">应用与资料说明</a></li>
+        </ul>
+      </nav>
+      <button class="toc-toggle" id="tocToggle" aria-controls="toc" aria-expanded="false" aria-label="打开目录">目录</button>
+      <main class="detail-content">
+        <section class="section-card" id="overview">
+          <h2>项目定位</h2>
+          <p>账号运营需要持续完成热门内容分析、选题规划、文案创作与二次创新。仅凭简单提示词仿写，容易丢失主题、情绪和平台话题语境，也难以形成新的表达角度。</p>
+          <p>本项目将热门笔记转化为结构化内容信号，再规划可执行的创作方向，辅助生成候选内容。当前定位是社交媒体内容分析与账号运营辅助应用，不将其表述为完整自主运营的 Social Bot。</p>
+        </section>
+        <section class="section-card" id="workflow">
+          <h2>内容工作流</h2>
+          <div class="highlight-box">热门内容分析 → 多维标签提取 → 创作方向规划 → 二创方向挖掘 → 内容生成</div>
+          <ol>
+            <li><strong>观察与分析：</strong>以平台热门笔记为材料，识别主题、高频元素、情绪触发与话题语境。</li>
+            <li><strong>组织信号：</strong>将内容特征整理为标签，作为后续选题与生成的中间信息。</li>
+            <li><strong>规划方向：</strong>从标签推进到“下一篇写什么”，形成具体创作方向。</li>
+            <li><strong>挖掘二创：</strong>通过热点延伸、内容反转和跨主题融合寻找新的切入点。</li>
+            <li><strong>辅助生成：</strong>借助 LLM 生成候选内容，为运营者继续筛选、修改和完善提供起点。</li>
+          </ol>
+          <p>以上为项目资料中的流程概括，不代表本详情页会在线调用模型或执行运营任务。</p>
+        </section>
+        <section class="section-card" id="labels">
+          <h2>多维标签与二创</h2>
+          <ul>
+            <li><strong>高频内容标签：</strong>提取主题和高频元素，回答当前内容主要讨论什么。</li>
+            <li><strong>情绪触发标签：</strong>分析可能引发的共鸣、好奇、焦虑或反差感，为标题与表达提供线索；这些是分析结果，不是对真实用户心理的确定测量。</li>
+            <li><strong>热词 Tag：</strong>保留原笔记的话题标签、Hashtag 与平台热词。</li>
+            <li><strong>创作辅助标签：</strong>把分析结果转化为具体可执行的选题方向。</li>
+            <li><strong>二创方向标签：</strong>延伸已有热点、反转原有视角，或融合不同主题，避免停留于简单仿写。</li>
+          </ul>
+        </section>
+        <section class="section-card" id="boundaries">
+          <h2>源码与功能边界</h2>
+          <p>项目源码入口为 <a href="https://github.com/yangyi626/Social-Media-Operations-Agent" target="_blank" rel="noopener noreferrer">Social-Media-Operations-Agent 仓库</a>。本页仅整理已确认的内容分析、创作规划与二创生成流程，不将流程描述直接等同于仓库已实现全部产品设计。</p>
+          <p>作品展示页的热门笔记分析、关键词分析、选题策略与“我的创作”为产品设计稿；笔记排期为排期设计。设计画面不构成后端已实现相应接口或自动化能力的证明。</p>
+          <p>当前资料不足以确认自动发布、自动互动或反馈学习闭环，因此不将这些能力列为已实现功能，也不把排期视图描述为定时自动发布。本页不补写未经核实的后端模块、接口细节或运行效果。</p>
+        </section>
+        <section class="section-card" id="application">
+          <h2>应用与资料说明</h2>
+          <p>据项目资料，该系统实际用于小红书账号内容运营，辅助热门内容分析、创作方向规划与二创生成；应用账号累计约 2K 粉丝。这是资料记录的账号规模，不将粉丝增长完全归因于 Agent，也不作为受控实验中的效果指标。</p>
+          <p>本页依据项目提供的 detail.md 与现有作品展示整理。个人职责与具体分工尚未核实，因此不声称独立完成、主导开发或负责某一模块。</p>
+        </section>
+        <div class="detail-footer-actions">
+          <a href="works-social.html" class="link-button">← 返回作品展示</a>
+          <a href="index.html" class="link-button">返回个人主页</a>
+        </div>
+      </main>
+    </div>
+    <script src="site.js" defer></script>
+  </body>
+</html>
