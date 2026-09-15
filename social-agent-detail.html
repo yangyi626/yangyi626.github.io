@@ -3,70 +3,180 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="社交媒体运营 Agent：通过热门内容分析、多维标签、选题规划与 LLM 二创生成辅助小红书账号运营，区分项目流程、产品设计与功能边界。" />
+    <meta name="description" content="社交媒体运营 Agent 项目案例：从笔记整理、主题关键词与标签分析，到搜索指数、策略人设、异步生成与创作日期管理，结合业务设计和源码介绍实现步骤。" />
     <title>社交媒体运营 Agent 项目详情 | 杨艺 Yang Yi</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="social-detail.css" />
     <link rel="canonical" href="https://yangyi626.github.io/social-agent-detail.html" />
   </head>
-  <body>
+  <body class="social-detail">
     <div class="container">
       <a href="works-social.html" class="back-button">← 返回作品展示</a>
       <header class="header">
         <div class="eyebrow">SOCIAL MEDIA / CONTENT INTELLIGENCE</div>
         <h1>社交媒体运营 Agent</h1>
-        <div class="project-meta">热门内容分析 · 选题规划 · 二创生成</div>
-        <p>面向小红书内容运营，以结构化标签连接内容洞察与 LLM 辅助创作，而不是直接仿写热门帖子。</p>
+        <div class="project-meta">2025.09–2025.12 · 内容分析 · 策略复用 · 辅助创作</div>
+        <p>把分散的参考笔记整理成可分析的内容资产，再用主题、关键词、标签与账号人设组织创作，而不只完成一次热门文案仿写。</p>
         <a href="https://github.com/yangyi626/Social-Media-Operations-Agent" class="link-button" target="_blank" rel="noopener noreferrer">项目代码 · GitHub ↗</a>
       </header>
       <nav class="toc-container" id="toc" aria-label="项目目录">
         <div class="toc-title">目录导航</div>
         <ul class="toc-list">
-          <li><a href="#overview">项目定位</a></li>
-          <li><a href="#workflow">内容工作流</a></li>
-          <li><a href="#labels">多维标签与二创</a></li>
-          <li><a href="#boundaries">源码与功能边界</a></li>
-          <li><a href="#application">应用与资料说明</a></li>
+          <li><a href="#background">1 背景与场景</a></li>
+          <li><a href="#problems">2 核心问题</a></li>
+          <li><a href="#method">3 方法设计</a></li>
+          <li><a href="#modules">4 模块划分</a></li>
+          <li><a href="#steps">5 每模块具体步骤</a></li>
+          <li><a href="#import">5.1 笔记导入与整理</a></li>
+          <li><a href="#analysis">5.2 主题、关键词与标签</a></li>
+          <li><a href="#trends">5.3 趋势与指数</a></li>
+          <li><a href="#strategy">5.4 策略与人设</a></li>
+          <li><a href="#generation">5.5 异步内容生成</a></li>
+          <li><a href="#records">5.6 创作记录与日期</a></li>
+          <li><a href="#application">应用与后续完善</a></li>
         </ul>
       </nav>
-      <button class="toc-toggle" id="tocToggle" aria-controls="toc" aria-expanded="false" aria-label="打开目录">目录</button>
+      <button class="toc-toggle" id="tocToggle" type="button" aria-controls="toc" aria-expanded="false" aria-label="打开目录">目录</button>
       <main class="detail-content">
-        <section class="section-card" id="overview">
-          <h2>项目定位</h2>
-          <p>账号运营需要持续完成热门内容分析、选题规划、文案创作与二次创新。仅凭简单提示词仿写，容易丢失主题、情绪和平台话题语境，也难以形成新的表达角度。</p>
-          <p>本项目将热门笔记转化为结构化内容信号，再规划可执行的创作方向，辅助生成候选内容。当前定位是社交媒体内容分析与账号运营辅助应用，不将其表述为完整自主运营的 Social Bot。</p>
+        <section class="section-card" id="background">
+          <h2>1 背景与场景</h2>
+          <p>小红书账号运营是一项连续工作：先观察相关笔记在讨论什么、哪些内容获得互动，再确定适合账号的表达角度，形成多篇候选内容，并安排后续编辑与发布日期。项目围绕这条工作链路，把“内容研究”和“内容生产”放在同一套数据与策略体系中。</p>
+          <p>使用者是负责内容运营的管理员，处理的对象包括导入的原始笔记、主题与标签、关键词指数、账号人设和生成笔记。原始笔记保留标题、正文、来源链接、发布时间及赞藏评转等信息；创作结果则独立保存，便于查询、修改和安排日期。</p>
+          <p>场景设计覆盖“关键词检索与内容观察”和“策略选择与内容生成”两部分。当前代码以 Excel 导入作为素材整理入口，以异步任务承接解析与生成，构成一个面向运营者的辅助创作工作台。</p>
         </section>
-        <section class="section-card" id="workflow">
-          <h2>内容工作流</h2>
-          <div class="highlight-box">热门内容分析 → 多维标签提取 → 创作方向规划 → 二创方向挖掘 → 内容生成</div>
+        <section class="section-card" id="problems">
+          <h2>2 核心问题</h2>
+          <p>结合业务流程、实体设计和标签文档，项目要解决的不是单次生成质量，而是生成前后的组织问题。</p>
           <ol>
-            <li><strong>观察与分析：</strong>以平台热门笔记为材料，识别主题、高频元素、情绪触发与话题语境。</li>
-            <li><strong>组织信号：</strong>将内容特征整理为标签，作为后续选题与生成的中间信息。</li>
-            <li><strong>规划方向：</strong>从标签推进到“下一篇写什么”，形成具体创作方向。</li>
-            <li><strong>挖掘二创：</strong>通过热点延伸、内容反转和跨主题融合寻找新的切入点。</li>
-            <li><strong>辅助生成：</strong>借助 LLM 生成候选内容，为运营者继续筛选、修改和完善提供起点。</li>
+            <li><strong>一次仿写不能替代持续选题。</strong>参考笔记提供了表达样本，却不能直接回答下一篇写什么、如何贴合账号人设。标签文档把创作辅助与二创方向单独列出，强调具体可执行的切入点，以及创新、反转和主题融合。</li>
+            <li><strong>资料分散，分析口径容易混在一起。</strong>正文中的分词、原笔记的 Hashtag、用于管理笔记的主题并不是同一种信息。导入流程需要清洗、去重和类别约束，才能把多批笔记放到同一个分析空间中。</li>
+            <li><strong>笔记表现与外部关注度回答不同问题。</strong>赞藏评转描述已有笔记的互动表现，关键词搜索指数描述另一平台上的搜索关注。流程图将主题榜单、词频与指数对比列为不同观察方式，避免仅凭一个“热门”标签决定选题。</li>
+            <li><strong>临时提示词难以复用。</strong>业务流程要求把角色背景、职业和语言风格沉淀为人设模板，并结合素材与具体要求生成内容；源码进一步把人设、主题、提示词、关键词和标签组织为可保存的生成策略。</li>
+            <li><strong>长耗时处理与创作管理需要衔接。</strong>文件解析、模型调用和多篇生成不适合一直占用一次请求。任务状态、结果记录与推荐日期需要分别管理，才能知道处理进展，并继续编辑生成结果。</li>
           </ol>
-          <p>以上为项目资料中的流程概括，不代表本详情页会在线调用模型或执行运营任务。</p>
         </section>
-        <section class="section-card" id="labels">
-          <h2>多维标签与二创</h2>
-          <ul>
-            <li><strong>高频内容标签：</strong>提取主题和高频元素，回答当前内容主要讨论什么。</li>
-            <li><strong>情绪触发标签：</strong>分析可能引发的共鸣、好奇、焦虑或反差感，为标题与表达提供线索；这些是分析结果，不是对真实用户心理的确定测量。</li>
-            <li><strong>热词 Tag：</strong>保留原笔记的话题标签、Hashtag 与平台热词。</li>
-            <li><strong>创作辅助标签：</strong>把分析结果转化为具体可执行的选题方向。</li>
-            <li><strong>二创方向标签：</strong>延伸已有热点、反转原有视角，或融合不同主题，避免停留于简单仿写。</li>
-          </ul>
+        <section class="section-card" id="method">
+          <h2>3 方法设计</h2>
+          <h3>用结构化信息连接分析与创作</h3>
+          <div class="highlight-box">参考笔记导入 → 主题、关键词与标签整理 → 内容表现与搜索趋势观察 → 选择人设与策略 → 异步生成候选内容 → 保存、编辑与日期管理</div>
+          <p>这条链路将“看过哪些材料”“准备采用什么角度”和“最后生成什么内容”分开管理。业务资料负责定义运营目标和交互方向；代码把可复用数据放入实体与服务，把耗时步骤放入任务执行器。趋势观察服务于运营者的选题判断，并非生成器已经自动读取全部趋势后做决策。</p>
+          <h3>五类标签：从内容描述走向创作方向</h3>
+          <dl class="social-definitions">
+            <dt>高频内容输出标签</dt><dd>文档定义为对笔记内容做词频统计获得的高频词，用于概括“内容反复讨论什么”。当前导入有正文分词与去重，不应把它直接等同于完整的高频统计模型。</dd>
+            <dt>情绪触发标签</dt><dd>描述内容可能引发的情感反应或心理状态，为表达角度提供线索。</dd>
+            <dt>热词 Tag 标签</dt><dd>保留原始笔记标签，连接平台话题语境与后续筛选。</dd>
+            <dt>创作辅助标签</dt><dd>将分析结果转成具体、可执行的关键词或短语，使选题能够进一步落到内容。</dd>
+            <dt>二创标签</dt><dd>从辅助方向中寻找新兴话题，或对已有话题做创新、反转和融合，拓展新的表达方式。</dd>
+          </dl>
+          <p><strong>设计与实现的衔接：</strong>五类标签是文档提出的分析框架。现有导入代码对原始标签做分类，生成代码让模型随正文返回标签；这不等于五类标签都已有独立抽取器。实体设计提出将类别描述加入提示词，当前分类服务实际传入的是类别 ID 与名称。</p>
+          <h3>百度指数：补充外部搜索信号</h3>
+          <p>文档给出了“访问令牌管理 → 关键词收录检查 → 创建计算任务 → 轮询状态 → 下载解析结果”的对接方案。用途是把按日搜索指数与关键词关联，为比较关注趋势提供补充视角，而不是预测小红书的曝光或互动。</p>
+          <p>这项能力不只停留在文档：当前源码已有百度指数 HTTP 客户端、批量抓取、结果 ZIP 导入和按日期查询。<strong>将搜索指数、内容表现与五类标签进一步融合为自动选题或自动多策略规划，仍属于设计扩展</strong>；现有实现证据不代表外部账号配额、接口联调或线上数据质量已经验证。</p>
         </section>
-        <section class="section-card" id="boundaries">
-          <h2>源码与功能边界</h2>
-          <p>项目源码入口为 <a href="https://github.com/yangyi626/Social-Media-Operations-Agent" target="_blank" rel="noopener noreferrer">Social-Media-Operations-Agent 仓库</a>。本页仅整理已确认的内容分析、创作规划与二创生成流程，不将流程描述直接等同于仓库已实现全部产品设计。</p>
-          <p>作品展示页的热门笔记分析、关键词分析、选题策略与“我的创作”为产品设计稿；笔记排期为排期设计。设计画面不构成后端已实现相应接口或自动化能力的证明。</p>
-          <p>当前资料不足以确认自动发布、自动互动或反馈学习闭环，因此不将这些能力列为已实现功能，也不把排期视图描述为定时自动发布。本页不补写未经核实的后端模块、接口细节或运行效果。</p>
+        <section class="section-card" id="modules">
+          <h2>4 模块划分</h2>
+          <p>后端采用 Java 21、Spring Boot 3.5.5 与 LangChain4j，使用 PostgreSQL 保存业务数据，并使用 Redis 支持指数待抓取集合和任务信息等场景。按运营工作划分为六个模块，底层复用查询服务、仓储和异步任务设施。</p>
+          <div class="social-table-wrap" role="region" aria-label="六个模块的输入与输出" tabindex="0">
+            <table>
+              <thead><tr><th scope="col">模块</th><th scope="col">输入</th><th scope="col">处理职责 / 源码对应</th><th scope="col">输出</th></tr></thead>
+              <tbody>
+                <tr><th scope="row"><a href="#import">笔记导入与整理</a></th><td>Excel、允许的标签类别</td><td>上传服务、Excel 解析器、解析任务</td><td>结构化原笔记、解析任务结果</td></tr>
+                <tr><th scope="row"><a href="#analysis">主题、关键词与标签分析</a></th><td>笔记正文、原始标签、已有主题与类别</td><td>主题生成服务、分词工具、标签分类服务</td><td>主题关联、去重关键词、分类标签</td></tr>
+                <tr><th scope="row"><a href="#trends">标签趋势与指数</a></th><td>关键词、日期区间、笔记统计维度</td><td>指数客户端、抓取服务、关键词图表查询；榜单与词云属设计范围</td><td>按日指数、缺失日期信息、趋势分析素材</td></tr>
+                <tr><th scope="row"><a href="#strategy">策略与人设</a></th><td>角色、语气、主题、提示词、标签与关键词</td><td>人设服务、生成策略服务、提示词组装器</td><td>可复用策略及合并后的生成参数</td></tr>
+                <tr><th scope="row"><a href="#generation">异步内容生成</a></th><td>生成参数、素材、篇数、起始日期</td><td>生成任务、结构化模型输出服务</td><td>候选笔记、关键词、推荐日期与任务结果</td></tr>
+                <tr><th scope="row"><a href="#records">创作记录与日期管理</a></th><td>生成笔记、编辑内容、查询条件</td><td>输出笔记服务与查询服务</td><td>可修改、可检索的创作记录</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <details class="social-evidence">
+            <summary>实体关系：文档设计如何映射到实际存储</summary>
+            <p>核心表名延续文档设计：原笔记 <code>source_note</code> 和输出笔记 <code>output_note</code> 通过 <code>theme_id</code> 表达主题关联；各自的关键词与标签以 JSON 列表保存。标签 <code>tag</code> 使用 <code>category_id</code> 表达所属类别，指数记录 <code>keyword_analyse</code> 使用 <code>keyword_id</code> 和 <code>dt</code> 对应关键词与日期。</p>
+            <p>文档可选的人设模板 <code>PersonaTemplate</code> 在实现中落为 <code>persona</code>，并新增独立的 <code>generation_strategy</code> 保存创作策略。原笔记实体增加 <code>originalId</code>；文档关键词表列出的原笔记数、输出笔记数字段，不在当前 <code>KeywordEntity</code> 中。文档正文中的指数日期名为 <code>date</code>，其后 SQL 与实现使用 <code>dt</code>。</p>
+            <p>这里描述的是实体字段与业务关联，不将文档中的“外键”说明扩写为数据库已强制执行的双向外键关系。原笔记和生成笔记也并非一一对应的改写记录。</p>
+          </details>
+        </section>
+        <section class="section-card" id="steps">
+          <h2>5 每模块具体步骤</h2>
+          <p>以下按“输入 → 处理步骤 → 输出”展开。前两模块在同一个导入任务中衔接执行，后两模块通过生成结果连接；指数查询是一条辅助分析支路，不是每次生成的强制前置步骤。</p>
+        </section>
+        <section class="section-card" id="import">
+          <h2>5.1 笔记导入与整理</h2>
+          <p class="social-io"><strong>输入：</strong>按约定列结构整理的 Excel 文件，以及允许用于分类的标签类别 ID。</p>
+          <ol>
+            <li><strong>校验并提交任务。</strong>上传服务检查所选标签类别，保存文件元信息，提交 Excel 解析任务并返回任务 ID，让调用端后续查询结果。</li>
+            <li><strong>解析第一张工作表。</strong>按固定列读取原始 ID、来源链接、发布时间、标题、正文、话题、互动数和媒体链接等字段，并处理 Excel 日期与文本日期。</li>
+            <li><strong>整理有效笔记。</strong>跳过标题和正文都为空的行，规范文本与列表；连续三行为空时结束扫描。标题正文分词、关键词列与原始标签合并去重。</li>
+            <li><strong>组织后续处理与保存。</strong>解析任务先调用主题分类，再批量保存带主题的原笔记，随后保存去重关键词与分类标签；任务执行方法声明事务回滚。</li>
+          </ol>
+          <p class="social-io"><strong>输出：</strong>原笔记记录、笔记 ID 列表和解析数量。这里的入口是文件导入，不是自动抓取平台；格式依赖约定列顺序，遇到单行解析异常会记录并跳过，因此结果数量表示实际保存的笔记数。</p>
+          <details class="social-evidence"><summary>实现依据与流程差异</summary><p><code>ExcelSourceNoteParser</code> 负责纯解析；<code>ExcelDocumentParseTaskExecutor</code> 负责主题、保存与分类的串联。业务流程 PDF 第 1 页提出上传时附带主题 ID，而当前解析任务参数不含主题 ID，由主题服务分析后赋值。</p></details>
+        </section>
+        <section class="section-card" id="analysis">
+          <h2>5.2 主题、关键词与标签分析</h2>
+          <p class="social-io"><strong>输入：</strong>已解析的笔记、数据库已有主题、原始标签及允许的类别集合。</p>
+          <ol>
+            <li><strong>提取关键词。</strong>解析器调用 Jieba 对标题和正文分词，把分词结果、文件中的关键词与完整话题标签合并；跨笔记再次汇总去重后保存关键词。</li>
+            <li><strong>按批次归类主题。</strong>主题服务把已有主题与笔记送入结构化模型输出，接收“新主题”和“笔记—主题关系”。导入任务使用每批 30 篇的参数。</li>
+            <li><strong>将模型关系转为实际 ID。</strong>复用已存在主题，保存新主题并映射模型占位 ID，再给笔记赋值；模型调用失败或关系缺失时使用兜底主题逻辑。</li>
+            <li><strong>分类原始标签。</strong>没有指定类别时归入“未分类”；仅有一个类别时直接归入；有多个类别时批量调用模型，在类别 ID 与名称构成的候选集上分类，遗漏标签兜底为“未分类”。</li>
+          </ol>
+          <p class="social-io"><strong>输出：</strong>带主题的笔记、去重关键词和标签类别映射，供查询与后续策略配置使用。此处是信息组织与原始标签分类，并不把情绪、创作辅助和二创方向都当作已自动抽取的结果。</p>
+          <details class="social-evidence"><summary>实现依据与分类约束</summary><p>对应 <code>ThemeGenerationServiceImpl</code>、<code>NoteParseUtil</code> 与 <code>TagClassificationServiceImpl</code>。文档提出保留已分类标签、重新处理未分类标签；当前分类服务本身未实现这一整套已有标签过滤规则，也未把类别描述送入提示词，不能直接照搬设计描述为完成状态。</p></details>
+        </section>
+        <section class="section-card" id="trends">
+          <h2>5.3 标签趋势与指数设计</h2>
+          <p class="social-io"><strong>输入：</strong>关键词与日期范围；设计层还包括主题、标签类别和笔记互动数。</p>
+          <ol>
+            <li><strong>区分内容统计与搜索指数。</strong>流程图第 1 页提出词云、按赞藏评转生成主题排行，以及按类别对比笔记总数与搜索指数。这是分析视图的业务设计，不把指标混成一个热度分。</li>
+            <li><strong>查询已有按日数据。</strong>关键词图表查询服务关联关键词与指数记录，按日期范围返回数据，并能识别缺失日期，为补数提供依据。</li>
+            <li><strong>提交外部计算任务。</strong>现有客户端提供收录检查、令牌刷新、创建任务与状态查询方法；批量抓取服务按关键词、起止日期和 PC / 移动设备提交搜索指数任务。</li>
+            <li><strong>等待结果并补充数据。</strong>抓取服务每 10 秒轮询，最多 18 次；成功后下载结果 ZIP，构建关键词名称到内部 ID 的映射，再调用导入服务解析并持久化。另有缺失日期合并与待抓取集合的实现。</li>
+          </ol>
+          <p class="social-io"><strong>输出：</strong>关联关键词和日期的指数记录、查询结果与缺失信息。指数对接已有源码实现；词云、主题榜单及基于趋势自动选择标签和生成策略，仍按设计能力介绍。搜索关注与小红书互动口径不同，需结合原笔记和账号定位判断。</p>
+          <details class="social-evidence"><summary>实现依据与验证范围</summary><p><code>BaiduIndexApiClient</code> 执行真实 HTTP 请求；<code>KeywordIndexFetchServiceImpl</code> 编排抓取和落库；<code>KeywordChartQueryServiceImpl</code> 提供按日查询与缺失检测。通用 <code>ChartQueryController</code> 当前为空类，因此不据其名称宣称所有设计图表已经实现。这里依据静态代码核对，没有执行外部 API 或验证真实配额与结果。</p></details>
+        </section>
+        <section class="section-card" id="strategy">
+          <h2>5.4 策略与人设</h2>
+          <p class="social-io"><strong>输入：</strong>人设背景、角色、语气与说话风格，以及主题、提示词、关键词、标签和补充素材。</p>
+          <ol>
+            <li><strong>保存账号人设。</strong>以描述、语气、角色列表和表达风格等字段维护人设，让后续创作使用一致的表达约束。</li>
+            <li><strong>保存生成策略。</strong>校验人设与主题存在，记录策略名称、说明、提示词、标签、关键词和启用状态，供以后重复选用。</li>
+            <li><strong>组合选中的策略。</strong>批量生成入口校验策略存在且启用，以第一个策略的人设和主题为主，合并去重标签、关键词，并拼接各策略提示词。</li>
+            <li><strong>形成一次生成任务。</strong>加入本次素材、篇数和起始日期，把合并提示词作为具体要求传入任务。临时生成入口也可以不保存策略，直接使用本次配置。</li>
+          </ol>
+          <p class="social-io"><strong>输出：</strong>可复用的人设与策略，以及一份完整的生成参数。策略复用已落到数据和服务；文档中“参考笔记自动总结人设”与流程图中的“自动选择标签、主题、类别并产生多个策略”是更进一步的设计方向，不能用现有增删改查接口代替其实现证明。</p>
+          <details class="social-evidence"><summary>实现依据与多策略含义</summary><p><code>GenerationStrategyServiceImpl.submitStrategyGenerateTask</code> 合并配置后提交一个任务，并非每条策略分别生成一组笔记。<code>PersonaServiceImpl</code> 负责人设维护；<code>PersonaPromptAssembler</code> 将人设与本次要求组织为模型输入。</p></details>
+        </section>
+        <section class="section-card" id="generation">
+          <h2>5.5 异步内容生成</h2>
+          <p class="social-io"><strong>输入：</strong>人设、主题、素材文本、具体要求、关键词与标签偏好、生成篇数、起始日期。</p>
+          <ol>
+            <li><strong>提交异步任务。</strong>服务把参数序列化后提交 <code>OUTPUT_NOTE_GENERATE</code>，先返回任务 ID；执行器再读取对应人设开始生成。</li>
+            <li><strong>组装创作上下文。</strong>把人设、素材、要求、关键词示例和起始日期放进提示词，补充标签偏好，并要求返回结构化 JSON 数组。</li>
+            <li><strong>接收候选笔记。</strong>模型输出标题、正文、标签和推荐发布日期。这里接收的是文本素材，不能把素材中包含链接直接理解为已自动抓取链接正文。</li>
+            <li><strong>整理生成结果。</strong>将输入关键词与模型返回标签合并去重；笔记使用任务指定主题，推荐日期优先采用模型结果，缺失时回退到输入起始日期。</li>
+            <li><strong>保存并返回结果。</strong>新增关键词，批量保存输出笔记，返回生成数量和笔记 ID，交给创作记录模块继续管理。</li>
+          </ol>
+          <p class="social-io"><strong>输出：</strong>可供运营者审阅与修改的候选内容，而非已经发布的帖子。文档计划生成后再次调用 AI 生成标签并归类；当前实现让标签随正文一次返回，输出任务中的独立标签分类入库调用已被注释。</p>
+          <details class="social-evidence"><summary>实现依据与标签处理差异</summary><p><code>NoteGenerationServiceImpl</code> 请求结构化正文与标签；<code>OutputNoteGenerateTaskExecutor</code> 保存结果。生成标签保存在笔记自身的标签列表中，但该任务未执行 <code>handleTagsClassificationAndPersistence</code>，因此不能声称生成后已经补全五类标签库。</p></details>
+        </section>
+        <section class="section-card" id="records">
+          <h2>5.6 创作记录与日期管理</h2>
+          <p class="social-io"><strong>输入：</strong>生成笔记或手工录入内容、编辑后的字段、主题与日期查询条件。</p>
+          <ol>
+            <li><strong>沉淀创作记录。</strong>使用独立输出笔记实体保存标题、正文、关键词、标签、所属主题、推荐发布日期和创建 / 更新时间。</li>
+            <li><strong>编辑内容与日期。</strong>更新前校验笔记和主题存在，再修改正文、标签、关键词与推荐日期，保留持续调整创作内容的空间。</li>
+            <li><strong>按日期检索。</strong>查询服务支持推荐日期的起止范围过滤，以及推荐日期、更新时间等排序，返回分页列表或单篇详情。</li>
+            <li><strong>衔接人工运营。</strong>运营者据此审阅候选稿并调整计划；记录不再需要只保留在一次模型对话里。</li>
+          </ol>
+          <p class="social-io"><strong>输出：</strong>可查询、修改、删除的创作记录及日期安排。<code>recommendPublishDate</code> 是推荐日期字段，不是发布任务；该链路不包含平台自动发布、自动互动或发布后反馈学习。</p>
         </section>
         <section class="section-card" id="application">
-          <h2>应用与资料说明</h2>
-          <p>据项目资料，该系统实际用于小红书账号内容运营，辅助热门内容分析、创作方向规划与二创生成；应用账号累计约 2K 粉丝。这是资料记录的账号规模，不将粉丝增长完全归因于 Agent，也不作为受控实验中的效果指标。</p>
-          <p>本页依据项目提供的 detail.md 与现有作品展示整理。个人职责与具体分工尚未核实，因此不声称独立完成、主导开发或负责某一模块。</p>
+          <h2>应用与后续完善</h2>
+          <p>适用场景是持续积累参考笔记、按账号定位选题、批量生成初稿并安排后续编辑。项目的价值在于把分析材料和生成配置沉淀下来，使运营者可以围绕同一主题继续研究、复用策略，而不是每次从空白提示词开始。</p>
+          <p>后续完善可围绕三点展开：补齐五类标签的独立抽取与类别描述约束；将词频、互动统计和搜索指数以可解释方式整合进选题流程；完善生成标签归类、输出校验与内容审核。自动策略规划属于在现有工作台之上的扩展，而不是把日期记录改称自动运营。</p>
+          <p>本案例呈现业务设计与静态源码实现，不以账号规模推导项目收益，也不补写未经资料支持的个人分工或量化效果。</p>
         </section>
         <div class="detail-footer-actions">
           <a href="works-social.html" class="link-button">← 返回作品展示</a>

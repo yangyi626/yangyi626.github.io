@@ -140,6 +140,21 @@ body.viewer-open { overflow: hidden; }
   #viewer-description { font-size: 11px; text-align: left; }
   .image-viewer button { padding: 8px 12px; font-size: 11px; }
 }
+/* Product screenshots stay compact in the stream; full-size inspection uses the viewer. */
+body.ailyn-theme .chapter, body.social-theme .chapter { max-width: 1080px; margin-inline: auto; }
+body.ailyn-theme .chapter > figure, body.social-theme .chapter > figure { width: min(100%, 960px); margin-inline: auto; }
+body.ailyn-theme .chapter-first > figure { width: min(100%, 1040px); }
+body.ailyn-theme .chapter-visual > figure { width: min(100%, 860px); }
+body.ailyn-theme .chapter-local > figure { width: min(100%, 920px); }
+body.ailyn-theme .chapter-concept > figure, body.ailyn-theme .chapter-expansion > figure { width: min(100%, 780px); }
+body.social-theme .chapter > figure { width: min(100%, 900px); }
+body.social-theme .chapter-first > figure { width: min(100%, 960px); }
+body.ailyn-theme .chapter-visual .chapter-copy, body.social-theme .chapter-visual .chapter-copy { padding-inline: 0; }
+body.ailyn-theme .chapter:not(.chapter-first), body.social-theme .chapter:not(.chapter-first) { padding-top: 76px; }
+@media (max-width: 760px) {
+  body.ailyn-theme .chapter:not(.chapter-first), body.social-theme .chapter:not(.chapter-first) { padding-top: 48px; }
+  body.ailyn-theme figcaption, body.social-theme figcaption { flex-wrap: wrap; gap: 6px 12px; }
+}
 /* The social project shares layout and motion, with its own warm accent palette. */
 body.social-theme {
   --canvas: #120d17;

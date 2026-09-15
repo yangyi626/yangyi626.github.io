@@ -1,0 +1,56 @@
+/* Scoped reading enhancements; retain the site's layout and navigation. */
+.social-detail .detail-content { display: block; }
+.social-detail .social-table-wrap {
+  max-width: 100%;
+  margin: 20px 0;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.social-detail table {
+  display: table;
+  width: 100%;
+  min-width: 640px;
+  margin: 0;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.social-detail th,
+.social-detail td {
+  padding: 13px 15px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+  overflow-wrap: anywhere;
+}
+.social-detail thead th { background: var(--teal-soft); color: var(--ink); }
+.social-detail tbody th { min-width: 120px; font-weight: 650; }
+.social-detail tbody tr:last-child > * { border-bottom: 0; }
+.social-detail .social-evidence {
+  margin-top: 20px;
+  padding: 14px 18px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.social-detail summary { cursor: pointer; color: var(--teal); font-weight: 650; }
+.social-detail .social-evidence p { margin-top: 14px; font-size: 14px; }
+.social-detail .social-definitions { margin: 20px 0; }
+.social-detail .social-definitions dt { margin-top: 16px; font-weight: 700; color: var(--ink); }
+.social-detail .social-definitions dd { margin: 5px 0 0; color: #38455a; line-height: 1.85; }
+.social-detail .social-io { padding-left: 14px; border-left: 2px solid var(--line-strong); }
+.social-detail code,
+.social-detail td a { overflow-wrap: anywhere; }
+.social-detail .toc-container { max-height: calc(100vh - 40px); overflow-y: auto; }
+.social-detail .toc-list a { padding-top: 7px; padding-bottom: 7px; }
+.social-detail summary:focus-visible,
+.social-detail .social-table-wrap:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+@media (max-width: 1200px) {
+  .social-detail .toc-container { max-height: 66vh; }
+}
+@media (max-width: 760px) {
+  .social-detail .social-evidence { padding: 12px; }
+  .social-detail th,
+  .social-detail td { padding: 11px 12px; }
+}
